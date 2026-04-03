@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon profil — Logidéal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .profil-page{min-height:100vh;background:var(--sable);display:flex;align-items:flex-start;justify-content:center;padding:80px 24px 40px}
+    .profil-wrap{display:grid;grid-template-columns:300px 1fr;max-width:1040px;width:100%;background:var(--creme);border-radius:24px;box-shadow:0 24px 80px rgba(184,92,56,0.12);overflow:hidden;align-items:stretch}
+    
+    /* GAUCHE — sticky + étirement sur toute la hauteur */
+    .profil-left-outer{background:var(--terra);display:flex;flex-direction:column}
+    .profil-left{padding:48px 36px;display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100vh;overflow-y:auto;flex:1}
+    .profil-left-logo{font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:white;text-decoration:none;margin-bottom:40px;display:block}
+    .profil-left-logo span{font-style:italic;color:var(--brun3)}
+    .profil-left h2{font-family:'DM Serif Display',serif;font-size:1.7rem;font-weight:700;color:white;line-height:1.2;margin-bottom:14px}
+    .profil-left p{color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;font-weight:300;margin-bottom:32px}
+
+    /* PROGRESS SIDEBAR */
+    .progress-nav{display:flex;flex-direction:column;gap:6px;margin-top:28px}
+    .progress-nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;opacity:0.4;transition:all 0.25s;border-radius:8px;margin:0 -12px}
+    .progress-nav-item.active{opacity:1;background:rgba(255,255,255,0.12)}
+    .progress-nav-item.done{opacity:0.6}
+    .progress-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.35);flex-shrink:0;transition:all 0.3s}
+    .progress-nav-item.active .progress-dot{background:white;width:9px;height:9px;box-shadow:0 0 0 3px rgba(255,255,255,0.2)}
+    .progress-nav-item.done .progress-dot{background:rgba(255,255,255,0.55)}
+    .progress-label{font-size:0.78rem;color:white;font-weight:400;transition:font-weight 0.2s}
+    .progress-nav-item.active .progress-label{font-weight:700}
+    .profil-left-footer{color:rgba(255,255,255,0.3);font-size:0.72rem;margin-top:32px}
+
+    /* DROITE */
+    .profil-right{padding:48px 44px 0 44px;display:flex;flex-direction:column}
+    .profil-right form{flex:1}
+    .total-bar{
+      background:var(--sable);border:1.5px solid var(--sable3);border-radius:var(--radius);
+      padding:14px 24px;margin:0 0 32px 0;
+      display:flex;justify-content:space-between;align-items:center;
+    }    .step-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    .step-header-content{flex:1}
+    .step-num{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--terra);margin-bottom:8px}
+    .step-title{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:700;color:var(--texte);line-height:1.15}
+    .step-sub{font-size:0.88rem;color:var(--gris);margin-top:6px;font-weight:300}
+
+    .form-section{display:none}
+    .form-section.active{display:block;animation:fadeUp 0.35s ease both}
+
+    /* BLOCS DE DÉPENSES */
+    .depense-bloc{background:var(--sable);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px}
+    .depense-bloc-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .depense-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+    .depense-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+    .depense-item{display:flex;flex-direction:column;gap:4px}
+    .depense-label{font-size:0.78rem;color:var(--gris);font-weight:500;display:flex;align-items:flex-start;gap:5px;min-height:2.2em;line-height:1.35}
+    .depense-label .dico{font-size:0.85rem;flex-shrink:0;margin-top:1px}
+    .input-euro{position:relative}
+    .input-euro .form-input{padding-right:32px;padding-top:10px;padding-bottom:10px;font-size:0.92rem}
+    .input-euro::after{content:'€';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gris2);font-size:0.85rem;pointer-events:none}
+    .input-pct{position:relative}
+    .input-pct .form-input{padding-right:32px;padding-top:10px;padding-bottom:10px;font-size:0.92rem}
+    .input-pct::after{content:'%';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gris2);font-size:0.85rem;pointer-events:none}
+
+    /* CHOIX VISUELS */
+    .choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+    .choice-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .choice-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+    .choice-btn{background:var(--sable);border:2px solid var(--sable3);border-radius:var(--radius-sm);padding:12px 10px;text-align:center;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;color:var(--gris)}
+    .choice-btn:hover{border-color:var(--terra3);color:var(--terra)}
+    .choice-btn.active{background:var(--terra-pale);border-color:var(--terra);color:var(--terra);font-weight:700}
+    .choice-btn.selected{border-color:var(--terra);background:var(--terra-pale);color:var(--terra);font-weight:600}
+    .choice-btn .ci{font-size:1.2rem;display:block;margin-bottom:4px}
+
+    /* TOTAL EN TEMPS RÉEL */
+    .total-bar-left{font-size:0.78rem;color:var(--gris);font-weight:500}
+    .total-bar-right{display:flex;align-items:baseline;gap:12px}
+    .total-bar-depenses{font-size:0.85rem;color:var(--gris)}
+    .total-bar-reste{font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:700}
+    .total-bar-reste.ok{color:var(--success)}
+    .total-bar-reste.warn{color:var(--warning)}
+    .total-bar-reste.bad{color:var(--danger)}
+
+    /* PROFIL CARD */
+    .profil-detected{background:var(--terra-pale);border:2px solid var(--terra3);border-radius:var(--radius);padding:20px 22px;margin:20px 0;display:none}
+    .profil-detected-tag{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:6px}
+    .profil-detected-name{font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;color:var(--texte)}
+    .profil-detected-desc{font-size:0.82rem;color:var(--gris);margin-top:4px;line-height:1.55}
+
+    /* NAV BOUTONS */
+    .form-nav{display:flex;gap:12px;margin-top:28px;padding-bottom:20px}
+    .btn-prev{background:transparent;color:var(--gris);border:2px solid var(--sable3);padding:12px 22px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap}
+    .btn-prev:hover{border-color:var(--gris)}
+    .btn-next{background:var(--terra);color:white;border:none;padding:12px 28px;border-radius:50px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;flex:1}
+    .btn-next:hover{background:var(--terra-dark)}
+
+    @media(max-width:800px){
+      .profil-wrap{grid-template-columns:1fr}
+      .profil-left{display:none}
+      .profil-right{padding:32px 20px 0}
+      .profil-page{padding:20px 16px}
+      .depense-grid{grid-template-columns:1fr 1fr}
+      .depense-grid.cols-3{grid-template-columns:1fr 1fr}
+      .total-bar{padding:12px 20px}
+    }
+    @media(max-width:480px){
+      .depense-grid,.depense-grid.cols-3{grid-template-columns:1fr}
+      .choice-grid.cols-3,.choice-grid.cols-4{grid-template-columns:1fr 1fr}
+    }
+
+    /* ── BOUTONS SIDEBAR ── */
+    .sidebar-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+    .btn-dashboard-sidebar{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.3);
+      border-radius:50px;padding:10px 16px;font-size:0.8rem;font-weight:600;
+      cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;
+      transition:background 0.2s;
+    }
+    .btn-dashboard-sidebar:hover{background:rgba(255,255,255,0.25)}
+    .btn-save-sidebar{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      background:white;color:var(--terra);border:none;
+      border-radius:50px;padding:10px 16px;font-size:0.8rem;font-weight:700;
+      cursor:pointer;font-family:'DM Sans',sans-serif;
+      transition:all 0.2s;
+    }
+    .btn-save-sidebar:hover{background:var(--sable);transform:translateY(-1px)}
+    .btn-save-sidebar:disabled{background:var(--sable2);color:var(--gris2);cursor:not-allowed;transform:none}
+
+    /* ── TOAST SAUVEGARDE ── */
+    .save-toast{
+      position:fixed;bottom:20px;right:20px;
+      background:var(--texte);color:white;padding:8px 16px;border-radius:50px;
+      font-size:0.78rem;font-weight:500;z-index:9999;
+      opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;
+      transform:translateY(8px);
+    }
+    .save-toast.show{opacity:1;transform:translateY(0)}
+    .save-toast.success{background:#2e6b3e}
+    .save-toast.error{background:var(--danger)}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+    <ul class="nav-links">
+    <li><a href="logement.html">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+
+<div class="save-toast" id="save-toast"></div>
+<div class="profil-page">
+  <div class="profil-wrap">
+
+    <!-- GAUCHE STICKY -->
+    <div class="profil-left-outer">
+    <div class="profil-left">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+          <a href="index.html" class="profil-left-logo" style="margin-bottom:0">Logi<span>déal</span></a>
+        </div>
+        <h2>Votre situation,<br>enfin claire</h2>
+        <p style="color:rgba(255,255,255,0.75);font-size:0.83rem;line-height:1.7;margin-bottom:0;font-style:italic;font-weight:400">
+          Plus vous serez précis, plus nos analyses correspondront à votre situation réelle. Laissez vide ce qui ne s'applique pas.
+        </p>
+        <div class="progress-nav">
+          <div class="progress-nav-item active" onclick="goStep(0)" id="nav-0">
+            <div class="progress-dot"></div><span class="progress-label">Votre situation</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(1)" id="nav-1">
+            <div class="progress-dot"></div><span class="progress-label">Logement</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(4)" id="nav-4">
+            <div class="progress-dot"></div><span class="progress-label">Alimentation & loisirs</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(2)" id="nav-2">
+            <div class="progress-dot"></div><span class="progress-label">Mobilité</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(5)" id="nav-5">
+            <div class="progress-dot"></div><span class="progress-label">Famille & santé</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(3)" id="nav-3">
+            <div class="progress-dot"></div><span class="progress-label">Abonnements</span>
+          </div>
+          <div class="progress-nav-item" onclick="goStep(6)" id="nav-6">
+            <div class="progress-dot"></div><span class="progress-label">Crédits & patrimoine</span>
+          </div>
+        </div>
+      </div>
+      <div class="profil-left-footer" style="margin-top:auto;padding-top:24px">🔒 Données sécurisées</div>
+    </div>
+
+    <!-- DROITE -->
+    </div><!-- /profil-left-outer -->
+    <div class="profil-right" id="profil-right">
+      <form id="profil-form">
+
+        <!-- ═══ ÉTAPE 0 : VOTRE SITUATION ═══ -->
+        <div class="form-section active" id="step-0">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 1 / 7</div>
+            <h2 class="step-title">Votre situation</h2>
+            <p class="step-sub">Ces informations adaptent tous les calculs et seuils de référence à votre situation réelle.<br><strong style="color:var(--terra)">Toutes les dépenses sont à renseigner par mois.</strong></p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="form-group">
+            <label class="form-label">👤 Comment vous appeler ? <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--gris2)">(prénom ou pseudo)</span></label>
+            <input class="form-input" type="text" id="prenom" placeholder="Ex : Alex, Camille…" autocomplete="given-name" oninput="autoSave()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">💰 Vos revenus mensuels nets <span style="color:var(--danger)">*</span></label>
+            <div class="input-euro"><input class="form-input" type="number" id="salaire" placeholder="2 200" min="0" required oninput="updateTotal();autoSave()"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">🎂 Votre âge</label>
+              <input class="form-input" type="number" id="age" placeholder="32" min="18" max="80">
+            </div>
+            <div class="form-group">
+              <label class="form-label">💼 Contrat</label>
+              <div class="choice-grid cols-4" style="margin-top:6px">
+                <button type="button" class="choice-btn" data-field="contrat" data-value="cdi" onclick="selectChoice(this)"><span class="ci">✅</span>CDI</button>
+                <button type="button" class="choice-btn" data-field="contrat" data-value="cdd" onclick="selectChoice(this)"><span class="ci">📅</span>CDD</button>
+                <button type="button" class="choice-btn" data-field="contrat" data-value="independant" onclick="selectChoice(this)"><span class="ci">💼</span>Indép.</button>
+                <button type="button" class="choice-btn" data-field="contrat" data-value="autre" onclick="selectChoice(this)"><span class="ci">🎓</span>Autre</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">👥 Situation familiale</label>
+            <div class="choice-grid cols-4">
+              <button type="button" class="choice-btn" data-field="situation" data-value="seul" onclick="selectChoice(this);onSituationChange(this)"><span class="ci">🧍</span>Seul(e)</button>
+              <button type="button" class="choice-btn" data-field="situation" data-value="couple" onclick="selectChoice(this);onSituationChange(this)"><span class="ci">👫</span>En couple</button>
+              <button type="button" class="choice-btn" data-field="situation" data-value="famille" onclick="selectChoice(this);onSituationChange(this)"><span class="ci">👨‍👩‍👧</span>Famille</button>
+              <button type="button" class="choice-btn" data-field="situation" data-value="coloc" onclick="selectChoice(this);onSituationChange(this)"><span class="ci">🏠</span>Coloc</button>
+            </div>
+          </div>
+
+          <div id="bloc-couple" style="display:none">
+            <div class="depense-bloc" style="background:var(--terra-pale);border:1.5px solid var(--terra3)">
+              <div class="depense-bloc-title" style="color:var(--terra)">👫 Votre couple</div>
+              <div class="depense-grid">
+                <div class="depense-item">
+                  <div class="depense-label">Vivez-vous ensemble ?</div>
+                  <div class="choice-grid" style="margin-top:6px">
+                    <button type="button" class="choice-btn" data-field="vit_ensemble" data-value="oui" onclick="selectChoice(this);onVitEnsembleChange(this)"><span class="ci">🏠</span>Oui</button>
+                    <button type="button" class="choice-btn" data-field="vit_ensemble" data-value="non" onclick="selectChoice(this);onVitEnsembleChange(this)"><span class="ci">🏘️</span>Non</button>
+                  </div>
+                </div>
+                <div class="depense-item" id="bloc-gestion-couple" style="display:none">
+                  <div class="depense-label">Gestion des dépenses</div>
+                  <div class="choice-grid" style="margin-top:6px">
+                    <button type="button" class="choice-btn" data-field="gestion_couple" data-value="commune" onclick="selectChoice(this);onGestionChange(this)"><span class="ci">🤝</span>Communes</button>
+                    <button type="button" class="choice-btn" data-field="gestion_couple" data-value="personnelle" onclick="selectChoice(this);onGestionChange(this)"><span class="ci">👤</span>Personnelles</button>
+                  </div>
+                </div>
+              </div>
+              <div id="bloc-revenus-conjoint" style="display:none;margin-top:14px">
+                <!-- Choix usage profil -->
+                <div style="margin-bottom:16px">
+                  <div class="depense-label" style="margin-bottom:8px;font-size:0.82rem;font-weight:600;color:var(--texte)">📋 Pour quel usage créez-vous ce profil ?</div>
+                  <div class="choice-grid" style="margin-top:6px">
+                    <button type="button" class="choice-btn" data-field="usage_profil" data-value="perso" onclick="selectChoice(this);onUsageChange(this)">
+                      <span class="ci">👤</span><span style="text-align:left"><strong>Mon budget personnel</strong><br><span style="font-size:0.72rem;font-weight:400;color:var(--gris)">Mes revenus et dépenses uniquement</span></span>
+                    </button>
+                    <button type="button" class="choice-btn" data-field="usage_profil" data-value="foyer" onclick="selectChoice(this);onUsageChange(this)">
+                      <span class="ci">🏠</span><span style="text-align:left"><strong>Notre budget foyer</strong><br><span style="font-size:0.72rem;font-weight:400;color:var(--gris)">Revenus et dépenses communs</span></span>
+                    </button>
+                  </div>
+                  <p style="font-size:0.72rem;color:var(--gris2);margin-top:8px">💡 Ce choix est définitif pour ce profil. Pour les deux usages, créez deux comptes distincts.</p>
+                </div>
+                <div class="depense-grid" id="bloc-champs-conjoint" style="display:none">
+                  <div class="depense-item">
+                    <div class="depense-label"><span class="dico">💰</span>Revenus mensuels nets du/de la conjoint(e)</div>
+                    <div class="input-euro"><input class="form-input" type="number" id="salaire_conjoint" placeholder="2 000" min="0" oninput="updateTotal();autoSave()"></div>
+                  </div>
+                  <div class="depense-item">
+                    <div class="depense-label"><span class="dico">🎂</span>Prénom du/de la conjoint(e) <span style="font-weight:400;color:var(--gris2)">(optionnel)</span></div>
+                    <input class="form-input" type="text" id="prenom_conjoint" placeholder="Ex : Morgan, Sasha…" oninput="autoSave()">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">👶 Enfants à charge</label>
+            <input class="form-input" type="number" id="enfants" placeholder="0" min="0" max="10" value="0" oninput="afficherAgesEnfants(this.value)">
+            <div id="ages-enfants-bloc" style="display:none;margin-top:12px">
+              <label class="form-label" style="margin-bottom:10px">🎂 Âge de chaque enfant</label>
+              <div id="ages-enfants-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">📍 Zone géographique</label>
+            <div class="choice-grid cols-3">
+              <button type="button" class="choice-btn" data-field="zone" data-value="paris" onclick="selectChoice(this)"><span class="ci">🗼</span>Paris / IDF</button>
+              <button type="button" class="choice-btn" data-field="zone" data-value="grande_ville" onclick="selectChoice(this)"><span class="ci">🏙️</span>Grande ville</button>
+              <button type="button" class="choice-btn" data-field="zone" data-value="province" onclick="selectChoice(this)"><span class="ci">🌳</span>Province</button>
+            </div>
+          </div>
+
+          <div class="form-nav"><button type="button" class="btn-next" onclick="goStep(1)">Suivant →</button></div>
+        </div>
+
+        <!-- ═══ ÉTAPE 1 : LOGEMENT ═══ -->
+        <div class="form-section" id="step-1">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 2 / 7</div>
+            <h2 class="step-title">🏠 Logement</h2>
+            <p class="step-sub">Laissez vide ce qui ne vous concerne pas.</p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <div class="choice-grid cols-3">
+              <button type="button" class="choice-btn" data-field="statut_logement" data-value="locataire" onclick="selectChoice(this);setLoyerLabel(this)"><span class="ci">🔑</span>Locataire</button>
+              <button type="button" class="choice-btn" data-field="statut_logement" data-value="proprietaire" onclick="selectChoice(this);setLoyerLabel(this)"><span class="ci">🏠</span>Propriétaire</button>
+
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🏠 Charges logement</div>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🏠</span><span id="loyer-label">Loyer mensuel</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="loyer" placeholder="800" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🏦</span>Crédit immobilier <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(mensualité)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="credit_immo_logement" placeholder="800" min="0" oninput="syncCreditImmo();updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🏢</span>Charges copropriété <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(si applicable)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="charges_copro" placeholder="100" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">⚡</span>Électricité / Gaz</div><div class="input-euro"><input class="form-input" type="number" id="electricite" placeholder="80" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💧</span>Eau</div><div class="input-euro"><input class="form-input" type="number" id="eau" placeholder="30" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🛡️</span>Assurance habitation</div><div class="input-euro"><input class="form-input" type="number" id="assurance_habitation" placeholder="20" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🧹</span>Entretien / ménage</div><div class="input-euro"><input class="form-input" type="number" id="entretien_maison" placeholder="50" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+            <!-- Champs patrimoniaux — uniquement pour les propriétaires -->
+            <div id="bloc-patrimonial" style="display:none">
+            <div class="depense-grid" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sable3)">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🏡</span>Valeur estimée du bien <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(non compté dans les dépenses)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="valeur_bien" placeholder="250 000" min="0" oninput="autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">📅</span>Durée restante du crédit <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(en mois)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="duree_credit_restante" placeholder="180" min="0" oninput="autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">📊</span>Taux d'intérêt du crédit <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(%)</span></div>
+                <div class="input-pct"><input class="form-input" type="number" id="taux_credit" placeholder="ex : 3.5" min="0" max="20" step="0.01" oninput="autoSave()"></div>
+              </div>
+            </div>
+            </div>
+            <div id="loyer-hint" style="font-size:0.75rem;color:var(--terra-dark);margin-top:10px;padding:8px 12px;background:var(--terra-pale);border-radius:var(--radius-sm);display:none"></div>
+          </div>
+
+          <!-- TAXES — toujours visible, indépendant du statut logement -->
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🏛️ Taxes & impôts locaux</div>
+            <p class="form-hint" id="taxes-hint" style="margin-bottom:12px">Renseignez vos taxes locales en montant annuel.</p>
+            <div class="depense-grid" style="align-items:start">
+              <div class="depense-item" id="bloc-taxes-proprio">
+                <div class="depense-label"><span class="dico">🏛️</span>Taxe foncière <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(montant annuel ÷ 12)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="taxe_fonciere_annuel" placeholder="1 200" min="0" oninput="updateTaxes();autoSave()"></div>
+                <div id="taxe-fonciere-hint" style="font-size:0.73rem;color:var(--terra);margin-top:4px"></div>
+              </div>
+              <div class="depense-item" id="bloc-taxe-hab">
+                <div class="depense-label"><span class="dico">🏛️</span>Taxe d'habitation résid. secondaire <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(annuel ÷ 12)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="taxe_habitation_annuel" placeholder="0" min="0" oninput="updateTaxes();autoSave()"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(0)">← Retour</button>
+            <button type="button" class="btn-next" onclick="goStep(4)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 2 : MOBILITÉ ═══ -->
+        <div class="form-section" id="step-2">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 3 / 7</div>
+            <h2 class="step-title">🚗 Mobilité</h2>
+            <p class="step-sub">Indiquez les budgets mensuels moyens de votre foyer.</p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="form-group">
+            <label class="form-label">🚗 Nombre de véhicules dans le foyer</label>
+            <div class="choice-grid cols-6" style="grid-template-columns:repeat(6,1fr)">
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="0" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚶</span>0</button>
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="1" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚗</span>1</button>
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="2" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚗🚗</span>2</button>
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="3" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚗🚗🚗</span>3</button>
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="4" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚐</span>4</button>
+              <button type="button" class="choice-btn" data-field="nb_voitures" data-value="5" onclick="selectChoice(this);onNbVoituresChange(this)"><span class="ci">🚌</span>5</button>
+            </div>
+          </div>
+
+          <!-- Blocs dynamiques par véhicule -->
+          <div id="bloc-voitures" style="display:none">
+            <div id="vehicules-detail"></div>
+
+            <!-- Totaux véhicules — mis à jour par updateTotalVehicules() depuis les champs par véhicule -->
+            <input type="hidden" id="carburant" value="0">
+            <input type="hidden" id="assurance_auto" value="0">
+            <input type="hidden" id="entretien_auto" value="0">
+            <input type="hidden" id="parking" value="0">
+          </div>
+
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🚇 Transports en commun & autres</div>
+            <p class="form-hint" style="margin-bottom:12px">Pass, abonnements, vélo, trottinette, taxi, train… Indiquez votre budget mensuel moyen.</p>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🎫</span>Abonnement TC mensuel <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block;margin-top:1px">(Navigo, TCL, TBM...)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="transports_commun" placeholder="90" min="0" oninput="updateTotal();onTCChange();autoSave()"></div>
+                <div id="tc-employeur-hint" style="display:none;font-size:0.73rem;color:var(--terra);margin-top:6px;padding:6px 10px;background:var(--terra-pale);border-radius:var(--radius-sm)"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🎟️</span>Tickets / recharges ponctuelles <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block;margin-top:1px">(trajets occasionnels)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="tc_ponctuel" placeholder="15" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🚲</span>Vélo / trottinette <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block;margin-top:1px">(entretien ou abonnement libre-service)</span></div><div class="input-euro"><input class="form-input" type="number" id="velo" placeholder="20" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🚕</span>Taxi / VTC</div><div class="input-euro"><input class="form-input" type="number" id="vtc" placeholder="30" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🤝</span>Covoiturage <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block;margin-top:1px">(BlaBlaCar, Karos...)</span></div><div class="input-euro"><input class="form-input" type="number" id="covoiturage" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🚂</span>Train / avion</div><div class="input-euro"><input class="form-input" type="number" id="train" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(4)">← Retour</button>
+            <button type="button" class="btn-next" onclick="goStep(5)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 3 : ABONNEMENTS ═══ -->
+        <div class="form-section" id="step-3">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 4 / 7</div>
+            <h2 class="step-title">📱 Abonnements</h2>
+            <p class="step-sub">Téléphone, internet, streaming, cloud…</p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">📡 Connectivité</div>
+            <div class="depense-grid">
+              <div class="depense-item"><div class="depense-label"><span class="dico">📱</span>Téléphone(s) mobile</div><div class="input-euro"><input class="form-input" type="number" id="telephone" placeholder="20" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">📶</span>Internet / box</div><div class="input-euro"><input class="form-input" type="number" id="internet" placeholder="35" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🎬 Divertissement</div>
+            <div class="depense-grid cols-3">
+              <div class="depense-item"><div class="depense-label"><span class="dico">🎬</span>Streaming vidéo</div><div class="input-euro"><input class="form-input" type="number" id="streaming_video" placeholder="15" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🎵</span>Streaming musique</div><div class="input-euro"><input class="form-input" type="number" id="streaming_musique" placeholder="10" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🎮</span>Gaming (PS+, Xbox…)</div><div class="input-euro"><input class="form-input" type="number" id="gaming" placeholder="10" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">☁️ Autres abonnements</div>
+            <div class="depense-grid cols-3">
+              <div class="depense-item"><div class="depense-label"><span class="dico">☁️</span>Stockage cloud</div><div class="input-euro"><input class="form-input" type="number" id="cloud" placeholder="3" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">📰</span>Presse / médias</div><div class="input-euro"><input class="form-input" type="number" id="presse" placeholder="15" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🛒</span>Amazon Prime…</div><div class="input-euro"><input class="form-input" type="number" id="prime" placeholder="7" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(5)">← Retour</button>
+            <button type="button" class="btn-next" onclick="goStep(6)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 4 : ALIMENTATION & LOISIRS ═══ -->
+        <div class="form-section" id="step-4">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 5 / 7</div>
+            <h2 class="step-title">🛒 Alimentation & loisirs</h2>
+            <p class="step-sub">Indiquez votre budget mensuel moyen par catégorie.</p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🥗 Alimentation</div>
+            <p class="form-hint" style="margin-bottom:12px">Courses, restaurants, livraisons, cafés, snacks…</p>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🛒</span>Courses alimentaires</div>
+                <div class="input-euro"><input class="form-input" type="number" id="courses" placeholder="350" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🍕</span>Restaurants & sorties repas <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(budget moyen/mois)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="restaurants" placeholder="100" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🎉 Budget loisirs</div>
+            <p class="form-hint" style="margin-bottom:12px">Cinéma, sorties, voyages, sport, bien-être… Indiquez votre budget mensuel moyen global.</p>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🎉</span>Budget loisirs & sorties</div>
+                <div class="input-euro"><input class="form-input" type="number" id="loisirs_budget" placeholder="200" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">👗</span>Budget vêtements & mode</div>
+                <div class="input-euro"><input class="form-input" type="number" id="vetements" placeholder="60" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🎁 Cadeaux & événements <span style="font-weight:400;font-size:0.75rem;color:var(--gris2)">(dépenses variables)</span></div>
+            <p class="form-hint" style="margin-bottom:12px">Noël, anniversaires, mariages, fêtes… Indiquez un <strong>budget annuel</strong> — nous le lissons automatiquement sur 12 mois.</p>
+            <div class="depense-grid" style="align-items:start">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🎁</span>Budget cadeaux & événements <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(par an)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="cadeaux_annuel" placeholder="600" min="0" oninput="updateCadeaux();autoSave()"></div>
+                <div class="form-hint" id="cadeaux-hint" style="font-size:0.73rem;color:var(--terra);margin-top:4px"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">✈️</span>Budget vacances & voyages <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(par an)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="voyages_annuel" placeholder="1200" min="0" oninput="updateVoyages();autoSave()"></div>
+                <div class="form-hint" id="voyages-hint" style="font-size:0.73rem;color:var(--terra);margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🚬 Consommations personnelles <span style="font-weight:400;font-size:0.75rem;color:var(--gris2)">(optionnel)</span></div>
+            <p class="form-hint" style="margin-bottom:12px">Tabac, alcool, autres consommations régulières.</p>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🚬</span>Tabac / cigarettes <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(budget moyen/mois)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="tabac" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🍷</span>Alcool / autres <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(budget moyen/mois)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="alcool" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(1)">← Retour</button>
+            <button type="button" class="btn-next" onclick="goStep(2)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 5 : FAMILLE & SANTÉ ═══ -->
+        <div class="form-section" id="step-5">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 6 / 7</div>
+            <h2 class="step-title">👨‍👩‍👧 Famille & Santé</h2>
+            <p class="step-sub">Dépenses liées aux enfants, à la santé et aux imprévus.</p>
+          </div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+          <div class="depense-bloc" id="bloc-enfants-depenses" style="display:none">
+            <div class="depense-bloc-title">👶 Enfants</div>
+            <p class="form-hint" style="margin-bottom:12px">Tous les postes liés aux enfants — fixes et variables (lissés sur 12 mois).</p>
+            <div class="depense-grid">
+              <div class="depense-item"><div class="depense-label"><span class="dico">🧸</span>Garde / crèche</div><div class="input-euro"><input class="form-input" type="number" id="garde_enfants" placeholder="400" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">📚</span>Scolarité & fournitures</div><div class="input-euro"><input class="form-input" type="number" id="scolarite" placeholder="50" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">⚽</span>Activités extrascolaires</div><div class="input-euro"><input class="form-input" type="number" id="activites_enfants" placeholder="60" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">👕</span>Vêtements enfants <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(par an)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="vetements_enfants_annuel" placeholder="600" min="0" oninput="updateVetementsEnfants();autoSave()"></div>
+                <div class="form-hint" id="vetements-enfants-hint" style="font-size:0.73rem;color:var(--terra);margin-top:4px"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">🎠</span>Sorties & loisirs famille <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(par an)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="loisirs_famille_annuel" placeholder="800" min="0" oninput="updateLoisirsFamille();autoSave()"></div>
+                <div class="form-hint" id="loisirs-famille-hint" style="font-size:0.73rem;color:var(--terra);margin-top:4px"></div>
+              </div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💸</span>Pension alimentaire</div><div class="input-euro"><input class="form-input" type="number" id="pension" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">🏥 Santé & bien-être</div>
+            <p class="form-hint" style="margin-bottom:12px">Mutuelle, soins, sport, bien-être…</p>
+            <div class="depense-grid">
+              <div class="depense-item"><div class="depense-label"><span class="dico">🏥</span>Mutuelle santé</div><div class="input-euro"><input class="form-input" type="number" id="mutuelle" placeholder="50" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💊</span>Soins & pharmacie <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(budget moyen/mois)</span></div><div class="input-euro"><input class="form-input" type="number" id="sante" placeholder="40" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🏋️</span>Sport & salle de sport</div><div class="input-euro"><input class="form-input" type="number" id="sport" placeholder="30" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💆</span>Bien-être & coaching <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(psy, kiné, spa…)</span></div><div class="input-euro"><input class="form-input" type="number" id="bienetre" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">✂️</span>Coiffeur & soins capillaires</div><div class="input-euro"><input class="form-input" type="number" id="coiffeur" placeholder="30" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💅</span>Esthétique & beauté <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;white-space:nowrap;display:block;margin-top:1px">(ongles, épilation, maquillage…)</span></div><div class="input-euro"><input class="form-input" type="number" id="esthetique" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">📦 Autres dépenses récurrentes</div>
+            <div class="depense-grid">
+              <div class="depense-item"><div class="depense-label"><span class="dico">🐾</span>Animal de compagnie</div><div class="input-euro"><input class="form-input" type="number" id="animal" placeholder="50" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">📖</span>Formation / auto-développement</div><div class="input-euro"><input class="form-input" type="number" id="formation" placeholder="30" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🤲</span>Dons / associations</div><div class="input-euro"><input class="form-input" type="number" id="dons" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(2)">← Retour</button>
+            <button type="button" class="btn-next" onclick="goStep(3)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 6 : CRÉDITS & ÉPARGNE ═══ -->
+        <div class="form-section" id="step-6">
+          <div class="step-header"><div class="step-header-content">
+            <div class="step-num">Étape 7 / 7</div>
+            <h2 class="step-title">💳 Crédits, épargne & patrimoine</h2>
+            <p class="step-sub">Remboursements, objectif d'épargne et situation patrimoniale.</p>
+          </div>
+
+          <!-- CRÉDITS -->
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">💳 Crédits en cours</div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:6px 14px;border-radius:50px;white-space:nowrap;flex-shrink:0">← Tableau de bord</a></div>
+            <div class="depense-grid">
+              <div class="depense-item"><div class="depense-label"><span class="dico">🏠</span>Crédit immobilier</div><div class="input-euro"><input class="form-input" type="number" id="credit_immo" placeholder="800" min="0" oninput="syncCreditImmoReverse();updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">🚗</span>Crédit auto / LOA</div><div class="input-euro"><input class="form-input" type="number" id="credit_auto" placeholder="200" min="0" oninput="syncCreditAutoReverse();updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">💳</span>Crédit conso</div><div class="input-euro"><input class="form-input" type="number" id="credit_conso" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+              <div class="depense-item"><div class="depense-label"><span class="dico">📦</span>Autres remboursements</div><div class="input-euro"><input class="form-input" type="number" id="credit_autre" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div></div>
+            </div>
+          </div>
+
+          <!-- RESTE À VIVRE -->
+          <div id="reste-vivre-bloc" style="background:var(--terra-pale);border:1.5px solid var(--terra3);border-radius:var(--radius);padding:20px 24px;margin:20px 0">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:8px">Votre reste à vivre actuel</div>
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <div>
+                <div style="font-size:0.75rem;color:var(--gris)">Revenus</div>
+                <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:var(--texte)" id="rv-revenus">—</div>
+              </div>
+              <div style="color:var(--gris2);font-size:1.2rem">−</div>
+              <div>
+                <div style="font-size:0.75rem;color:var(--gris)">Dépenses</div>
+                <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:var(--texte)" id="rv-depenses">—</div>
+              </div>
+              <div style="color:var(--gris2);font-size:1.2rem">=</div>
+              <div>
+                <div style="font-size:0.75rem;color:var(--gris)">Reste à vivre</div>
+                <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;font-weight:700" id="rv-reste">—</div>
+              </div>
+            </div>
+            <div id="rv-hint" style="font-size:0.8rem;color:var(--gris);margin-top:10px;line-height:1.5"></div>
+          </div>
+
+          <!-- ÉPARGNE -->
+          <div class="depense-bloc">
+            <div class="depense-bloc-title">💰 Objectif d'épargne</div>
+            <p class="form-hint" style="margin-bottom:12px">Sur votre reste à vivre, quel montant souhaitez-vous mettre de côté chaque mois ?</p>
+            <div class="depense-grid">
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">💰</span>Épargne souhaitée / mois</div>
+                <div class="input-euro"><input class="form-input" type="number" id="epargne" placeholder="200" min="0" oninput="updateTotal();updateResteVivre();autoSave()"></div>
+              </div>
+              <div class="depense-item">
+                <div class="depense-label"><span class="dico">📈</span>Investissement / mois <span style="font-weight:400;color:var(--gris2)">(optionnel)</span></div>
+                <div class="input-euro"><input class="form-input" type="number" id="investissement" placeholder="0" min="0" oninput="updateTotal();autoSave()"></div>
+              </div>
+            </div>
+            <div id="epargne-hint" style="font-size:0.75rem;color:var(--gris2);margin-top:8px"></div>
+          </div>
+
+          <!-- OBJECTIF SIMPLE -->
+          <div class="depense-bloc" style="background:var(--sable);border:1.5px solid var(--sable3)">
+            <div class="depense-bloc-title">🎯 Votre objectif principal <span style="font-weight:400;font-size:0.72rem;color:var(--gris2);text-transform:none;letter-spacing:0">(optionnel)</span></div>
+            <div class="choice-grid cols-3" style="margin-top:8px">
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="precaution" onclick="selectChoice(this)"><span class="ci">🛡️</span>Avoir un matelas de sécurité</button>
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="projet" onclick="selectChoice(this)"><span class="ci">🎯</span>Financer un projet</button>
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="immobilier" onclick="selectChoice(this)"><span class="ci">🏡</span>Acheter un logement</button>
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="retraite" onclick="selectChoice(this)"><span class="ci">🌅</span>Préparer ma retraite</button>
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="fructifier" onclick="selectChoice(this)"><span class="ci">📈</span>Faire fructifier mes économies</button>
+              <button type="button" class="choice-btn" data-field="objectif_patrimoine" data-value="aucun" onclick="selectChoice(this)"><span class="ci">💭</span>Pas encore défini</button>
+            </div>
+          </div>
+
+                    <!-- PROFIL DÉTECTÉ -->
+          <div class="profil-detected" id="profil-detected">
+            <div class="profil-detected-tag">Votre profil financier</div>
+            <div class="profil-detected-name" id="pd-nom">—</div>
+            <div class="profil-detected-desc" id="pd-desc">—</div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(3)">← Retour</button>
+            <button type="submit" class="btn-next" onclick="document.getElementById('profil-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))">Enregistrer mon profil ✓</button>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- RÉSUMÉ BUDGET -->
+      <div class="total-bar" id="total-bar" style="display:none">
+        <div class="total-bar-left">
+          <span id="tb-label-revenus">Revenus</span> : <strong id="tb-salaire">—</strong>
+        </div>
+        <div class="total-bar-right">
+          <span class="total-bar-depenses" id="tb-depenses">0 €</span>
+          <span style="color:var(--gris2)">→</span>
+          <span class="total-bar-reste ok" id="tb-reste">Reste : —</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>
+const state = {};
+let currentStep = 0;
+// Ouvrir directement à l'étape demandée depuis une rubrique
+const _stepParam = parseInt(new URLSearchParams(window.location.search).get('step'));
+if (_stepParam >= 0 && _stepParam <= 6) currentStep = _stepParam;
+
+// Champs de dépenses — loisirs_budget remplace les 5 anciens champs détaillés
+const DEPENSE_FIELDS = [
+  'loyer','electricite','eau','assurance_habitation','charges_copro','entretien_maison',
+  'carburant','assurance_auto','entretien_auto','parking','transports_commun','tc_ponctuel','velo','vtc','covoiturage','train',
+  'telephone','internet','streaming_video','streaming_musique','gaming','cloud','presse','prime',
+  'courses','restaurants','loisirs_budget','vetements','tabac','alcool',
+  'garde_enfants','scolarite','activites_enfants','pension','mutuelle','sante','sport','bienetre','coiffeur','esthetique',
+  'animal','formation','dons',
+  'credit_immo','credit_auto','credit_conso','credit_autre'
+];
+
+// Ordre de navigation dans le parcours profil
+const NAV_ORDER = [0, 1, 4, 2, 5, 3, 6];
+function navPos(step) { return NAV_ORDER.indexOf(step); }
+
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  const allNavIds = [0,1,2,3,4,5,6];
+  // Recalculer l'état de chaque nav item par rapport au nouveau step
+  allNavIds.forEach(function(id) {
+    const el = document.getElementById('nav-' + id);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+    if (id === n) el.classList.add('active');
+    else if (navPos(id) < navPos(n)) el.classList.add('done');
+  });
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  document.getElementById('profil-right').scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  updateTotal();
+  if (n === 6) updateResteVivre();
+}
+
+function selectChoice(btn) {
+  const field = btn.dataset.field;
+  document.querySelectorAll('[data-field="' + field + '"]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[field] = btn.dataset.value;
+  autoSave();
+}
+
+function onSituationChange(btn) {
+  const val = btn.dataset.value;
+  const isCouple = val === 'couple' || val === 'famille';
+  document.getElementById('bloc-couple').style.display = isCouple ? 'block' : 'none';
+  updateEnfantsDepenses();
+}
+
+function onVitEnsembleChange(btn) {
+  const ensemble = btn.dataset.value === 'oui';
+  document.getElementById('bloc-gestion-couple').style.display = ensemble ? 'block' : 'none';
+  if (!ensemble) {
+    document.getElementById('bloc-revenus-conjoint').style.display = 'none';
+    state.gestion_couple = 'personnelle';
+  }
+}
+
+function onUsageChange(btn) {
+  const isFoyer = btn.dataset.value === 'foyer';
+  const blocConj = document.getElementById('bloc-champs-conjoint');
+  if (blocConj) blocConj.style.display = isFoyer ? 'grid' : 'none';
+  if (!isFoyer) {
+    const sc = document.getElementById('salaire_conjoint');
+    if (sc) sc.value = '';
+  }
+  updateTotal();
+}
+
+function onGestionChange(btn) {
+  const commune = btn.dataset.value === 'commune';
+  document.getElementById('bloc-revenus-conjoint').style.display = commune ? 'block' : 'none';
+  if (commune) document.getElementById('salaire_conjoint').focus();
+  updateTotal();
+}
+
+function onNbVoituresChange(btn) {
+  const n = parseInt(btn.dataset.value) || 0;
+
+  // Sauvegarder AVANT re-rendu — prevN = nombre de blocs actuellement dans le DOM
+  const prevBlocs = document.querySelectorAll('#vehicules-detail .depense-bloc');
+  const prevN = prevBlocs.length;
+  for (let i = 1; i <= prevN; i++) {
+    const fin       = document.getElementById('veh_fin_' + i)?.value || '';
+    const carb      = document.getElementById('veh_carb_' + i)?.value || '';
+    const type      = document.getElementById('veh_type_' + i)?.value || '';
+    const annee     = parseInt(document.getElementById('veh_annee_' + i)?.value) || 0;
+    const valeur    = parseFloat(document.getElementById('veh_valeur_' + i)?.value) || 0;
+    const credit    = parseFloat(document.getElementById('veh_credit_mensualite_' + i)?.value) || 0;
+    const loa       = parseFloat(document.getElementById('veh_loa_mensualite_' + i)?.value) || 0;
+    const vCarburant= parseFloat(document.getElementById('veh_carburant_' + i)?.value) || 0;
+    const vAssurance= parseFloat(document.getElementById('veh_assurance_' + i)?.value) || 0;
+    const vEntretien= parseFloat(document.getElementById('veh_entretien_' + i)?.value) || 0;
+    const vParking  = parseFloat(document.getElementById('veh_parking_' + i)?.value) || 0;
+    const km        = parseInt(document.getElementById('veh_km_' + i)?.value) || 0;
+    const usage     = document.getElementById('veh_usage_' + i)?.value || '';
+    localStorage.setItem('logideal_veh_' + i, JSON.stringify({
+      fin, carb, type, annee, valeur, credit, loa,
+      vCarburant, vAssurance, vEntretien, vParking, km, usage
+    }));
+  }
+
+  document.getElementById('bloc-voitures').style.display = n > 0 ? 'block' : 'none';
+  if (n === 0) {
+    ['carburant','assurance_auto','entretien_auto','parking'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    for (let i = 1; i <= 5; i++) localStorage.removeItem('logideal_veh_' + i);
+    updateTotal();
+    autoSave();
+  }
+  renderVehiculeBlocs(n);
+}
+
+function renderVehiculeBlocs(n) {
+  const container = document.getElementById('vehicules-detail');
+  container.innerHTML = '';
+  if (n <= 0) return;
+  const sel = (id, opts, ph) => `<select id="${id}" class="form-input" onchange="onVehChange();autoSave()" style="width:100%;padding:10px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.88rem;font-family:inherit;background:var(--creme);color:var(--texte);cursor:pointer"><option value="">${ph}</option>${opts.map(o=>`<option value="${o.val}">${o.label}</option>`).join('')}</select>`;
+  const typeOpts = [
+    { val: 'citadine', label: '🏙️ Citadine' }, { val: 'berline', label: '🚗 Berline' },
+    { val: 'suv', label: '🚙 SUV / 4x4' }, { val: 'break', label: '🚐 Break' },
+    { val: 'utilitaire', label: '🚚 Utilitaire' }, { val: 'moto', label: '🏍️ Moto / scooter' },
+  ];
+  const carbOpts = [
+    { val: 'essence', label: '⛽ Essence' }, { val: 'diesel', label: '🛢️ Diesel' },
+    { val: 'hybride', label: '🔋 Hybride' }, { val: 'electrique', label: '⚡ Électrique' },
+    { val: 'autre', label: '🔧 Autre' },
+  ];
+  const finOpts = [
+    { val: 'proprio', label: '🏠 Payée / Propriété' }, { val: 'credit', label: '💳 Crédit auto en cours' },
+    { val: 'loa', label: '📋 LOA / LLD' },
+  ];
+  for (let i = 1; i <= n; i++) {
+    const bloc = document.createElement('div');
+    bloc.className = 'depense-bloc';
+    bloc.style.marginTop = '16px';
+    bloc.innerHTML = `
+      <div class="depense-bloc-title">🚗 Véhicule ${i}</div>
+      <div class="depense-grid">
+        <div class="depense-item">
+          <div class="depense-label">🚗 Type de véhicule</div>
+          ${sel('veh_type_'+i, typeOpts, '— Sélectionner —')}
+        </div>
+        <div class="depense-item">
+          <div class="depense-label">⛽ Type de carburant</div>
+          ${sel('veh_carb_'+i, carbOpts, '— Sélectionner —')}
+        </div>
+        <div class="depense-item">
+          <div class="depense-label">🏦 Financement</div>
+          ${sel('veh_fin_'+i, finOpts, '— Sélectionner —')}
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">📅</span>Année <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(dépréciation)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_annee_${i}" placeholder="2020" min="1990" max="2026" oninput="autoSave()"></div>
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">💰</span>Valeur estimée <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(hors dépenses)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_valeur_${i}" placeholder="12 000" min="0" oninput="autoSave()"></div>
+        </div>
+      </div>
+      <div class="depense-grid" id="veh-fin-extra-${i}" style="margin-top:12px;display:none">
+        <div class="depense-item" id="veh-credit-item-${i}" style="display:none">
+          <div class="depense-label"><span class="dico">💳</span>Mensualité crédit <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(synchro Crédits)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_credit_mensualite_${i}" placeholder="200" min="0" oninput="syncCreditAuto();updateTotal();autoSave()"></div>
+        </div>
+        <div class="depense-item" id="veh-loa-item-${i}" style="display:none">
+          <div class="depense-label"><span class="dico">📋</span>Loyer LOA / LLD</div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_loa_mensualite_${i}" placeholder="300" min="0" oninput="updateTotal();autoSave()"></div>
+        </div>
+      </div>
+      <div class="depense-grid" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sable3)">
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">⛽</span>Carburant <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(€/mois)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_carburant_${i}" placeholder="80" min="0" oninput="updateTotalVehicules();autoSave()"></div>
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">🛡️</span>Assurance <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(€/mois)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_assurance_${i}" placeholder="60" min="0" oninput="updateTotalVehicules();autoSave()"></div>
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">🔧</span>Entretien & répar. <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(€/mois moyen)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_entretien_${i}" placeholder="30" min="0" oninput="updateTotalVehicules();autoSave()"></div>
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">🅿️</span>Parking / péages <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(€/mois)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_parking_${i}" placeholder="0" min="0" oninput="updateTotalVehicules();autoSave()"></div>
+        </div>
+      </div>
+      <div class="depense-grid" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sable3)">
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">📍</span>Kilométrage annuel <span style="font-weight:400;color:var(--gris2);font-size:0.68rem;display:block">(km/an environ)</span></div>
+          <div class="input-euro"><input class="form-input" type="number" id="veh_km_${i}" placeholder="12 000" min="0" step="500" oninput="autoSave()"></div>
+        </div>
+        <div class="depense-item">
+          <div class="depense-label"><span class="dico">🎯</span>Usage principal</div>
+          ${sel('veh_usage_'+i, [
+            {val:'domicile_travail', label:'🏢 Domicile → Travail'},
+            {val:'mixte', label:'🔄 Mixte (travail + perso)'},
+            {val:'loisirs', label:'🎯 Loisirs / perso uniquement'},
+            {val:'professionnel', label:'💼 Professionnel'},
+          ], '— Sélectionner —')}
+        </div>
+      </div>`;
+    container.appendChild(bloc);
+    // Watch financement dropdown
+    document.getElementById('veh_fin_'+i).addEventListener('change', function() { onVehFinChange(i); });
+    restoreVehicule(i);
+  }
+}
+
+function onVehFinChange(i) {
+  const fin = document.getElementById('veh_fin_'+i)?.value || '';
+  const extraBloc = document.getElementById('veh-fin-extra-'+i);
+  const creditItem = document.getElementById('veh-credit-item-'+i);
+  const loaItem = document.getElementById('veh-loa-item-'+i);
+  if (fin === 'credit' || fin === 'loa') {
+    extraBloc.style.display = 'grid';
+    creditItem.style.display = fin === 'credit' ? 'block' : 'none';
+    loaItem.style.display = fin === 'loa' ? 'block' : 'none';
+    if (fin === 'credit') syncCreditAuto();
+  } else {
+    extraBloc.style.display = 'none';
+  }
+  autoSave();
+}
+
+function onVehChange() { autoSave(); }
+
+function updateTotalVehicules() {
+  const n = document.querySelectorAll('#vehicules-detail .depense-bloc').length;
+  let totCarb = 0, totAssur = 0, totEntretien = 0, totParking = 0;
+  for (let i = 1; i <= n; i++) {
+    totCarb += parseFloat(document.getElementById('veh_carburant_'+i)?.value) || 0;
+    totAssur += parseFloat(document.getElementById('veh_assurance_'+i)?.value) || 0;
+    totEntretien += parseFloat(document.getElementById('veh_entretien_'+i)?.value) || 0;
+    totParking += parseFloat(document.getElementById('veh_parking_'+i)?.value) || 0;
+  }
+  // Sync totals to global fields used by calcDepenses
+  const setV = (id, v) => { const el = document.getElementById(id); if(el) el.value = v || ''; };
+  setV('carburant', totCarb);
+  setV('assurance_auto', totAssur);
+  setV('entretien_auto', totEntretien);
+  setV('parking', totParking);
+  updateTotal();
+}
+
+
+
+
+// Sync total credit auto from all vehicle credit fields → credit_auto in Crédits
+function syncCreditAuto() {
+  let total = 0;
+  const n = document.querySelectorAll('#vehicules-detail .depense-bloc').length;
+  for (let i = 1; i <= n; i++) {
+    const fin = document.getElementById('veh_fin_' + i)?.value;
+    if (fin === 'credit') {
+      total += parseFloat(document.getElementById('veh_credit_mensualite_' + i)?.value) || 0;
+    }
+  }
+  const el = document.getElementById('credit_auto');
+  if (el) el.value = total > 0 ? total : '';
+  updateTotal();
+}
+
+// Reverse sync: when credit_auto changes in Crédits, update vehicle 1 credit field if only 1 credit vehicle
+function syncCreditAutoReverse() {
+  const val = parseFloat(document.getElementById('credit_auto')?.value) || 0;
+  const n = parseInt(document.querySelector('[data-field="nb_voitures"].active')?.dataset.value) || 0;
+  const creditVehicles = [];
+  for (let i = 1; i <= n; i++) {
+    if (document.querySelector('.veh-fin-btn[data-veh="' + i + '"].active')?.dataset.fin === 'credit') creditVehicles.push(i);
+  }
+  if (creditVehicles.length === 1) {
+    const el = document.getElementById('veh_credit_mensualite_' + creditVehicles[0]);
+    if (el) el.value = val;
+  }
+}
+
+function getVehiculeData() {
+  const n = document.querySelectorAll('#vehicules-detail .depense-bloc').length || parseInt(document.querySelector('[data-field="nb_voitures"].active')?.dataset.value) || 0;
+  const data = [];
+  for (let i = 1; i <= n; i++) {
+    // Lire depuis le DOM en priorité, sinon depuis le localStorage (si l'étape n'est pas visible)
+    const saved = JSON.parse(localStorage.getItem('logideal_veh_' + i) || '{}');
+    const getF = (id) => document.getElementById(id)?.value || '';
+    const getN = (id) => parseFloat(document.getElementById(id)?.value) || 0;
+    const getI = (id) => parseInt(document.getElementById(id)?.value) || 0;
+    const fin        = getF('veh_fin_'+i)              || saved.fin        || '';
+    const carb       = getF('veh_carb_'+i)             || saved.carb       || '';
+    const type       = getF('veh_type_'+i)             || saved.type       || '';
+    const credit     = getN('veh_credit_mensualite_'+i)|| saved.credit     || 0;
+    const loa        = getN('veh_loa_mensualite_'+i)   || saved.loa        || 0;
+    const valeur     = getN('veh_valeur_'+i)           || saved.valeur     || 0;
+    const annee      = getI('veh_annee_'+i)            || saved.annee      || 0;
+    const vCarburant = getN('veh_carburant_'+i)        || saved.vCarburant || 0;
+    const vAssurance = getN('veh_assurance_'+i)        || saved.vAssurance || 0;
+    const vEntretien = getN('veh_entretien_'+i)        || saved.vEntretien || 0;
+    const vParking   = getN('veh_parking_'+i)          || saved.vParking   || 0;
+    const km         = getI('veh_km_'+i)               || saved.km         || 0;
+    const usage      = getF('veh_usage_'+i)            || saved.usage      || '';
+    data.push({ fin, carb, type, credit, loa, valeur, annee, vCarburant, vAssurance, vEntretien, vParking, km, usage });
+  }
+  return data;
+}
+
+function restoreVehicule(i) {
+  const saved = JSON.parse(localStorage.getItem('logideal_veh_' + i) || 'null');
+  if (!saved) return;
+  const setEl = (id, v) => { const el = document.getElementById(id); if (el && (v || v === 0)) el.value = v; };
+  // Dropdowns
+  setEl('veh_fin_' + i, saved.fin);
+  if (saved.fin) onVehFinChange(i);
+  setEl('veh_type_' + i, saved.type);
+  setEl('veh_carb_' + i, saved.carb);
+  // Champs numériques identité
+  setEl('veh_annee_' + i, saved.annee || '');
+  setEl('veh_valeur_' + i, saved.valeur || '');
+  // Financement
+  setEl('veh_credit_mensualite_' + i, saved.credit || '');
+  setEl('veh_loa_mensualite_' + i, saved.loa || '');
+  // Dépenses par véhicule
+  setEl('veh_carburant_' + i, saved.vCarburant || '');
+  setEl('veh_assurance_' + i, saved.vAssurance || '');
+  setEl('veh_entretien_' + i, saved.vEntretien || '');
+  setEl('veh_parking_' + i, saved.vParking || '');
+  // Kilométrage et usage
+  setEl('veh_km_' + i, saved.km || '');
+  setEl('veh_usage_' + i, saved.usage || '');
+  // Recalculer les totaux globaux
+  updateTotalVehicules();
+}
+
+// ── CHAMPS ANNUELS → mensualisés automatiquement ──
+function updateTaxes() {
+  const tf = parseFloat(document.getElementById('taxe_fonciere_annuel')?.value) || 0;
+  const th = parseFloat(document.getElementById('taxe_habitation_annuel')?.value) || 0;
+  const hint = document.getElementById('taxe-fonciere-hint');
+  if (hint) hint.textContent = tf > 0 ? `→ ${formatEuro(Math.round(tf/12))}/mois lissé sur 12 mois` : '';
+  updateTotal();
+}
+function updateCadeaux() {
+  const v = parseFloat(document.getElementById('cadeaux_annuel')?.value) || 0;
+  const hint = document.getElementById('cadeaux-hint');
+  if (hint) hint.textContent = v > 0 ? `→ ${formatEuro(v/12)}/mois lissé sur 12 mois` : '';
+  updateTotal();
+}
+function updateVoyages() {
+  const v = parseFloat(document.getElementById('voyages_annuel')?.value) || 0;
+  const hint = document.getElementById('voyages-hint');
+  if (hint) hint.textContent = v > 0 ? `→ ${formatEuro(v/12)}/mois lissé sur 12 mois` : '';
+  updateTotal();
+}
+function updateVetementsEnfants() {
+  const v = parseFloat(document.getElementById('vetements_enfants_annuel')?.value) || 0;
+  const hint = document.getElementById('vetements-enfants-hint');
+  if (hint) hint.textContent = v > 0 ? `→ ${formatEuro(v/12)}/mois lissé sur 12 mois` : '';
+  updateTotal();
+}
+function updateLoisirsFamille() {
+  const v = parseFloat(document.getElementById('loisirs_famille_annuel')?.value) || 0;
+  const hint = document.getElementById('loisirs-famille-hint');
+  if (hint) hint.textContent = v > 0 ? `→ ${formatEuro(v/12)}/mois lissé sur 12 mois` : '';
+  updateTotal();
+}
+
+function updateEnfantsDepenses() {
+  const nb = parseInt(document.getElementById('enfants')?.value) || 0;
+  const sit = state.situation || 'seul';
+  document.getElementById('bloc-enfants-depenses').style.display =
+    (sit === 'famille' || nb > 0) ? 'block' : 'none';
+}
+
+function afficherAgesEnfants(nb) {
+  const n = parseInt(nb) || 0;
+  const bloc = document.getElementById('ages-enfants-bloc');
+  const grid = document.getElementById('ages-enfants-grid');
+  if (n <= 0) { bloc.style.display = 'none'; return; }
+  bloc.style.display = 'block';
+  const existing = [];
+  grid.querySelectorAll('input').forEach(i => existing.push(i.value));
+  grid.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const label = n === 1 ? 'Âge de votre enfant' : `Enfant ${i+1}`;
+    grid.innerHTML += `<div style="display:flex;flex-direction:column;gap:6px">
+      <label style="font-size:0.75rem;font-weight:600;color:var(--gris)">${label}</label>
+      <input class="form-input" type="number" id="age_enfant_${i}" placeholder="ex: 4" min="0" max="25" value="${existing[i]||''}" style="text-align:center" oninput="updateTotal();autoSave()">
+    </div>`;
+  }
+  updateEnfantsDepenses();
+}
+
+function setLoyerLabel(btn) {
+  const isProprietaire = btn.dataset.value === 'proprietaire';
+  const loyerItem = document.getElementById('loyer')?.closest('.depense-item');
+  if (loyerItem) loyerItem.style.display = isProprietaire ? 'none' : '';
+  const creditItem = document.getElementById('credit_immo_logement')?.closest('.depense-item');
+  if (creditItem) creditItem.style.display = isProprietaire ? '' : 'none';
+  const coproItem = document.getElementById('charges_copro')?.closest('.depense-item');
+  if (coproItem) coproItem.style.display = isProprietaire ? '' : 'none';
+  const hint = document.getElementById('loyer-hint');
+  if (hint) hint.style.display = 'none';
+  const bloc = document.getElementById('bloc-patrimonial');
+  if (bloc) bloc.style.display = isProprietaire ? 'block' : 'none';
+  // Taxe foncière : masquer et vider si locataire, afficher si proprio
+  const blocTaxesProprio = document.getElementById('bloc-taxes-proprio');
+  if (blocTaxesProprio) blocTaxesProprio.style.display = isProprietaire ? '' : 'none';
+  if (!isProprietaire) {
+    const tf = document.getElementById('taxe_fonciere_annuel');
+    if (tf) { tf.value = ''; updateTaxes(); }
+    // Vider tous les champs propres au propriétaire
+    ['valeur_bien','duree_credit_restante','taux_credit','charges_copro','credit_immo_logement'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    autoSave();
+  }
+}
+
+function getVal(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+
+// Sync crédit immo logement ↔ crédit immo crédits (même donnée, deux endroits)
+function syncCreditImmo() {
+  const val = document.getElementById('credit_immo_logement')?.value || '';
+  const main = document.getElementById('credit_immo');
+  if (main && val !== '') main.value = val;
+}
+
+function syncCreditImmoReverse() {
+  const val = document.getElementById('credit_immo')?.value || '';
+  const logement = document.getElementById('credit_immo_logement');
+  if (logement && val !== '') logement.value = val;
+}
+
+function getRevenusFoyer() {
+  const salaire = getVal('salaire');
+  const isFoyer = (state.usage_profil === 'foyer' || !state.usage_profil)
+    && state.gestion_couple === 'commune'
+    && (state.situation === 'couple' || state.situation === 'famille')
+    && state.vit_ensemble === 'oui';
+  const conjoint = isFoyer ? getVal('salaire_conjoint') : 0;
+  return { perso: salaire, conjoint, total: salaire + conjoint };
+}
+
+function calcDepenses() {
+  const mensuel = DEPENSE_FIELDS.reduce((s, id) => s + getVal(id), 0);
+  // Champs annuels lissés sur 12 mois
+  const annuel = [
+    'cadeaux_annuel','voyages_annuel',
+    'vetements_enfants_annuel','loisirs_famille_annuel',
+    'taxe_fonciere_annuel','taxe_habitation_annuel'
+  ].reduce((s, id) => s + (getVal(id) / 12), 0);
+  return mensuel + annuel;
+}
+
+function updateResteVivre() {
+  const rev = getRevenusFoyer();
+  const dep = calcDepenses();
+  const reste = (rev.total || rev.perso) - dep;
+  const epargne = getVal('epargne');
+
+  const rvEl = document.getElementById('rv-revenus');
+  const rdEl = document.getElementById('rv-depenses');
+  const rrEl = document.getElementById('rv-reste');
+  const rhEl = document.getElementById('rv-hint');
+  const ehEl = document.getElementById('epargne-hint');
+
+  if (rvEl) rvEl.textContent = formatEuro(rev.total || rev.perso);
+  if (rdEl) rdEl.textContent = formatEuro(dep);
+  if (rrEl) {
+    rrEl.textContent = formatEuro(reste);
+    rrEl.style.color = reste < 0 ? 'var(--danger)' : reste < 200 ? 'var(--warning)' : 'var(--success)';
+  }
+  if (rhEl) {
+    if (reste <= 0) rhEl.textContent = '⚠️ Vos dépenses dépassent vos revenus. Vérifiez les étapes précédentes.';
+    else if (epargne > reste) rhEl.textContent = `⚠️ Objectif d'épargne supérieur au reste à vivre (${formatEuro(reste)}).`;
+    else if (epargne > 0) rhEl.textContent = `✅ Après épargne, il vous restera ${formatEuro(reste - epargne)}/mois.`;
+    else rhEl.textContent = `Vous pouvez épargner jusqu'à ${formatEuro(reste)}/mois.`;
+  }
+  if (ehEl && reste > 0) {
+    const pct = Math.round((epargne / (rev.total || rev.perso)) * 100);
+    ehEl.textContent = epargne > 0 ? `Soit ${pct}% de vos revenus` : '';
+  }
+}
+
+function updateTotal() {
+  const rev = getRevenusFoyer();
+  const dep = calcDepenses();
+  const base = rev.total || rev.perso;
+  const reste = base - dep;
+  const isCouple = rev.conjoint > 0;
+
+  if (base > 0) {
+    const bar = document.getElementById('total-bar');
+    bar.style.display = 'flex';
+    const lbl = document.getElementById('tb-label-revenus');
+    const sal = document.getElementById('tb-salaire');
+    if (lbl) lbl.textContent = isCouple ? 'Revenus foyer' : 'Revenus';
+    // Note : le mode d'affichage (foyer/perso) se choisit depuis le tableau de bord
+    if (sal) sal.textContent = formatEuro(base);
+    document.getElementById('tb-depenses').textContent = formatEuro(dep);
+    const resteEl = document.getElementById('tb-reste');
+    resteEl.textContent = 'Reste : ' + formatEuro(reste);
+    resteEl.className = 'total-bar-reste ' + (reste < 0 ? 'bad' : reste < base * 0.1 ? 'warn' : 'ok');
+
+    if (currentStep === 6) {
+      updateResteVivre();
+      const pd = document.getElementById('profil-detected');
+      const type = reste < 0 ? 'deficitaire' : reste/base < 0.10 ? 'serre' : reste/base < 0.25 ? 'equilibre' : reste/base < 0.40 ? 'aise' : 'confortable';
+      const cfg = getProfilConfig(type);
+      pd.style.display = 'block';
+      document.getElementById('pd-nom').textContent = cfg.nom;
+      document.getElementById('pd-desc').textContent = cfg.message;
+    }
+  }
+  updateEnfantsDepenses();
+}
+
+// ── SAUVEGARDE IMMÉDIATE (bouton sidebar) ──
+// ── SAUVEGARDE AUTO AVEC DEBOUNCE ──
+let _saveTimer = null;
+function onTCChange() {
+  const val = parseFloat(document.getElementById('transports_commun')?.value) || 0;
+  const hint = document.getElementById('tc-employeur-hint');
+  if (!hint) return;
+  if (val > 0) {
+    const remboursement = Math.round(val * 0.5);
+    hint.style.display = 'block';
+    hint.innerHTML = '💡 <strong>Remboursement employeur obligatoire</strong> — votre employeur doit prendre en charge 50% de votre abonnement TC, soit <strong>' + remboursement + '€/mois</strong>. Pensez à le déclarer si ce n\'est pas encore fait.';
+  } else {
+    hint.style.display = 'none';
+  }
+}
+
+function autoSave() {
+  // Save per-vehicle data — compter les blocs dans le DOM (plus fiable que le bouton .active)
+  const n = document.querySelectorAll('#vehicules-detail .depense-bloc').length;
+  for (let i = 1; i <= n; i++) {
+    const fin = document.getElementById('veh_fin_'+i)?.value || '';
+    const carb = document.getElementById('veh_carb_' + i)?.value || '';
+    const type = document.getElementById('veh_type_' + i)?.value || '';
+    const credit = parseFloat(document.getElementById('veh_credit_mensualite_' + i)?.value) || 0;
+    const loa = parseFloat(document.getElementById('veh_loa_mensualite_' + i)?.value) || 0;
+    const valeur = parseFloat(document.getElementById('veh_valeur_' + i)?.value) || 0;
+    const annee = parseInt(document.getElementById('veh_annee_' + i)?.value) || 0;
+    const vCarburant = parseFloat(document.getElementById('veh_carburant_'+i)?.value) || 0;
+    const vAssurance = parseFloat(document.getElementById('veh_assurance_'+i)?.value) || 0;
+    const vEntretien = parseFloat(document.getElementById('veh_entretien_'+i)?.value) || 0;
+    const vParking = parseFloat(document.getElementById('veh_parking_'+i)?.value) || 0;
+    const km = parseInt(document.getElementById('veh_km_'+i)?.value) || 0;
+    const usage = document.getElementById('veh_usage_'+i)?.value || '';
+    localStorage.setItem('logideal_veh_' + i, JSON.stringify({ fin, carb, type, credit, loa, valeur, annee, vCarburant, vAssurance, vEntretien, vParking, km, usage }));
+  }
+  if (!getVal('salaire')) return; // pas de revenus = pas de sauvegarde
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    const profil = buildProfil();
+    sauvegarderProfil(profil);
+    if (window._logidealUser) {
+      if (profil.prenom) { const sb=getSB(); if(sb) sb.auth.updateUser({data:{prenom:profil.prenom}}); }
+      const ok = await sauvegarderProfilDB(window._logidealUser.id, profil);
+      if (ok) showToast('✅ Enregistré', 'success');
+    }
+  }, 1200); // 1.2s après la dernière modification
+}
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('save-toast');
+  t.textContent = msg;
+  t.className = 'save-toast ' + type + ' show';
+  setTimeout(() => t.className = 'save-toast ' + type, 1500);
+}
+
+function buildProfil() {
+  const rev = getRevenusFoyer();
+  const dep = calcDepenses();
+  const base = rev.total || rev.perso;
+  const reste = base - dep;
+  const type = reste < 0 ? 'deficitaire' : reste/base < 0.10 ? 'serre' : reste/base < 0.25 ? 'equilibre' : reste/base < 0.40 ? 'aise' : 'confortable';
+  const cfg = getProfilConfig(type);
+  return {
+    prenom:(document.getElementById('prenom').value||'').trim()||undefined,
+    prenom_conjoint:(document.getElementById('prenom_conjoint')?.value||'').trim()||undefined,
+    salaire:rev.perso,salaire_conjoint:rev.conjoint||0,salaire_foyer:rev.total,
+    age:parseInt(document.getElementById('age').value)||null,
+    enfants:parseInt(document.getElementById('enfants').value)||0,
+    ages_enfants:(function(){
+      const n=parseInt(document.getElementById('enfants').value)||0;const a=[];
+      for(let i=0;i<n;i++){const el=document.getElementById('age_enfant_'+i);a.push(el?parseInt(el.value)||0:0);}return a;
+    })(),
+    situation:state.situation||'seul',usage_profil:state.usage_profil||'perso',vit_ensemble:state.vit_ensemble||null,
+    gestion_couple:state.gestion_couple||null,nb_voitures:parseInt(state.nb_voitures)||0,
+    contrat:state.contrat||null,zone:state.zone||null,statut_logement:state.statut_logement||'locataire',
+    loyer:getVal('loyer'),electricite:getVal('electricite'),eau:getVal('eau'),
+    assurance_habitation:getVal('assurance_habitation'),charges_copro:getVal('charges_copro'),valeur_bien:getVal('valeur_bien'),duree_credit_restante:getVal('duree_credit_restante'),taux_credit:getVal('taux_credit'),
+    entretien_maison:getVal('entretien_maison'),
+    charges:getVal('electricite')+getVal('eau')+getVal('assurance_habitation')+getVal('charges_copro'),
+    taxe_fonciere_annuel:getVal('taxe_fonciere_annuel'),taxe_habitation_annuel:getVal('taxe_habitation_annuel'),
+    carburant:getVal('carburant'),assurance_auto:getVal('assurance_auto'),
+    entretien_auto:getVal('entretien_auto'),parking:getVal('parking'),vehicules:getVehiculeData(),
+    transports_commun:getVal('transports_commun'),tc_ponctuel:getVal('tc_ponctuel'),velo:getVal('velo'),vtc:getVal('vtc'),covoiturage:getVal('covoiturage'),train:getVal('train'),
+    transport:getVal('carburant')+getVal('assurance_auto')+getVal('entretien_auto')+getVal('parking')+getVal('transports_commun')+getVal('velo')+getVal('vtc')+getVal('train'),
+    telephone:getVal('telephone'),internet:getVal('internet'),streaming_video:getVal('streaming_video'),
+    streaming_musique:getVal('streaming_musique'),gaming:getVal('gaming'),cloud:getVal('cloud'),
+    presse:getVal('presse'),prime:getVal('prime'),
+    abonnements:getVal('telephone')+getVal('internet')+getVal('streaming_video')+getVal('streaming_musique')+getVal('gaming')+getVal('cloud')+getVal('presse')+getVal('prime'),
+    courses:getVal('courses'),restaurants:getVal('restaurants'),
+    loisirs_budget:getVal('loisirs_budget'),vetements:getVal('vetements'),
+    cadeaux_annuel:getVal('cadeaux_annuel'),voyages_annuel:getVal('voyages_annuel'),
+    cafe:0,culture:0,voyages:getVal('voyages_annuel')/12,cadeaux:getVal('cadeaux_annuel')/12,
+    sport:getVal('sport'),bienetre:getVal('bienetre'),tabac:getVal('tabac'),alcool:getVal('alcool'),
+    loisirs:getVal('loisirs_budget'),
+    garde_enfants:getVal('garde_enfants'),scolarite:getVal('scolarite'),
+    activites_enfants:getVal('activites_enfants'),pension:getVal('pension'),
+    vetements_enfants_annuel:getVal('vetements_enfants_annuel'),
+    loisirs_famille_annuel:getVal('loisirs_famille_annuel'),
+    mutuelle:getVal('mutuelle'),sante:getVal('sante'),sport:getVal('sport'),bienetre:getVal('bienetre'),coiffeur:getVal('coiffeur'),esthetique:getVal('esthetique'),dentiste:0,
+    animal:getVal('animal'),formation:getVal('formation'),dons:getVal('dons'),
+    credit_immo:getVal('credit_immo'),credit_auto:getVal('credit_auto'),
+    credit_conso:getVal('credit_conso'),credit_autre:getVal('credit_autre'),
+    dettes:getVal('credit_immo')+getVal('credit_auto')+getVal('credit_conso')+getVal('credit_autre'),
+    epargne:getVal('epargne'),investissement:getVal('investissement'),
+    objectif_patrimoine:state.objectif_patrimoine||null,
+    profilType:type,profilNom:cfg.nom,depensesTotal:dep,
+    dateCreation:window._profilExistant?.dateCreation||new Date().toISOString(),
+    dateMaj:new Date().toISOString()
+  };
+}
+
+async function sauvegarderMaintenant() { autoSave(); }
+
+document.getElementById('profil-form').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') e.preventDefault();
+});
+
+document.getElementById('profil-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const rev = getRevenusFoyer();
+  if (!rev.perso) { alert('Indiquez vos revenus mensuels nets (étape 1).'); goStep(0); return; }
+
+  const dep = calcDepenses();
+  const base = rev.total || rev.perso;
+  const reste = base - dep;
+  const type = reste < 0 ? 'deficitaire' : reste/base < 0.10 ? 'serre' : reste/base < 0.25 ? 'equilibre' : reste/base < 0.40 ? 'aise' : 'confortable';
+  const cfg = getProfilConfig(type);
+
+  const profil = {
+    prenom: (document.getElementById('prenom').value||'').trim()||undefined,
+    prenom_conjoint: (document.getElementById('prenom_conjoint')?.value||'').trim()||undefined,
+    salaire: rev.perso, salaire_conjoint: rev.conjoint||0, salaire_foyer: rev.total,
+    age: parseInt(document.getElementById('age').value)||null,
+    enfants: parseInt(document.getElementById('enfants').value)||0,
+    ages_enfants: (function(){
+      const n=parseInt(document.getElementById('enfants').value)||0;
+      const a=[];
+      for(let i=0;i<n;i++){const el=document.getElementById('age_enfant_'+i);a.push(el?parseInt(el.value)||0:0);}
+      return a;
+    })(),
+    situation: state.situation||'seul', vit_ensemble: state.vit_ensemble||null,
+    gestion_couple: state.gestion_couple||null, nb_voitures: parseInt(state.nb_voitures)||0,
+    contrat: state.contrat||null, zone: state.zone||null,
+    statut_logement: state.statut_logement||'locataire',
+    // Logement
+    loyer:getVal('loyer'),electricite:getVal('electricite'),eau:getVal('eau'),
+    assurance_habitation:getVal('assurance_habitation'),charges_copro:getVal('charges_copro'),valeur_bien:getVal('valeur_bien'),duree_credit_restante:getVal('duree_credit_restante'),taux_credit:getVal('taux_credit'),
+    entretien_maison:getVal('entretien_maison'),
+    charges:getVal('electricite')+getVal('eau')+getVal('assurance_habitation')+getVal('charges_copro'),
+    // Mobilité
+    carburant:getVal('carburant'),assurance_auto:getVal('assurance_auto'),
+    entretien_auto:getVal('entretien_auto'),parking:getVal('parking'),vehicules:getVehiculeData(),
+    transports_commun:getVal('transports_commun'),tc_ponctuel:getVal('tc_ponctuel'),velo:getVal('velo'),vtc:getVal('vtc'),covoiturage:getVal('covoiturage'),train:getVal('train'),
+    transport:getVal('carburant')+getVal('assurance_auto')+getVal('entretien_auto')+getVal('parking')+getVal('transports_commun')+getVal('velo')+getVal('vtc')+getVal('train'),
+    // Abonnements
+    telephone:getVal('telephone'),internet:getVal('internet'),streaming_video:getVal('streaming_video'),
+    streaming_musique:getVal('streaming_musique'),gaming:getVal('gaming'),cloud:getVal('cloud'),
+    presse:getVal('presse'),prime:getVal('prime'),
+    abonnements:getVal('telephone')+getVal('internet')+getVal('streaming_video')+getVal('streaming_musique')+getVal('gaming')+getVal('cloud')+getVal('presse')+getVal('prime'),
+    // Alimentation & loisirs (nouveau modèle simplifié)
+    courses:getVal('courses'),restaurants:getVal('restaurants'),
+    loisirs_budget:getVal('loisirs_budget'),vetements:getVal('vetements'),tabac:getVal('tabac'),alcool:getVal('alcool'),
+    // Rétrocompat anciens champs
+    cafe:0,culture:0,voyages:0,cadeaux:0,sport:0,bienetre:0,tabac:0,
+    loisirs:getVal('loisirs_budget'),
+    // Famille & santé
+    garde_enfants:getVal('garde_enfants'),scolarite:getVal('scolarite'),
+    activites_enfants:getVal('activites_enfants'),pension:getVal('pension'),
+    // Variables annuelles
+    cadeaux_annuel:getVal('cadeaux_annuel'),voyages_annuel:getVal('voyages_annuel'),
+    vetements_enfants_annuel:getVal('vetements_enfants_annuel'),
+    loisirs_famille_annuel:getVal('loisirs_famille_annuel'),
+    taxe_fonciere_annuel:getVal('taxe_fonciere_annuel'),
+    taxe_habitation_annuel:getVal('taxe_habitation_annuel'),
+    // Mensualisés pour les calculs
+    cadeaux:getVal('cadeaux_annuel')/12,voyages:getVal('voyages_annuel')/12,
+    mutuelle:getVal('mutuelle'),sante:getVal('sante'),sport:getVal('sport'),bienetre:getVal('bienetre'),coiffeur:getVal('coiffeur'),esthetique:getVal('esthetique'),dentiste:0,
+    animal:getVal('animal'),formation:getVal('formation'),dons:getVal('dons'),
+    // Crédits
+    credit_immo:getVal('credit_immo'),credit_auto:getVal('credit_auto'),
+    credit_conso:getVal('credit_conso'),credit_autre:getVal('credit_autre'),
+    dettes:getVal('credit_immo')+getVal('credit_auto')+getVal('credit_conso')+getVal('credit_autre'),
+    // Épargne
+    epargne:getVal('epargne'),investissement:getVal('investissement'),
+    objectif_patrimoine:state.objectif_patrimoine||null,
+    // Profil
+    profilType:type,profilNom:cfg.nom,depensesTotal:dep,
+    dateCreation:new Date().toISOString()
+  };
+
+  sauvegarderProfil(profil);
+  if (window._logidealUser) {
+    if (profil.prenom) { const sb=getSB(); if(sb) sb.auth.updateUser({data:{prenom:profil.prenom}}); }
+    sauvegarderProfilDB(window._logidealUser.id, profil).then(()=>{
+      window.location.href='dashboard.html';
+    });
+  } else {
+    window.location.href='dashboard.html';
+  }
+});
+
+(async()=>{
+  const user = await requireAuth();
+  if(!user) return;
+  window._logidealUser=user;
+  renderNav();
+
+  let e = await chargerProfilDB(user.id);
+  if(!e) e=chargerProfil();
+  window._profilExistant = e;
+
+  if(e){
+    [...DEPENSE_FIELDS,'salaire','salaire_conjoint','age','enfants','epargne','investissement','prenom','prenom_conjoint','valeur_bien','duree_credit_restante','taux_credit'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&e[id]!==undefined) el.value=e[id];
+    });
+    // Sync credit_immo vers credit_immo_logement (même donnée affichée dans deux endroits)
+    if (e.credit_immo) {
+      const el = document.getElementById('credit_immo_logement');
+      if (el) el.value = e.credit_immo;
+    }
+    // Rétrocompat : loisirs_budget depuis anciens champs si vide
+    if(!e.alcool) { const al=document.getElementById('alcool'); if(al) al.value=0; }
+    if(!e.loisirs_budget && (e.culture||e.voyages||e.cadeaux||e.sport||e.bienetre)){
+      const el=document.getElementById('loisirs_budget');
+      if(el) el.value=Math.round((e.culture||0)+(e.voyages||0)+(e.cadeaux||0)+(e.sport||0)+(e.bienetre||0));
+    }
+    // Pré-remplir les champs annuels
+    ['cadeaux_annuel','voyages_annuel','vetements_enfants_annuel','loisirs_famille_annuel',
+     'taxe_fonciere_annuel','taxe_habitation_annuel',].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && e[id]) { el.value = e[id]; }
+    });
+    // 1. Restaurer le state (choix visuels) EN PREMIER
+    ['situation','contrat','zone','statut_logement','vit_ensemble','gestion_couple','nb_voitures','objectif_patrimoine','usage_profil'].forEach(field=>{
+      const val=e[field];
+      if(val!==undefined&&val!==null){
+        const btn=document.querySelector('[data-field="'+field+'"][data-value="'+val+'"]');
+        if(btn){btn.classList.add('selected');state[field]=String(val);}
+      }
+    });
+    // 2. Restaurer les blocs conditionnels
+    const sit=e.situation;
+    if(sit==='couple'||sit==='famille'){
+      document.getElementById('bloc-couple').style.display='block';
+      if(e.vit_ensemble==='oui'){
+        document.getElementById('bloc-gestion-couple').style.display='block';
+        if(e.gestion_couple==='commune') {
+        document.getElementById('bloc-revenus-conjoint').style.display='block';
+        // Afficher les champs conjoint seulement si usage foyer
+        const blocChamps = document.getElementById('bloc-champs-conjoint');
+        if (blocChamps) blocChamps.style.display = (e.usage_profil === 'foyer' || !e.usage_profil) ? 'grid' : 'none';
+      }
+      }
+    }
+    if(parseInt(e.nb_voitures)>0) {
+      document.getElementById('bloc-voitures').style.display='block';
+      // Alimenter le localStorage par véhicule depuis profil.vehicules[]
+      // pour que restoreVehicule() puisse les retrouver
+      if (e.vehicules && Array.isArray(e.vehicules)) {
+        e.vehicules.forEach(function(veh, idx) {
+          localStorage.setItem('logideal_veh_' + (idx + 1), JSON.stringify(veh));
+        });
+      }
+      renderVehiculeBlocs(parseInt(e.nb_voitures));
+    }
+    if(e.statut_logement){
+      const btn=document.querySelector('[data-field="statut_logement"][data-value="'+e.statut_logement+'"]');
+      if(btn) setLoyerLabel(btn);
+    }
+    if(e.enfants>0){
+      afficherAgesEnfants(e.enfants);
+      setTimeout(()=>{
+        (e.ages_enfants||[]).forEach((age,i)=>{
+          const el=document.getElementById('age_enfant_'+i);
+          if(el) el.value=age;
+        });
+      },50);
+    }
+    // 3. Déclencher les hints et updateTotal APRÈS que tout le state est prêt
+    updateCadeaux(); updateVoyages(); updateVetementsEnfants(); updateLoisirsFamille(); updateTaxes();
+    updateTotal();
+    // 4. Naviguer vers l'étape demandée si ?step= dans l'URL
+    if (currentStep > 0) {
+      document.getElementById('step-0').classList.remove('active');
+      document.getElementById('nav-0').classList.remove('active');
+      document.getElementById('step-' + currentStep).classList.add('active');
+      document.getElementById('nav-' + currentStep).classList.add('active');
+    }
+  }
+
+  const prenomEl=document.getElementById('prenom');
+  if(prenomEl&&!prenomEl.value){
+    const meta=user.user_metadata||{};
+    const p=meta.prenom||meta.given_name||(meta.full_name||meta.name||'').split(' ')[0];
+    if(p) prenomEl.value=p;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon tableau de bord — Logidéal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* HERO */
+    .dash-hero{background:var(--sable);padding:40px 56px 0;border-bottom:1px solid var(--sable3)}
+    .dash-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+    .dash-greeting{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:700;color:var(--texte);line-height:1.15}
+    .dash-greeting em{font-style:italic;color:var(--terra)}
+    .dash-date{font-size:0.8rem;color:var(--gris);margin-top:4px}
+
+    /* PROFIL BANNER */
+    .profil-banner{border-radius:var(--radius-sm);padding:14px 20px;margin-bottom:24px;border-left:4px solid var(--terra);background:var(--terra-pale);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .profil-banner-nom{font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:700;color:var(--texte)}
+    .profil-banner-desc{font-size:0.78rem;color:var(--gris);margin-top:2px}
+
+    /* SCORE BAND */
+    .score-band{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--sable3);margin:0 -56px}
+    .score-item{background:var(--creme);padding:22px 28px;display:flex;flex-direction:column;gap:6px}
+    .score-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gris)}
+    .score-val{font-family:'DM Serif Display',serif;font-size:1.9rem;font-weight:700;color:var(--texte);line-height:1}
+    .score-sub{font-size:0.75rem;color:var(--gris2)}
+
+    /* BUDGET */
+    .budget-section{background:var(--creme);padding:48px 56px}
+    .budget-layout{display:grid;grid-template-columns:1fr 340px;gap:32px;max-width:1100px;margin:0 auto}
+
+    /* CATÉGORIES */
+    .categories{display:flex;flex-direction:column;gap:8px}
+    .cat-bloc{background:var(--sable);border-radius:var(--radius-sm);overflow:hidden;transition:box-shadow 0.2s}
+    .cat-bloc:hover{box-shadow:var(--shadow)}
+    .cat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none;gap:8px}
+    .cat-header-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+    .cat-bar-outer{flex:1;min-width:60px;max-width:180px}
+    .cat-bar-bg{height:6px;background:var(--sable3);border-radius:3px;overflow:hidden}
+    .cat-bar-fg{height:100%;border-radius:3px;transition:width 0.8s ease}
+
+    /* CÔTÉ DROIT */
+    .dash-right{display:flex;flex-direction:column;gap:14px}
+
+    /* ÉPARGNE CARD */
+    .epargne-objectif-label{opacity:0.6;margin-bottom:4px}
+    .epargne-barre-fill{height:100%;background:white;border-radius:3px;transition:width 0.8s ease}
+
+    /* OBJECTIFS PERSONNALISABLES */
+    .obj-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--sable3);gap:8px}
+    .obj-row:last-child{border-bottom:none}
+    .obj-label{font-size:0.82rem;color:var(--texte);flex:1}
+    .obj-badge{font-size:0.7rem;font-weight:700;padding:3px 9px;border-radius:50px;white-space:nowrap}
+    .ok-b{background:#edf5ee;color:#2e6b3e}
+    .warn-b{background:#fef3e2;color:#a06010}
+    .bad-b{background:#fceaea;color:#932b2b}
+    .obj-seuil-input{width:52px;background:var(--creme);border:1px solid var(--sable3);border-radius:6px;padding:3px 6px;font-size:0.78rem;font-family:'DM Sans',sans-serif;color:var(--texte);display:none;text-align:center}
+    .editing .obj-seuil-input{display:inline-block}
+    .editing .obj-badge{display:none}
+
+    /* CHARGES FIXES VS VARIABLES */
+    .repartition-section{background:var(--sable);padding:48px 56px}
+    .repartition-layout{max-width:1100px;margin:0 auto}
+    .repartition-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}
+
+    .charge-bloc{background:var(--creme);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+    .charge-bloc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+    .charge-bloc.fixes::before{background:var(--brun)}
+    .charge-bloc.variables::before{background:var(--terra)}
+
+    .charge-bloc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+    .charge-bloc-title{font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;color:var(--texte)}
+    .charge-bloc-badge{font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:50px;background:var(--sable);color:var(--gris)}
+    .charge-bloc-total{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:700;margin:8px 0 4px}
+    .charge-bloc.fixes .charge-bloc-total{color:var(--brun)}
+    .charge-bloc.variables .charge-bloc-total{color:var(--terra)}
+    .charge-bloc-sub{font-size:0.8rem;color:var(--gris);margin-bottom:20px}
+    .charge-liste{display:flex;flex-direction:column;gap:8px}
+    .charge-ligne{display:flex;justify-content:space-between;align-items:center;font-size:0.83rem;padding:6px 10px;border-radius:var(--radius-sm);background:var(--sable)}
+    .charge-ligne-label{color:var(--gris);display:flex;align-items:center;gap:6px}
+    .charge-ligne-val{font-weight:600;color:var(--texte)}
+    .charge-ligne-opt{font-size:0.68rem;font-weight:600;color:var(--terra);background:var(--terra-pale);padding:2px 7px;border-radius:50px;margin-left:6px}
+
+    .economie-potentielle{margin-top:16px;padding:12px 14px;background:var(--terra-pale);border-radius:var(--radius-sm);font-size:0.82rem;color:var(--terra-dark)}
+    .economie-val{font-family:'DM Serif Display',serif;font-size:1.1rem;font-weight:700;color:var(--terra);margin-right:4px}
+
+    /* CONSEILS */
+    .conseils-section{background:var(--creme);padding:48px 56px}
+    .conseils-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:28px auto 0}
+    .conseil-card{background:var(--sable);border-radius:var(--radius);padding:22px;border-left:4px solid var(--brun3);transition:box-shadow 0.2s}
+    .conseil-card:hover{box-shadow:var(--shadow)}
+    .conseil-card.warn{border-left-color:var(--warning)}
+    .conseil-card.bad{border-left-color:var(--danger)}
+    .conseil-card.ok{border-left-color:var(--terra)}
+    .conseil-icon{font-size:1.4rem;margin-bottom:8px;display:block}
+    .conseil-card h4{font-family:'DM Serif Display',serif;font-size:0.98rem;font-weight:700;margin-bottom:7px;color:var(--texte)}
+    .conseil-card p{font-size:0.8rem;color:var(--gris);line-height:1.6;font-weight:300;margin-bottom:12px}
+    .conseil-link{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);text-decoration:none}
+
+    /* RUBRIQUES */
+    .rubriques-section{background:var(--sable);padding:48px 56px}
+    .rubriques-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:0 auto}
+    .rubrique-card{background:var(--creme);border-radius:var(--radius);padding:28px;text-decoration:none;color:inherit;transition:all 0.25s;display:block;position:relative;overflow:hidden;border:1px solid var(--sable3)}
+    .rubrique-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--terra3)}
+    .rubrique-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+    .rubrique-icon-wrap{width:48px;height:48px;background:var(--terra-pale);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .rubrique-stat{text-align:right}
+    .rubrique-stat-val{font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:var(--texte);line-height:1}
+    .rubrique-stat-label{font-size:0.7rem;color:var(--gris);margin-top:2px}
+    .rubrique-card h3{font-family:'DM Serif Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:6px;color:var(--texte)}
+    .rubrique-card p{font-size:0.82rem;color:var(--gris);line-height:1.55;font-weight:300;margin-bottom:16px}
+    .rubrique-alert{background:var(--terra-pale);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.78rem;color:var(--terra-dark);margin-bottom:14px;display:none}
+    .rubrique-alert.warn{background:#fef3e2;color:#7a4a10}
+    .rubrique-alert.bad{background:#fceaea;color:#7a1f1f}
+    .rubrique-cta{display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:700;color:var(--terra);letter-spacing:0.5px}
+
+    /* MODAL OBJECTIFS */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--creme);border-radius:var(--radius);padding:32px;max-width:460px;width:100%;margin:20px;box-shadow:0 24px 60px rgba(0,0,0,0.2)}
+    .modal h3{font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:6px;color:var(--texte)}
+    .modal-sub{font-size:0.83rem;color:var(--gris);margin-bottom:24px;font-weight:300}
+    .modal-field{margin-bottom:16px}
+    .modal-label{font-size:0.78rem;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
+    .modal-input-wrap{display:flex;align-items:center;gap:8px}
+    .modal-input{background:var(--sable);border:1.5px solid var(--sable3);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.95rem;font-family:'DM Sans',sans-serif;color:var(--texte);outline:none;width:100px;transition:border-color 0.2s}
+    .modal-input:focus{border-color:var(--terra3)}
+    .modal-input-unit{font-size:0.82rem;color:var(--gris)}
+    .modal-hint{font-size:0.75rem;color:var(--gris2);margin-top:4px}
+    .modal-btns{display:flex;gap:10px;margin-top:24px}
+    .modal-cancel{background:transparent;border:2px solid var(--sable3);color:var(--gris);padding:10px 20px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex:1}
+    .modal-save{background:var(--terra);color:white;border:none;padding:10px 20px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex:2}
+
+    /* ANALYSE PROFIL */
+    .analyse-bloc{background:white;border-radius:var(--radius-sm);padding:10px 14px}
+    .analyse-bloc-title{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+    .analyse-item{display:flex;align-items:flex-start;gap:6px;font-size:0.78rem;color:var(--texte);margin-bottom:4px;line-height:1.4}
+    .analyse-item:last-child{margin-bottom:0}
+    .analyse-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+    /* TAGS RÉSUMÉ UTILISATEUR */
+    .user-tag{display:inline-flex;align-items:center;gap:5px;background:var(--sable);border:1px solid var(--sable3);border-radius:50px;padding:5px 12px;font-size:0.8rem;font-weight:500;color:var(--texte)}
+    .user-tag-sep{color:var(--sable3);font-size:0.8rem}
+
+    @media(max-width:1000px){
+      .budget-layout,.repartition-grid{grid-template-columns:1fr}#rubriques-grid{grid-template-columns:1fr 1fr}
+      .score-band{grid-template-columns:1fr 1fr}
+      .conseils-grid,.rubriques-grid{grid-template-columns:1fr 1fr}
+      .dash-hero,.budget-section,.repartition-section,.conseils-section,.rubriques-section{padding:32px 20px}
+      .score-band{margin:0 -20px}
+    }
+    @media(max-width:560px){
+      .conseils-grid,.rubriques-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+    <ul class="nav-links">
+    <li><a href="logement.html">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions" data-page="dashboard">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="dash-hero">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:32px;margin-bottom:20px">
+    <div>
+      <h1 class="dash-greeting" id="dash-greeting">Tableau de <em>bord</em></h1>
+      <p class="dash-date" id="dash-date"></p>
+    </div>
+
+  </div>
+
+  <!-- BANDEAU PROFIL ENRICHI -->
+  <div id="profil-banner" style="display:none;margin-bottom:24px">
+    <!-- Tags résumé utilisateur -->
+    <div id="user-summary" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
+    <!-- Analyse personnalisée -->
+    <div id="profil-type-banner" style="background:var(--terra-pale);border-left:4px solid var(--terra);border-radius:var(--radius-sm);padding:14px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:6px">Profil financier détecté</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:700;color:var(--texte);margin-bottom:10px" id="pb-nom">—</div>
+          <p id="pb-analyse" style="font-size:0.83rem;color:var(--gris);line-height:1.6;font-weight:300;margin-top:6px;margin-bottom:0"></p>
+        </div>
+        <a href="profil.html" style="font-size:0.72rem;font-weight:600;color:var(--terra);text-decoration:none;flex-shrink:0;opacity:0.8;white-space:nowrap">✏️ Modifier →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-band" style="grid-template-columns:repeat(4,1fr)">
+    <div class="score-item">
+      <span class="score-label" id="sc-salaire-label">Revenus nets</span>
+      <span class="score-val" id="sc-salaire">—</span>
+      <span class="score-sub">par mois</span>
+    </div>
+    <div class="score-item">
+      <span class="score-label">Total dépenses</span>
+      <span class="score-val" id="sc-depenses">—</span>
+      <span class="score-sub" id="sc-depenses-pct">—</span>
+    </div>
+    <div class="score-item" id="sc-reste-item">
+      <span class="score-label">Reste à vivre</span>
+      <span class="score-val" id="sc-reste-new">—</span>
+      <span class="score-sub" id="sc-reste-new-sub">disponible ce mois</span>
+    </div>
+    <div class="score-item" id="sc-epargne-item" style="border-left:3px solid var(--terra)">
+      <span class="score-label" style="color:var(--terra)">🎯 Objectif épargne</span>
+      <span class="score-val" id="sc-objectif" style="color:var(--terra)">—</span>
+      <span class="score-sub" id="sc-objectif-sub">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- BUDGET UNIFIÉ -->
+<section class="budget-section">
+  <div class="budget-layout">
+    <div>
+      <span class="section-badge">Répartition</span>
+      <h2 class="section-title" style="font-size:1.8rem;margin-bottom:6px">Mon budget en détail</h2>
+      <p style="font-size:0.82rem;color:var(--gris);margin-bottom:20px;font-weight:300">Clique sur une catégorie pour voir le détail · <span style="color:var(--terra);font-weight:600">🔒 Fixes</span> · <span style="color:var(--brun2);font-weight:600">✂️ Optimisables</span></p>
+      <div class="categories" id="categories"></div>
+      <!-- FIXES VS VARIABLES intégré -->
+      <div id="fixvar-section" style="margin-top:24px;display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div id="fixvar-fixes" style="background:var(--sable);border-radius:var(--radius-sm);padding:18px;border-top:3px solid var(--brun)">
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--brun);margin-bottom:6px">🔒 Charges fixes</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:700;color:var(--brun)" id="fv-fixes-val">—</div>
+            <div style="font-size:0.72rem;color:var(--gris);margin-bottom:10px" id="fv-fixes-pct">—</div>
+            <div id="fv-fixes-list" style="font-size:0.78rem;color:var(--gris);display:flex;flex-direction:column;gap:4px"></div>
+          </div>
+          <div id="fixvar-variables" style="background:var(--sable);border-radius:var(--radius-sm);padding:18px;border-top:3px solid var(--terra)">
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:6px">✂️ Charges optimisables</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:700;color:var(--terra)" id="fv-var-val">—</div>
+            <div style="font-size:0.72rem;color:var(--gris);margin-bottom:10px" id="fv-var-pct">—</div>
+            <div id="fv-var-list" style="font-size:0.78rem;color:var(--gris);display:flex;flex-direction:column;gap:4px"></div>
+            <div id="fv-eco" style="margin-top:10px;padding:8px 10px;background:var(--terra-pale);border-radius:var(--radius-sm);font-size:0.75rem;color:var(--terra-dark);display:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-right">
+      <!-- CARTE ÉPARGNE PRINCIPALE -->
+
+
+    </div>
+  </div>
+</section>
+
+<!-- RUBRIQUES + IA (juste après le budget) -->
+<section class="rubriques-section">
+  <div style="max-width:1100px;margin:0 auto">
+    <span class="section-badge">Mes rubriques</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:8px">Explore ta situation en détail</h2>
+    <p class="section-sub" style="margin-bottom:28px">Chaque rubrique analyse ton profil et te donne des conseils personnalisés par l'IA.</p>
+    <div class="rubriques-grid" id="rubriques-grid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div><span class="footer-logo">Logidéal</span><p class="footer-desc">Ton allié pour mieux gérer ton quotidien.</p></div>
+    <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="alimentation.html">Alimentation</a></li><li><a href="logement.html">Logement</a></li><li><a href="patrimoine.html">Patrimoine</a></li></ul></div>
+    <div class="footer-col"><h4>Infos</h4><ul><li><a href="profil.html">Mon profil</a></li><li><a href="#">Mentions légales</a></li><li><a href="#">Confidentialité</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 Logidéal</span><span>🔒 Tes données restent sur ton appareil</span></div>
+</footer>
+
+<!-- MODAL OBJECTIF ÉPARGNE -->
+<div class="modal-overlay" id="modal-epargne" onclick="if(event.target===this)closeEpargneModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;align-items:center;justify-content:center">
+  <div class="modal">
+    <h3>Mon objectif d'épargne</h3>
+    <p class="modal-sub">Combien souhaites-tu mettre de côté chaque mois ? Cet objectif guide toute l'analyse de ton budget.</p>
+    <div class="modal-field">
+      <label class="modal-label">Épargne mensuelle souhaitée</label>
+      <div class="modal-input-wrap"><input class="modal-input" type="number" id="modal-epargne-val" min="0" placeholder="ex: 300"><span class="modal-input-unit">€ / mois</span></div>
+      <div class="modal-hint" id="modal-epargne-hint"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEpargneModal()">Annuler</button>
+      <button class="modal-save" onclick="sauvegarderEpargne()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>
+// ── INIT ──
+let profil = null;
+(async () => {
+  const user = await requireAuth();
+  if (!user) return;
+  window._logidealUser = user;
+  renderNav();
+
+  // Charger profil depuis Supabase en priorité
+  profil = await chargerProfilDB(user.id);
+  if (!profil) profil = chargerProfil(); // fallback localStorage
+  if (!profil) { window.location.href = 'profil.html'; return; }
+
+  initDashboard();
+})();
+
+function initDashboard() {
+
+// ── OBJECTIFS (avec valeurs par défaut personnalisables) ──
+const OBJ_KEY = 'logideal_objectifs';
+function chargerObjectifs() {
+  const saved = localStorage.getItem(OBJ_KEY);
+  return saved ? JSON.parse(saved) : { loyer:33, epargne:10, credits:33, abonnements:8 };
+}
+function sauvegarderObjectifsData(obj) {
+  localStorage.setItem(OBJ_KEY, JSON.stringify(obj));
+}
+let objectifs = chargerObjectifs();
+
+function openEpargneModal() {
+  const p = chargerProfil();
+  const input = document.getElementById('modal-epargne-val');
+  input.value = p ? (p.epargne || '') : '';
+  const reste = (p && p.salaire) ? p.salaire - (p.depensesTotal || 0) : 0;
+  document.getElementById('modal-epargne-hint').textContent = reste > 0 ? 'Ton reste à vivre actuel est de ' + formatEuro(reste) + '/mois' : '';
+  document.getElementById('modal-epargne').style.display = 'flex';
+}
+function closeEpargneModal() { document.getElementById('modal-epargne').style.display = 'none'; }
+function sauvegarderEpargne() {
+  const val = parseInt(document.getElementById('modal-epargne-val').value) || 0;
+  const p = chargerProfil();
+  if (p) { p.epargne = val; sauvegarderProfil(p); }
+  closeEpargneModal();
+  location.reload();
+}
+
+// ── CALCULS ──
+const cats = (function(p){
+  const logement=(p.loyer||0)+(p.electricite||0)+(p.eau||0)+(p.assurance_habitation||0)+(p.charges_copro||0)+(p.entretien_maison||0)
+    +((p.taxe_fonciere_annuel||0)/12)+((p.taxe_habitation_annuel||0)/12);
+  const mobilite=(p.carburant||0)+(p.assurance_auto||0)+(p.entretien_auto||0)+(p.parking||0)+(p.transports_commun||0)+(p.velo||0)+(p.vtc||0)+(p.train||0);
+  const abonnements=(p.telephone||0)+(p.internet||0)+(p.streaming_video||0)+(p.streaming_musique||0)+(p.gaming||0)+(p.cloud||0)+(p.presse||0)+(p.prime||0);
+  const alimentaire=(p.courses||0)+(p.restaurants||0);
+  const loisirs=(p.loisirs_budget||0)+(p.vetements||0)+((p.cadeaux_annuel||0)/12)+((p.voyages_annuel||0)/12);
+  // Note: anciens champs culture/voyages/cadeaux ignorés si loisirs_budget est renseigné
+  const famille=(p.garde_enfants||0)+(p.scolarite||0)+(p.activites_enfants||0)+(p.pension||0)
+    +((p.vetements_enfants_annuel||0)/12)+((p.loisirs_famille_annuel||0)/12);
+  const sante=(p.mutuelle||0)+(p.sante||0)+(p.sport||0)+(p.bienetre||0)+(p.coiffeur||0)+(p.esthetique||0)+(p.tabac||0)+(p.alcool||0);
+  const autres=(p.animal||0)+(p.formation||0)+(p.dons||0);
+  const credits=(p.credit_immo||0)+(p.credit_auto||0)+(p.credit_conso||0)+(p.credit_autre||0);
+  const total=logement+mobilite+abonnements+alimentaire+loisirs+famille+sante+autres+credits;
+  return {logement,mobilite,abonnements,alimentaire,loisirs,famille,sante,autres,credits,total};
+})(profil);
+
+// Revenus foyer
+const isCoupleFoyer = (profil.usage_profil === 'foyer' || (!profil.usage_profil && profil.gestion_couple === 'commune')) && (profil.situation === 'couple' || profil.situation === 'famille') && profil.vit_ensemble === 'oui' && profil.gestion_couple === 'commune' && (profil.salaire_conjoint || 0) > 0;
+const salaire = isCoupleFoyer && profil.salaire_foyer ? profil.salaire_foyer : (profil.salaire || 0);
+const nbPersonnesFoyer = isCoupleFoyer ? 2 + (profil.enfants || 0) : 1 + (profil.enfants || 0);
+const nbEnfants = profil.enfants || 0;
+const nbVoitures = profil.nb_voitures || 0;
+
+// Titre dashboard
+const prenomConj = profil.prenom_conjoint;
+
+
+const reste = salaire - cats.total;
+const epargneObjectif = profil.epargne || 0;
+const epargneReelle = Math.min(epargneObjectif > 0 ? epargneObjectif : reste, Math.max(0, reste));
+const tauxEpargne = salaire > 0 ? (epargneReelle/salaire)*100 : 0;
+const tauxLoyer = salaire > 0 ? ((profil.loyer||0)/salaire)*100 : 0;
+const tauxCredits = salaire > 0 ? (cats.credits/salaire)*100 : 0;
+const tauxAbonnements = salaire > 0 ? (cats.abonnements/salaire)*100 : 0;
+
+// ── SEUILS DE RÉFÉRENCE ADAPTÉS AU FOYER ──
+const refAlimentation = 300 + (isCoupleFoyer ? 200 : 0) + nbEnfants * 150;
+const refTransport = nbVoitures * 250 + (profil.transports_commun || 0);
+const refAbonnements = 80 + (isCoupleFoyer ? 40 : 0) + nbEnfants * 10;
+const refLoisirs = 150 + (isCoupleFoyer ? 100 : 0) + nbEnfants * 80;
+const tauxEpargneRef = nbEnfants > 0 ? 8 : 10; // % objectif épargne
+
+// ── DATE ──
+document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+// ── PROFIL BANNER ENRICHI ──
+const pType = reste<0?'deficitaire':reste/salaire<0.10?'serre':reste/salaire<0.25?'equilibre':reste/salaire<0.40?'aise':'confortable';
+const pCfg = getProfilConfig(pType);
+const pb = document.getElementById('profil-banner');
+pb.style.display = 'block';
+
+const ptBanner = document.getElementById('profil-type-banner');
+if (pType === 'deficitaire') { ptBanner.style.background='#fceaea'; ptBanner.style.borderLeftColor='var(--danger)'; }
+else if (pType === 'serre') { ptBanner.style.background='#fef3e2'; ptBanner.style.borderLeftColor='var(--warning)'; }
+document.getElementById('pb-nom').textContent = pCfg.nom;
+
+// ── ANALYSE NARRATIVE DU PROFIL ──
+const sortedCats = Object.entries({
+  logement: cats.logement, alimentation: cats.alimentaire, credits: cats.credits,
+  mobilite: cats.mobilite, abonnements: cats.abonnements, loisirs: cats.loisirs,
+  famille: cats.famille+cats.sante, autres: cats.autres
+}).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+
+const catLabels = {logement:'logement', alimentation:'alimentation', credits:'remboursements de crédits', mobilite:'mobilité', abonnements:'abonnements', loisirs:'loisirs', famille:'famille et santé', autres:'autres dépenses'};
+const top1 = sortedCats[0], top2 = sortedCats[1], top3 = sortedCats[2];
+
+// Phrase 1 : situation globale
+const situationFr = reste < 0
+  ? `Budget déficitaire de ${formatEuro(Math.abs(reste))}/mois.`
+  : reste < salaire * 0.08
+  ? (isCoupleFoyer ? `Budget serré — ${formatEuro(reste)} disponibles après dépenses.` : `Budget serré — ${formatEuro(reste)} disponibles après dépenses.`)
+  : `Budget équilibré — ${Math.round(cats.total/salaire*100)}% des revenus dépensés, ${formatEuro(reste)} disponibles.`;
+
+// Phrase 2 : plus gros postes
+let postesFr = 'Principaux postes : ';
+const parts = [];
+if (top1) parts.push(catLabels[top1[0]] + ' ' + formatEuro(top1[1]));
+if (top2) parts.push(catLabels[top2[0]] + ' ' + formatEuro(top2[1]));
+if (top3) parts.push(catLabels[top3[0]] + ' ' + formatEuro(top3[1]));
+postesFr += parts.join(', ') + '.';
+
+// Phrase 3 : ce qui va bien
+let bienFr = '';
+const tauxLoyer2 = (profil.loyer||0)/salaire*100;
+if (epargneObjectif > 0 && epargneReelle >= epargneObjectif) bienFr = `Objectif epargne de ${formatEuro(epargneObjectif)}/mois atteint.`;
+else if (tauxLoyer2 <= 33 && tauxLoyer2 > 0) bienFr = `Loyer maîtrisé (${Math.round(tauxLoyer2)}%).`;
+
+// Phrase 4 : ce qui est optimisable
+let optimFr = '';
+const potentiel = Math.round((cats.abonnements * 0.35) + (cats.alimentaire * 0.12) + (cats.loisirs * 0.20));
+if (tauxLoyer2 > 35) optimFr = `Loyer élevé (${Math.round(tauxLoyer2)}%) — à optimiser en priorité.`;
+else if (cats.abonnements > salaire * 0.08) optimFr = `${formatEuro(cats.abonnements)} en abonnements — un audit pourrait libérer du budget.`;
+else if (epargneObjectif > 0 && epargneReelle < epargneObjectif) optimFr = `Il manque ${formatEuro(epargneObjectif - epargneReelle)}/mois pour atteindre l'objectif.`;
+else if (potentiel > 30) optimFr = `Potentiel d'optimisation : ~${formatEuro(potentiel)}/mois sur les postes variables.`;
+
+// Texte concis : 2 phrases max pour tenir sur une ligne
+const narratif = [situationFr, postesFr, optimFr || bienFr].filter(Boolean).join(' ');
+document.getElementById('pb-analyse').textContent = narratif;
+
+// Résumé utilisateur en tags
+const summaryEl = document.getElementById('user-summary');
+const tags = [];
+
+// Âge
+if (profil.age) tags.push({ icon:'🎂', label: profil.age + ' ans' });
+
+// Situation
+const situationLabels = { seul:'Célibataire', couple:'En couple', famille:'En famille', coloc:'En colocation' };
+if (profil.situation) tags.push({ icon:'👤', label: situationLabels[profil.situation] || profil.situation });
+
+// Enfants
+if (profil.enfants > 0) tags.push({ icon:'👶', label: profil.enfants + ' enfant' + (profil.enfants > 1 ? 's' : '') });
+
+// Contrat
+const contratLabels = { cdi:'CDI', cdd:'CDD', independant:'Indépendant', autre:'Autre' };
+if (profil.contrat) tags.push({ icon:'💼', label: contratLabels[profil.contrat] || profil.contrat });
+
+// Zone
+const zoneLabels = { paris:'Région parisienne', grande_ville:'Grande ville', province:'Province' };
+if (profil.zone) tags.push({ icon:'📍', label: zoneLabels[profil.zone] || profil.zone });
+
+// Statut logement
+const logLabels = { locataire:'Locataire', proprietaire:'Propriétaire' };
+if (profil.statut_logement) tags.push({ icon:'🏠', label: logLabels[profil.statut_logement] || profil.statut_logement });
+
+// Objectif
+const objPatrimoineLabels = { precaution:'Matelas de sécurité', projet:'Financer un projet', immobilier:'Acheter un logement', retraite:'Préparer la retraite', fructifier:'Faire fructifier', aucun:'' };
+if (profil.objectif_patrimoine && profil.objectif_patrimoine !== 'aucun') tags.push({ icon:'🎯', label: objPatrimoineLabels[profil.objectif_patrimoine] || '' });
+
+if (tags.length > 0) {
+  summaryEl.innerHTML = tags.map((t, i) =>
+    `<span class="user-tag">${t.icon} ${t.label}</span>${i < tags.length-1 ? '<span class="user-tag-sep">·</span>' : ''}`
+  ).join('');
+} else {
+  summaryEl.innerHTML = '<a href="profil.html" style="font-size:0.82rem;color:var(--terra);font-weight:500">+ Compléter mon profil pour personnaliser cet affichage</a>';
+}
+
+// ── SCORE BAND ──
+document.getElementById('sc-salaire').textContent = formatEuro(salaire);
+if (isCoupleFoyer) {
+  const lbl = document.getElementById('sc-salaire-label');
+  if (lbl) lbl.textContent = 'Revenus foyer';
+}
+document.getElementById('sc-depenses').textContent = formatEuro(cats.total);
+document.getElementById('sc-depenses-pct').textContent = salaire>0 ? formatPct(cats.total/salaire*100)+' des revenus' : '—';
+
+// Case reste à vivre
+document.getElementById('sc-reste-new').textContent = formatEuro(reste);
+const resteNewSub = document.getElementById('sc-reste-new-sub');
+const resteItem = document.getElementById('sc-reste-item');
+if (reste < 0) {
+  resteNewSub.textContent = 'Budget déficitaire !';
+  resteItem.style.background = '#fceaea';
+  document.getElementById('sc-reste-new').style.color = 'var(--danger)';
+} else if (reste < salaire * 0.05) {
+  resteNewSub.textContent = 'Marge très serrée';
+  document.getElementById('sc-reste-new').style.color = 'var(--warning)';
+} else {
+  resteNewSub.textContent = 'disponible ce mois';
+}
+
+// Case objectif épargne (remplace "reste à vivre" + "épargne possible")
+const scObjEl = document.getElementById('sc-objectif');
+const scObjSub = document.getElementById('sc-objectif-sub');
+const scItem = document.getElementById('sc-epargne-item');
+if (epargneObjectif > 0) {
+  scObjEl.textContent = formatEuro(epargneObjectif) + '/mois';
+  const manqueScore = epargneObjectif - epargneReelle;
+  if (manqueScore <= 0) {
+    scObjSub.textContent = '✅ Objectif atteint ce mois-ci !';
+    scItem.style.borderLeftColor = '#4a7c59';
+    scObjEl.style.color = '#4a7c59';
+  } else {
+    scObjSub.textContent = 'Il manque ' + formatEuro(manqueScore) + ' pour atteindre ' + (isCoupleFoyer ? 'votre' : 'ton') + ' objectif';
+    scItem.style.borderLeftColor = 'var(--warning)';
+    scObjEl.style.color = 'var(--warning)';
+  }
+} else {
+  scObjEl.textContent = formatEuro(reste);
+  scObjSub.textContent = 'Définir un objectif dans le profil';
+}
+
+
+
+// ── CATÉGORIES DÉPLIABLES AVEC BARRES ──
+const CATS_DEF = [
+  {id:'logement',icon:'🏠',label:'Logement',total:cats.logement,color:'#8a4128',details:[
+    {icon:'🏠',label:(profil.statut_logement==='proprietaire'?'Charges copro':profil.statut_logement==='accession'?'Crédit immo':'Loyer'),val:profil.loyer},
+    {icon:'⚡',label:'Électricité / Gaz',val:profil.electricite},{icon:'💧',label:'Eau',val:profil.eau},
+    {icon:'🛡️',label:'Assurance habitation',val:profil.assurance_habitation},
+    {icon:'🏢',label:'Charges copropriété',val:profil.charges_copro},{icon:'🧹',label:'Entretien',val:profil.entretien_maison},
+  ]},
+  {id:'credits',icon:'💳',label:'Crédits',total:cats.credits,color:'#932b2b',details:[
+    {icon:'🏠',label:'Crédit immobilier',val:profil.credit_immo},{icon:'🚗',label:'Crédit auto / LOA',val:profil.credit_auto},
+    {icon:'💳',label:'Crédit conso',val:profil.credit_conso},{icon:'📦',label:'Autres',val:profil.credit_autre},
+  ]},
+  {id:'mobilite',icon:'🚗',label:'Mobilité',total:cats.mobilite,color:'#d4724a',details:[
+    {icon:'⛽',label:'Carburant',val:profil.carburant},{icon:'🛡️',label:'Assurance auto',val:profil.assurance_auto},
+    {icon:'🔧',label:'Entretien auto',val:profil.entretien_auto},{icon:'🅿️',label:'Parking / péages',val:profil.parking},
+    {icon:'🎫',label:'Transports commun',val:profil.transports_commun},{icon:'🚲',label:'Vélo',val:profil.velo},
+    {icon:'🚕',label:'VTC',val:profil.vtc},{icon:'🚂',label:'Train / avion',val:profil.train},
+  ]},
+  {id:'abonnements',icon:'📱',label:'Abonnements',total:cats.abonnements,color:'#7a6248',details:[
+    {icon:'📱',label:'Téléphone',val:profil.telephone},{icon:'📶',label:'Internet / box',val:profil.internet},
+    {icon:'🎬',label:'Streaming vidéo',val:profil.streaming_video},{icon:'🎵',label:'Musique',val:profil.streaming_musique},
+    {icon:'🎮',label:'Gaming',val:profil.gaming},{icon:'☁️',label:'Cloud',val:profil.cloud},
+    {icon:'📰',label:'Presse',val:profil.presse},{icon:'🛒',label:'Prime…',val:profil.prime},
+  ]},
+  {id:'alimentaire',icon:'🛒',label:'Alimentation',total:cats.alimentaire,color:'#4a7c59',details:[
+    {icon:'🛒',label:'Courses',val:profil.courses},{icon:'🍕',label:'Restaurants',val:profil.restaurants},{icon:'☕',label:'Café / snacks',val:profil.cafe},
+  ]},
+  {id:'loisirs',icon:'🎉',label:'Loisirs',total:cats.loisirs,color:'#c9a87c',details:[
+    {icon:'🎉',label:'Budget loisirs & sorties',val:profil.loisirs_budget},
+    {icon:'👗',label:'Vêtements & mode',val:profil.vetements},
+    {icon:'🎁',label:'Cadeaux & événements',val:Math.round((profil.cadeaux_annuel||0)/12)},
+    {icon:'✈️',label:'Voyages & vacances',val:Math.round((profil.voyages_annuel||0)/12)},
+  ]},
+  {id:'famille',icon:'👨‍👩‍👧',label:'Famille',total:cats.famille,color:'#a0714f',details:[
+    {icon:'🧸',label:'Garde / crèche',val:profil.garde_enfants},
+    {icon:'📚',label:'Scolarité & fournitures',val:profil.scolarite},
+    {icon:'⚽',label:'Activités extrascolaires',val:profil.activites_enfants},
+    {icon:'👕',label:'Vêtements enfants',val:Math.round((profil.vetements_enfants_annuel||0)/12)},
+    {icon:'🎠',label:'Sorties famille',val:Math.round((profil.loisirs_famille_annuel||0)/12)},
+    {icon:'💸',label:'Pension alimentaire',val:profil.pension},
+  ]},
+  {id:'sante',icon:'🏥',label:'Santé & bien-être',total:cats.sante,color:'#4a7c59',details:[
+    {icon:'🏥',label:'Mutuelle',val:profil.mutuelle},
+    {icon:'💊',label:'Soins & pharmacie',val:profil.sante},
+    {icon:'🏋️',label:'Sport',val:profil.sport},
+    {icon:'💆',label:'Bien-être & coaching',val:profil.bienetre},
+    {icon:'✂️',label:'Coiffeur',val:profil.coiffeur},
+    {icon:'💅',label:'Esthétique & beauté',val:profil.esthetique},
+    {icon:'🚬',label:'Tabac',val:profil.tabac},
+    {icon:'🍷',label:'Alcool',val:profil.alcool},
+  ]},
+  {id:'autres',icon:'🐾',label:'Autres',total:cats.autres,color:'#bba88e',details:[
+    {icon:'🐾',label:'Animal',val:profil.animal},{icon:'📖',label:'Formation',val:profil.formation},{icon:'🤲',label:'Dons',val:profil.dons},
+  ]},
+];
+
+const container = document.getElementById('categories');
+const maxVal = Math.max(...CATS_DEF.filter(c=>c.total>0).map(c=>c.total));
+
+CATS_DEF.sort((a,b) => b.total - a.total);
+CATS_DEF.forEach(cat => {
+  if (cat.total <= 0) return;
+  const pct = salaire > 0 ? (cat.total/salaire*100) : 0;
+  const barWidth = maxVal > 0 ? (cat.total/maxVal*100) : 0;
+  const details = cat.details.filter(d=>(d.val||0)>0);
+  const isFixed = ['logement','credits'].includes(cat.id);
+  const isOptim = ['abonnements','alimentaire','loisirs'].includes(cat.id);
+  const tag = isFixed
+    ? '<span style="font-size:0.62rem;font-weight:700;color:var(--brun);background:#f0e8dc;padding:2px 6px;border-radius:50px;white-space:nowrap">🔒 Fixe</span>'
+    : isOptim
+    ? '<span style="font-size:0.62rem;font-weight:700;color:var(--terra);background:var(--terra-pale);padding:2px 6px;border-radius:50px;white-space:nowrap">✂️ Optim.</span>'
+    : '';
+  // Construire le bloc via DOM (pas innerHTML) pour éviter les bugs d'affichage
+  const bloc = document.createElement('div');
+  bloc.className = 'cat-bloc';
+  const clickable = details.length >= 1;
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'cat-header';
+  header.style.cssText = 'display:flex;align-items:center;padding:12px 0;cursor:'+(clickable?'pointer':'default');
+
+  const labelWrap = document.createElement('div');
+  labelWrap.style.cssText = 'display:flex;align-items:center;gap:8px;width:220px;flex-shrink:0';
+  labelWrap.innerHTML = '<span style="font-size:1rem">'+cat.icon+'</span><span style="font-size:0.85rem;font-weight:600;color:var(--texte)">'+cat.label+'</span>'+tag;
+
+  const barWrap = document.createElement('div');
+  barWrap.style.cssText = 'flex:1;padding:0 16px';
+  barWrap.innerHTML = '<div style="height:6px;background:var(--sable3);border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+cat.color+';width:'+barWidth+'%;transition:width 0.8s ease"></div></div>';
+
+  const valWrap = document.createElement('div');
+  valWrap.style.cssText = 'display:flex;align-items:baseline;gap:4px;flex-shrink:0;width:90px;justify-content:flex-end';
+  const chevronEl = document.createElement('span');
+  chevronEl.style.cssText = 'font-size:0.6rem;color:var(--gris2);margin-left:4px';
+  chevronEl.textContent = clickable ? '▼' : '';
+  valWrap.innerHTML = '<span style="font-family:DM Serif Display,serif;font-size:1rem;font-weight:700;color:var(--texte)">'+formatEuro(cat.total)+'</span><span style="font-size:0.68rem;color:var(--gris)">'+Math.round(pct)+'%</span>';
+  if (clickable) valWrap.appendChild(chevronEl);
+
+  header.appendChild(labelWrap);
+  header.appendChild(barWrap);
+  header.appendChild(valWrap);
+  bloc.appendChild(header);
+
+  // Détails
+  if (clickable) {
+    const detDiv = document.createElement('div');
+    detDiv.style.cssText = 'display:none;padding:0 16px 12px;flex-direction:column;gap:4px';
+    details.forEach(d => {
+      const dpct = salaire>0?Math.round((d.val||0)/salaire*100):0;
+      const dw = cat.total>0?Math.round((d.val||0)/cat.total*100):0;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--sable3)';
+      row.innerHTML = '<span style="font-size:0.85rem">'+d.icon+'</span>'+
+        '<span style="font-size:0.78rem;color:var(--gris);flex:1">'+d.label+'</span>'+
+        '<div style="width:80px;height:4px;background:var(--sable3);border-radius:2px;overflow:hidden"><div style="height:100%;border-radius:2px;background:'+cat.color+';opacity:0.6;width:'+dw+'%"></div></div>'+
+        '<span style="font-size:0.78rem;font-weight:600;color:var(--texte);width:52px;text-align:right">'+formatEuro(d.val)+'</span>'+
+        '<span style="font-size:0.68rem;color:var(--gris2);width:28px;text-align:right">'+dpct+'%</span>';
+      detDiv.appendChild(row);
+    });
+    bloc.appendChild(detDiv);
+
+    header.addEventListener('click', () => {
+      const isOpen = detDiv.style.display === 'flex';
+      detDiv.style.display = isOpen ? 'none' : 'flex';
+      detDiv.style.flexDirection = 'column';
+      chevronEl.textContent = isOpen ? '▼' : '▲';
+    });
+  }
+  container.appendChild(bloc);
+});
+
+// Épargne possible
+if (epargneReelle > 0) {
+  const pctEp = salaire>0?(epargneReelle/salaire*100):0;
+  const bwEp = maxVal>0?(epargneReelle/maxVal*100):0;
+  const bloc = document.createElement('div');
+  bloc.className = 'cat-bloc';
+  bloc.style.borderTop = '2px dashed var(--sable3)';
+  bloc.style.marginTop = '4px';
+  bloc.innerHTML = '<div class="cat-header">'+
+    '<div style="display:flex;align-items:center;gap:8px;width:220px;flex-shrink:0">'+
+      '<span style="font-size:1rem">💰</span>'+
+      '<span style="font-size:0.85rem;font-weight:700;color:var(--terra)">Épargne possible</span>'+
+    '</div>'+
+    '<div style="flex:1;padding:0 16px">'+
+      '<div style="height:6px;background:var(--sable3);border-radius:3px;overflow:hidden">'+
+        '<div style="height:100%;border-radius:3px;background:var(--terra);width:'+bwEp+'%;transition:width 0.8s ease"></div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;align-items:baseline;gap:4px;flex-shrink:0;width:90px;justify-content:flex-end">'+
+      '<span style="font-family:DM Serif Display,serif;font-size:1rem;font-weight:700;color:var(--terra)">'+formatEuro(epargneReelle)+'</span>'+
+      '<span style="font-size:0.68rem;color:var(--gris)">'+Math.round(pctEp)+'%</span>'+
+    '</div>'+
+  '</div>'+
+  '<div style="padding:0 16px 8px;font-size:0.72rem;color:var(--gris)">'+
+    (epargneObjectif>0&&epargneReelle>=epargneObjectif?'✅ Objectif atteint !':epargneObjectif>0?'Objectif : '+formatEuro(epargneObjectif)+' — il manque '+formatEuro(epargneObjectif-epargneReelle):(isCoupleFoyer ? 'Ce que vous pouvez mettre de côté' : 'Ce que tu peux mettre de côté ce mois'))+
+  '</div>';
+  container.appendChild(bloc);
+}
+
+// ── FIXES VS VARIABLES INTÉGRÉ ──
+(function() {
+  const fixes = [
+    {label:'Loyer / crédit immo', val:(profil.loyer||0)+(profil.credit_immo||0)},
+    {label:'Électricité / Gaz', val:profil.electricite||0},
+    {label:'Eau', val:profil.eau||0},
+    {label:'Assurance habitation', val:profil.assurance_habitation||0},
+    {label:'Assurance auto', val:profil.assurance_auto||0},
+    {label:'Mutuelle', val:profil.mutuelle||0},
+    {label:'Téléphone / Internet', val:(profil.telephone||0)+(profil.internet||0)},
+    {label:'Crédits conso / auto', val:(profil.credit_auto||0)+(profil.credit_conso||0)+(profil.credit_autre||0)},
+    {label:'Pension alimentaire', val:profil.pension||0},
+    {label:'Garde enfants', val:profil.garde_enfants||0},
+  ].filter(f=>f.val>0);
+
+  const vars = [
+    {label:'Streaming / gaming', val:(profil.streaming_video||0)+(profil.streaming_musique||0)+(profil.gaming||0)+(profil.prime||0)},
+    {label:'Courses alimentaires', val:profil.courses||0},
+    {label:'Restaurants / livraison', val:(profil.restaurants||0)+(profil.cafe||0)},
+    {label:'Transport variable', val:(profil.carburant||0)+(profil.vtc||0)+(profil.train||0)},
+    {label:'Loisirs / voyages', val:(profil.voyages||0)+(profil.culture||0)+(profil.cadeaux||0)},
+    {label:'Vêtements / mode', val:profil.vetements||0},
+    {label:'Sport / bien-être', val:(profil.sport||0)+(profil.bienetre||0)+(profil.coiffeur||0)+(profil.esthetique||0)},
+    {label:'Tabac / alcool', val:(profil.tabac||0)+(profil.alcool||0)},
+    {label:'Loisirs & sorties', val:(profil.loisirs_budget||0)+Math.round(((profil.cadeaux_annuel||0)+(profil.voyages_annuel||0))/12)},
+  ].filter(v=>v.val>0);
+
+  const totalFix = fixes.reduce((s,f)=>s+f.val,0);
+  const totalVar = vars.reduce((s,v)=>s+v.val,0);
+
+  if (totalFix + totalVar > 0) {
+    document.getElementById('fixvar-section').style.display = 'block';
+    document.getElementById('fv-fixes-val').textContent = formatEuro(totalFix);
+    document.getElementById('fv-fixes-pct').textContent = salaire>0?Math.round(totalFix/salaire*100)+'% des revenus':'';
+    document.getElementById('fv-var-val').textContent = formatEuro(totalVar);
+    document.getElementById('fv-var-pct').textContent = salaire>0?Math.round(totalVar/salaire*100)+'% des revenus':'';
+    document.getElementById('fv-fixes-list').innerHTML = fixes.slice(0,5).map(f=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--sable3)"><span>${f.label}</span><strong>${formatEuro(f.val)}</strong></div>`).join('');
+    document.getElementById('fv-var-list').innerHTML = vars.map(v=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--sable3)"><span>${v.label}</span><strong>${formatEuro(v.val)}</strong></div>`).join('');
+    const eco = totalVar * 0.25;
+    if (eco > 0) {
+      const ecoEl = document.getElementById('fv-eco');
+      ecoEl.style.display = 'block';
+      ecoEl.textContent = (isCoupleFoyer ? 'En optimisant 25% de vos charges variables, vous pourriez économiser ' : 'En optimisant 25% de tes charges variables, tu pourrais économiser ') + formatEuro(eco) + '/mois.';
+    }
+  }
+})();
+
+const a = analyserBudget(profil);
+
+const rubriquesConfig = [
+  {href:'logement.html',icon:'🏠',title:'Logement',
+    stat:formatEuro(cats.logement),statLabel:'/ mois',
+    desc:'Loyer, charges, assurances et crédits immobiliers. Analyse et conseils pour optimiser le poste le plus lourd.',
+    alert:tauxLoyer>objectifs.loyer?{type:tauxLoyer>40?'bad':'warn',msg:(isCoupleFoyer?'Votre loyer représente ':'Ton loyer représente ')+Math.round(tauxLoyer)+'% des revenus (objectif : '+objectifs.loyer+'%).'}:null,
+    cta:'Analyser →'},
+  {href:'mobilite.html',icon:'🚗',title:'Mobilité',
+    stat:formatEuro(cats.mobilite),statLabel:'/ mois',
+    desc:'Carburant, assurance auto, transports en commun. Optimise tes déplacements selon ta zone géographique.',
+    alert:cats.mobilite>salaire*0.15?{type:'warn',msg:(isCoupleFoyer?'Votre mobilité représente ':'Ta mobilité représente ')+Math.round(cats.mobilite/salaire*100)+'% des revenus.'}:null,
+    cta:'Analyser →'},
+  {href:'abonnements.html',icon:'📱',title:'Abonnements',
+    stat:formatEuro(cats.abonnements),statLabel:'/ mois · '+formatEuro(cats.abonnements*12)+'/an',
+    desc:'Téléphone, box, streaming, cloud. Audit complet pour identifier les abonnements inutiles ou redondants.',
+    alert:tauxAbonnements>objectifs.abonnements?{type:'warn',msg:(isCoupleFoyer?'Vos abonnements représentent ':'Tes abonnements représentent ')+Math.round(tauxAbonnements)+'% des revenus (objectif : '+objectifs.abonnements+'%).'}:null,
+    cta:'Auditer →'},
+  {href:'alimentation.html',icon:'🥗',title:'Alimentation',
+    stat:formatEuro(cats.alimentaire),statLabel:'/ mois',
+    desc:'Courses, restaurants, livraison. Menus de la semaine optimisés et astuces pour manger mieux pour moins cher.',
+    alert:cats.alimentaire>salaire*0.20?{type:'warn',msg:(isCoupleFoyer?'Votre budget alimentation représente ':'Ton budget alimentation représente ')+Math.round(cats.alimentaire/salaire*100)+'% des revenus.'}:null,
+    cta:'Voir mes menus →'},
+  {href:'loisirs.html',icon:'🎉',title:'Loisirs & bien-être',
+    stat:formatEuro(cats.loisirs),statLabel:'/ mois',
+    desc:(isCoupleFoyer?'Culture, voyages, sport, vêtements. Profitez au maximum de votre budget loisirs.':'Culture, voyages, sport, vêtements. Profite au maximum de ton budget loisirs avec les bonnes astuces.'),
+    alert:null,
+    cta:'Optimiser →'},
+  {href:'famille.html',icon:'👨‍👩‍👧',title:'Famille & santé',
+    stat:formatEuro(cats.famille+cats.sante),statLabel:'/ mois',
+    desc:'Enfants, mutuelle, santé. Droits CAF, aides et optimisation des dépenses santé.',
+    alert:null,
+    cta:'Voir mes droits →'},
+  {href:'sante.html',icon:'🏥',title:'Santé & bien-être',
+    stat:formatEuro(cats.sante),statLabel:'/ mois',
+    desc:'Mutuelle, soins, sport, coiffeur, esthétique, bien-être. Analyse complète de vos dépenses santé.',
+    alert:null,cta:'Voir l\'analyse →'},
+  {href:'patrimoine.html',icon:'📈',title:'Patrimoine & investissement',
+    stat:formatPct(tauxEpargne),statLabel:(isCoupleFoyer?'de vos revenus épargnables':'de tes revenus épargnables'),
+    desc:(pType==='aise'||pType==='confortable')?'Stratégie investissement, placements et constitution de patrimoine.':'Plan épargne personnalisé, objectifs chiffrés et premiers placements.',
+    alert:tauxEpargne<objectifs.epargne?{type:'warn',msg:(isCoupleFoyer?'Vous épargnez ':'Tu épargnes ')+Math.round(tauxEpargne)+'% — objectif : '+objectifs.epargne+'%.'}:null,
+    cta:'Mon plan →'},
+];
+
+const rubriquesGrid = document.getElementById('rubriques-grid');
+rubriquesConfig.forEach(r => {
+  const alertHtml = r.alert ? `<div class="rubrique-alert ${r.alert.type}" style="display:block">${r.alert.type==='bad'?'❌':r.alert.type==='warn'?'⚠️':'💡'} ${r.alert.msg}</div>` : '';
+  rubriquesGrid.innerHTML += `
+    <a href="${r.href}" class="rubrique-card anim">
+      <div class="rubrique-card-top">
+        <div class="rubrique-icon-wrap">${r.icon}</div>
+        <div class="rubrique-stat">
+          <div class="rubrique-stat-val">${r.stat}</div>
+          <div class="rubrique-stat-label">${r.statLabel}</div>
+        </div>
+      </div>
+      <h3>${r.title}</h3>
+      <p>${r.desc}</p>
+      ${alertHtml}
+      <span class="rubrique-cta">${r.cta} <span style="font-size:0.9rem">→</span></span>
+    </a>`;
+});
+} // fin initDashboard
+</script>
+</body>
+</html>

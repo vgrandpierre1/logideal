@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Logidéal — Renseigne ton budget et découvre des menus, conseils et astuces personnalisés pour mieux vivre au quotidien.">
+  <title>Logidéal — Vis mieux, dépense moins</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* HERO + ÉTAPES : une seule section fluide */
+    .hero-block{background:var(--sable);padding:72px 48px 80px;text-align:center}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--terra-pale);color:var(--terra);font-size:0.72rem;font-weight:700;padding:7px 16px;border-radius:50px;margin-bottom:24px;letter-spacing:0.8px;text-transform:uppercase}
+    .hero-block h1{font-family:'DM Serif Display',serif;font-size:5rem;font-weight:700;line-height:1.05;margin-bottom:20px;letter-spacing:-2px}
+    .hero-block h1 em{font-style:italic;color:var(--terra)}
+    .hero-desc{font-size:1.05rem;color:var(--gris);line-height:1.75;max-width:540px;margin:0 auto 56px;font-weight:300}
+
+    /* SÉPARATEUR VISUEL */
+    .steps-divider{display:flex;align-items:center;gap:16px;max-width:900px;margin:0 auto 40px;opacity:0.35}
+    .steps-divider-line{flex:1;height:1px;background:var(--terra)}
+    .steps-divider-text{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--terra);white-space:nowrap}
+
+    /* ÉTAPES INLINE */
+    .how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1080px;margin:0 auto;position:relative}
+    .how-steps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:var(--sable3)}
+    .how-step{text-align:center;position:relative}
+    .how-num{width:56px;height:56px;border-radius:50%;background:var(--terra);color:white;font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative;z-index:1}
+    .how-step h3{font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--texte)}
+    .how-step p{font-size:0.83rem;color:var(--gris);line-height:1.6;font-weight:300}
+
+    /* CTA APRÈS LES ÉTAPES */
+    .hero-cta-wrap{margin-top:48px;display:flex;justify-content:center}
+
+    /* FONCTIONNALITÉS */
+    .features{background:var(--creme);padding:80px 48px}
+    .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;margin:48px auto 0}
+    .feature-card{background:var(--sable);border-radius:var(--radius);padding:32px;display:flex;gap:20px;align-items:flex-start;transition:all 0.25s}
+    .feature-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+    .feature-icon{width:52px;height:52px;background:var(--terra-pale);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .feature-card h3{font-family:'DM Serif Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:6px;color:var(--texte)}
+    .feature-card p{font-size:0.83rem;color:var(--gris);line-height:1.6;font-weight:300}
+
+    /* CTA BAS */
+    .cta-bottom{background:var(--terra);padding:80px 48px;text-align:center}
+    .cta-bottom h2{font-family:'DM Serif Display',serif;font-size:2.4rem;color:white;margin-bottom:14px}
+    .cta-bottom p{color:rgba(255,255,255,0.7);font-size:1rem;font-weight:300;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto}
+    .btn-white{background:white;color:var(--terra)}
+    .btn-white:hover{background:var(--sable);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+
+    /* TRUST */
+    .trust{background:var(--creme);padding:32px 48px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap;border-top:1px solid var(--sable3)}
+    .trust-item{display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--gris)}
+    .trust-icon{font-size:1.2rem}
+
+    @media(max-width:900px){
+      .hero-block{padding:56px 24px 64px}
+      .hero-block h1{font-size:3rem}
+      .how-steps{grid-template-columns:1fr 1fr}
+      .how-steps::before{display:none}
+      .features-grid{grid-template-columns:1fr}
+      .features,.cta-bottom,.trust{padding:56px 24px}
+    }
+    @media(max-width:480px){
+      .how-steps{grid-template-columns:1fr}
+      .hero-block h1{font-size:2.4rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+    <ul class="nav-links">
+    <li><a href="logement.html">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+
+<!-- HERO + ÉTAPES EN UNE SEULE SECTION -->
+<div class="hero-block">
+  <span class="hero-tag">🌿 Gratuit & sans pub</span>
+  <h1>Vis <em>mieux,</em><br>dépense <em>moins</em></h1>
+  <p class="hero-desc">Crée ton compte gratuit, renseigne ton budget et reçois des conseils, menus et astuces vraiment adaptés à ta situation. Plus tu es précis, plus nos recommandations te correspondent.</p>
+
+  <div class="steps-divider">
+    <div class="steps-divider-line"></div>
+    <span class="steps-divider-text">Comment ça marche</span>
+    <div class="steps-divider-line"></div>
+  </div>
+
+  <div class="how-steps">
+    <div class="how-step anim">
+      <div class="how-num">1</div>
+      <h3>Tu renseignes ton budget</h3>
+      <p>Salaire, loyer, charges, courses, transport — plus tu es précis, plus nos analyses sont pertinentes.</p>
+    </div>
+    <div class="how-step anim">
+      <div class="how-num">2</div>
+      <h3>On analyse ta situation</h3>
+      <p>Chaque poste est analysé. Tu vois immédiatement ce qui va et ce qui peut s'améliorer.</p>
+    </div>
+    <div class="how-step anim">
+      <div class="how-num">3</div>
+      <h3>Tu accèdes à tes outils</h3>
+      <p>Menus personnalisés, conseils d'épargne, astuces charges — tout adapté à toi.</p>
+    </div>
+    <div class="how-step anim">
+      <div class="how-num">4</div>
+      <h3>Tu ajustes quand tu veux</h3>
+      <p>Salaire qui change ? Nouveau loyer ? Mets à jour en 30 secondes, tout se recalcule.</p>
+    </div>
+  </div>
+
+  <div class="hero-cta-wrap">
+    <a href="#" class="btn btn-primary btn-lg" id="main-cta">Créer mon compte →</a>
+  </div>
+</div>
+
+<!-- FONCTIONNALITÉS -->
+<section class="features">
+  <div class="section-intro anim">
+    <span class="section-badge">Ce que tu obtiens</span>
+    <h2 class="section-title">Un vrai outil, pas un site vitrine</h2>
+    <p class="section-sub">Tout s'adapte à ta situation réelle</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card anim">
+      <div class="feature-icon">📊</div>
+      <div>
+        <h3>Analyse de budget personnalisée</h3>
+        <p>Vois en un coup d'œil si ton loyer, tes charges et ton potentiel d'épargne sont dans les clous — avec des indicateurs clairs vert / orange / rouge.</p>
+      </div>
+    </div>
+    <div class="feature-card anim">
+      <div class="feature-icon">🥗</div>
+      <div>
+        <h3>Menus semaine adaptés</h3>
+        <p>Des menus complets générés selon ton budget courses exact et ta situation (seul, en couple, famille). Économiques, équilibrés ou rapides.</p>
+      </div>
+    </div>
+    <div class="feature-card anim">
+      <div class="feature-icon">💰</div>
+      <div>
+        <h3>Plan d'épargne sur-mesure</h3>
+        <p>Découvre combien tu peux réellement épargner, combien tu auras dans 1 an, 3 ans, et comment atteindre tes objectifs concrets.</p>
+      </div>
+    </div>
+    <div class="feature-card anim">
+      <div class="feature-icon">⚡</div>
+      <div>
+        <h3>Astuces pour réduire tes charges</h3>
+        <p>Des conseils pratiques et chiffrés pour baisser tes factures d'énergie, tes abonnements et tes dépenses de transport.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAS -->
+<section class="cta-bottom">
+  <h2>Prêt à mieux gérer ton quotidien ?</h2>
+  <p>C'est gratuit, sans pub, et tes données sont sécurisées. Rien à perdre.</p>
+  <a href="#" class="btn btn-white btn-lg" id="bottom-cta">Créer mon compte gratuit →</a>
+</section>
+
+<!-- TRUST -->
+<div class="trust">
+  <div class="trust-item"><span class="trust-icon">🔒</span><span>Données chiffrées & sécurisées</span></div>
+  <div class="trust-item"><span class="trust-icon">✅</span><span>100% gratuit, sans pub</span></div>
+  <div class="trust-item"><span class="trust-icon">🌿</span><span>Accessible depuis tous tes appareils</span></div>
+  <div class="trust-item"><span class="trust-icon">🔄</span><span>Modifiable à tout moment</span></div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="footer-logo">Logidéal</span>
+      <p class="footer-desc">Ton allié pour mieux gérer ton quotidien — logement, alimentation, charges et épargne.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Rubriques</h4>
+      <ul>
+        <li><a href="alimentation.html">Alimentation</a></li>
+        <li><a href="logement.html">Logement</a></li>
+        <li><a href="patrimoine.html">Épargne</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Infos</h4>
+      <ul>
+        <li><a href="profil.html">Mon profil</a></li>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#">Confidentialité</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Logidéal</span>
+    <span>Fait pour les 25-40 ans actifs 🌿</span>
+    <span style="opacity:0.4;font-size:0.7rem">v112</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async () => {
+  const user = await getUser();
+  const mainCta   = document.getElementById('main-cta');
+  const bottomCta = document.getElementById('bottom-cta');
+
+  if (user) {
+    const profilDB    = await profilCompletDB(user.id);
+    const profilLocal = profilExiste();
+    const profilOk    = profilDB || profilLocal;
+
+    // Migration silencieuse localStorage → Supabase
+    if (!profilDB && profilLocal) {
+      const p = chargerProfil();
+      if (p) sauvegarderProfilDB(user.id, p);
+    }
+
+    if (profilOk) {
+      mainCta.textContent   = '📊 Mon tableau de bord →';
+      mainCta.href          = 'dashboard.html';
+      bottomCta.textContent = '📊 Accéder à mon tableau de bord →';
+      bottomCta.href        = 'dashboard.html';
+    } else {
+      mainCta.textContent   = '✏️ Compléter mon profil →';
+      mainCta.href          = 'profil.html';
+      bottomCta.textContent = '✏️ Compléter mon profil →';
+      bottomCta.href        = 'profil.html';
+    }
+  } else {
+    mainCta.href   = 'auth.html?redirect=profil.html';
+    bottomCta.href = 'auth.html?redirect=profil.html';
+  }
+
+  renderNav();
+})();
+</script>
+</body>
+</html>
