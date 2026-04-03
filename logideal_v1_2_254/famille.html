@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Famille & santé — Logidéal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-hero{background:var(--sable);padding:48px 56px 0;border-bottom:1px solid var(--sable3)}
+    .breadcrumb{font-size:0.78rem;color:var(--gris);margin-bottom:10px}.breadcrumb a{color:var(--terra);text-decoration:none}
+    .page-title{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:700;color:var(--texte)}.page-title em{font-style:italic;color:var(--terra)}
+    .band{display:grid;gap:1px;background:var(--sable3);margin:28px -56px 0}
+    .band-item{background:var(--creme);padding:20px 28px;display:flex;flex-direction:column;gap:5px}
+    .band-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gris)}
+    .band-val{font-family:'DM Serif Display',serif;font-size:1.7rem;font-weight:700;color:var(--texte);line-height:1}
+    .band-sub{font-size:0.75rem;color:var(--gris2)}
+    .rs{padding:48px 56px}.rs.alt{background:var(--sable)}.rs.main{background:var(--creme)}
+    .inner{max-width:1100px;margin:0 auto}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
+    .card{background:var(--creme);border-radius:var(--radius);padding:26px}
+    .card.s{background:var(--sable)}
+    .card h4{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:12px;color:var(--texte)}
+    .card p{font-size:0.83rem;color:var(--gris);line-height:1.65;font-weight:300}
+    .row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--sable);border-radius:var(--radius-sm);margin-bottom:8px}
+    .alerte{border-radius:var(--radius-sm);padding:12px 16px;font-size:0.83rem;line-height:1.6;margin-bottom:8px}
+    .alerte.ok{background:#edf5ee;color:#2e6b3e}.alerte.warn{background:#fef3e2;color:#7a4a10}.alerte.bad{background:#fceaea;color:#7a1f1f}
+    .aide-card{background:var(--sable);border-radius:var(--radius);padding:24px;border-top:3px solid var(--terra)}
+    .aide-card h4{font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:8px;color:var(--texte)}
+    .aide-card p{font-size:0.82rem;color:var(--gris);line-height:1.6;font-weight:300}
+    .plan-step{border-radius:var(--radius);padding:24px 28px;display:flex;align-items:flex-start;gap:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+    .plan-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:white;flex-shrink:0}
+    .plan-titre{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--texte);margin-bottom:6px}
+    .plan-desc{font-size:0.83rem;color:var(--gris);line-height:1.65;font-weight:300;margin-bottom:12px}
+    .plan-btn{display:inline-flex;align-items:center;gap:6px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none}
+    .plan-eco{flex-shrink:0;text-align:center;background:white;border-radius:var(--radius-sm);padding:12px 16px;min-width:90px}
+    .plan-eco-val{font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700}
+    @media(max-width:900px){.band{grid-template-columns:1fr 1fr}.rs,.page-hero{padding:32px 20px}.band{margin:20px -20px 0}.g2,.g3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+    <ul class="nav-links">
+    <li><a href="logement.html">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+<div class="page-hero">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="breadcrumb"><a href="dashboard.html">← Tableau de bord</a></div>
+    <h1 class="page-title">Famille & <em>santé</em> 👨‍👩‍👧</h1>
+    <p style="font-size:0.9rem;color:var(--gris);margin-top:6px;font-weight:300" id="page-sub">—</p>
+    <div class="band" id="hero-band" style="grid-template-columns:repeat(4,1fr)"></div>
+  </div>
+</div>
+
+<section class="rs main"><div class="inner">
+  <span class="section-badge">État des lieux</span>
+  <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Mes dépenses famille & santé</h2>
+  <div class="g2" style="margin-top:20px">
+    <div><div id="detail-famille"></div><div id="detail-sante"></div></div>
+    <div class="card s"><h4>Analyse</h4><div id="analyse-content"></div></div>
+  </div>
+</div></section>
+
+<section class="rs alt"><div class="inner">
+  <span class="section-badge">Droits & aides</span>
+  <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Aides auxquelles tu as peut-être droit</h2>
+  <p class="section-sub">Beaucoup d'aides sont sous-utilisées faute d'information. Vérifie ta situation.</p>
+  <div class="g3" style="margin-top:20px" id="aides-grid"></div>
+</div></section>
+
+<section class="rs main"><div class="inner">
+  <span class="section-badge">Conseils</span>
+  <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Optimiser ses dépenses santé</h2>
+  <div class="g3" id="conseils-grid"></div>
+</div></section>
+
+<section style="background:var(--creme);padding:56px;border-top:4px solid var(--terra)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px">
+      <div style="background:var(--terra);width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🎯</div>
+      <div><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--terra);margin-bottom:4px">Plan d'action personnalisé</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--texte)">Ce que tu peux faire <em style="font-style:italic;color:var(--terra)">dès maintenant</em></h2></div>
+    </div>
+    <p style="font-size:0.88rem;color:var(--gris);font-weight:300;margin-bottom:32px;max-width:700px;line-height:1.6" id="plan-sub">—</p>
+    <div id="plan-steps"></div>
+  </div>
+</section>
+
+<footer><div class="footer-top"><div><span class="footer-logo">Logidéal</span><p class="footer-desc">Ton allié pour mieux gérer ton quotidien.</p></div></div><div class="footer-bottom"><span>© 2025 Logidéal</span><span>🔒 Tes données restent sur ton appareil</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>renderNav();</script>
+<script>
+const profil = verifierProfil();
+if (!profil) window.location.href = 'index.html';
+const salaire = profil.salaire||0, enfants=profil.enfants||0;
+const garde=profil.garde_enfants||0, scolarite=profil.scolarite||0, activites=profil.activites_enfants||0, pension=profil.pension||0;
+const mutuelle=profil.mutuelle||0, sante=profil.sante||0, dentiste=profil.dentiste||0;
+const animal=profil.animal||0, formation=profil.formation||0, dons=profil.dons||0;
+const totalFamille=garde+scolarite+activites+pension, totalSante=mutuelle+sante+dentiste;
+const totalAutres=animal+formation+dons, total=totalFamille+totalSante+totalAutres;
+
+document.getElementById('page-sub').textContent=`${formatEuro(total)}/mois — ${enfants} enfant(s) à charge`;
+const band=document.getElementById('hero-band');
+[{label:'Total famille & santé',val:formatEuro(total),sub:salaire>0?Math.round(total/salaire*100)+'% des revenus':''},
+ {label:'Enfants',val:formatEuro(totalFamille),sub:'garde + scolarité + activités'},
+ {label:'Santé',val:formatEuro(totalSante),sub:'mutuelle + soins'},
+ {label:'Divers',val:formatEuro(totalAutres),sub:'animal + formation + dons'},
+].forEach(b=>band.innerHTML+=`<div class="band-item"><span class="band-label">${b.label}</span><span class="band-val">${b.val}</span><span class="band-sub">${b.sub}</span></div>`);
+
+const df=document.getElementById('detail-famille');
+if(totalFamille>0){
+  df.innerHTML=`<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin-bottom:10px">👶 Enfants</div>`;
+  [[garde,'🧸','Garde / crèche'],[scolarite,'📚','Scolarité'],[activites,'⚽','Activités'],[pension,'💸','Pension alimentaire']].filter(l=>l[0]>0).forEach(([val,icon,label])=>{
+    df.innerHTML+=`<div class="row"><div style="display:flex;align-items:center;gap:8px;font-size:0.85rem">${icon} ${label}</div><strong style="font-family:'DM Serif Display',serif">${formatEuro(val)}</strong></div>`;
+  });
+}
+const ds=document.getElementById('detail-sante');
+if(totalSante>0||totalAutres>0){
+  ds.innerHTML=`<div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--terra);margin:16px 0 10px">🏥 Santé & divers</div>`;
+  [[mutuelle,'🏥','Mutuelle santé'],[sante,'💊','Médecins / pharmacie'],[dentiste,'🦷','Dentiste'],[animal,'🐾','Animal'],[formation,'📖','Formation'],[dons,'🤲','Dons']].filter(l=>l[0]>0).forEach(([val,icon,label])=>{
+    ds.innerHTML+=`<div class="row"><div style="display:flex;align-items:center;gap:8px;font-size:0.85rem">${icon} ${label}</div><strong style="font-family:'DM Serif Display',serif">${formatEuro(val)}</strong></div>`;
+  });
+}
+
+const ac=document.getElementById('analyse-content');
+if(mutuelle>80)ac.innerHTML+=`<div class="alerte warn">🏥 Ta mutuelle à ${formatEuro(mutuelle)}/mois mérite une comparaison annuelle — 20 à 35% d'économie possible.</div>`;
+if(dentiste>50)ac.innerHTML+=`<div class="alerte warn">🦷 Le dispositif 100% Santé garantit des soins dentaires sans reste à charge — à demander à ton dentiste.</div>`;
+if(enfants>0&&garde>500)ac.innerHTML+=`<div class="alerte warn">🧸 ${formatEuro(garde)}/mois de garde — le crédit d'impôt garde d'enfants rembourse 50% des frais jusqu'à 3 500€/an.</div>`;
+if(!ac.innerHTML)ac.innerHTML=`<div class="alerte ok">✅ Tes dépenses famille/santé semblent bien maîtrisées.</div>`;
+
+// Aides
+const aides=[];
+if(enfants>0)aides.push({titre:'👶 Allocations familiales CAF',txt:'Allocations familiales, PAJE, CMG, complément de libre choix... Simulateur gratuit sur caf.fr en 10 minutes.',lien:'https://wwwd.caf.fr/wps/portal/caffr/aidesetservices/lesservicesenligne/estimervosdroits'});
+if(enfants>0)aides.push({titre:'🎒 Bourses scolaires',txt:'Bourses de collège et lycée selon les revenus, fonds sociaux, aide aux transports scolaires. À demander chaque année à l\'établissement.',lien:'https://www.service-public.fr/particuliers/vosdroits/F984'});
+aides.push({titre:'🏥 Complémentaire Santé Solidaire',txt:'Ancienne CMU-C : couvre les soins à 100% pour les bas revenus. Gratuite ou à 1€/mois. Simuler ses droits sur ameli.fr.',lien:'https://www.service-public.fr/particuliers/vosdroits/F10027'});
+aides.push({titre:'🦷 100% Santé',txt:'Soins dentaires, lunettes et aides auditives sans reste à charge. À demander systématiquement à ton praticien.',lien:'https://www.ameli.fr/assure/remboursements/rembourse/100-sante'});
+if(salaire<3000)aides.push({titre:'💊 Tiers payant généralisé',txt:'Tu n\'as pas à avancer les frais de santé — le tiers payant est un droit. À demander à ton médecin si ce n\'est pas déjà appliqué.',lien:'https://www.ameli.fr/assure/remboursements/etre-bien-rembourse/tiers-payant'});
+aides.push({titre:'📱 Mon espace santé',txt:'Centralise ton dossier médical, tes ordonnances et tes remboursements. Évite les doublons d\'examens et réduit les dépenses santé à long terme.',lien:'https://www.monespacesante.fr'});
+
+const ag=document.getElementById('aides-grid');
+aides.forEach(a=>ag.innerHTML+=`<div class="aide-card"><h4>${a.titre}</h4><p>${a.txt}</p><a href="${a.lien}" target="_blank" style="display:inline-block;margin-top:12px;font-size:0.75rem;font-weight:700;color:var(--terra);text-decoration:none">En savoir plus →</a></div>`);
+
+[{icon:'🏥',titre:'Comparer sa mutuelle chaque année',txt:'Après 1 an, tu peux résilier ta mutuelle à tout moment. Les comparateurs (LeLynx, Meilleureassurance) permettent de trouver une offre équivalente moins chère.'},
+ {icon:'💊',titre:'Médicaments génériques',txt:'Les génériques ont la même efficacité que les princeps à un prix 20 à 70% inférieur. Demander "non substituable" uniquement si le médecin le préconise.'},
+ {icon:'🦷',titre:'Soins dentaires : prévention',txt:'Un détartrage annuel (remboursé à 70%) prévient des soins coûteux non remboursés. L\'investissement en prévention est toujours rentable.'},
+ {icon:'📋',titre:'Choisir un médecin traitant',txt:'Être hors parcours de soins réduit le remboursement de 30%. Avoir un médecin traitant déclaré et le consulter en premier optimise tes remboursements.'},
+ {icon:'💙',titre:'Applications santé gratuites',txt:'Doctolib pour les rendez-vous, Ameli pour les remboursements, Mon Espace Santé pour le dossier médical — tout est gratuit et accessible.'},
+ {icon:'🐾',titre:'Assurance animaux',txt:'Les assurances pour animaux remboursent les frais vétérinaires élevés. À comparer via Lovys ou Dalma si ton animal engendre des frais réguliers.'},
+].forEach(c=>document.getElementById('conseils-grid').innerHTML+=`<div class="card s"><span style="font-size:1.4rem;margin-bottom:10px;display:block">${c.icon}</span><h4>${c.titre}</h4><p>${c.txt}</p></div>`);
+
+const steps=[];
+const ecoMutuelle=mutuelle>50?Math.round(mutuelle*0.25):0;
+const ecoCaf=enfants>0?Math.min(200,Math.round(garde*0.5)):0;
+if(enfants>0)steps.push({eco:ecoCaf,titre:`Simuler tes droits CAF — jusqu'à ${formatEuro(ecoCaf)}/mois`,desc:`Avec ${enfants} enfant(s), tu peux bénéficier d'allocations familiales, d'aides à la garde et de crédits d'impôt. La simulation sur caf.fr prend 10 minutes et peut révéler des aides non réclamées.`,lien:'https://wwwd.caf.fr/wps/portal/caffr/aidesetservices/lesservicesenligne/estimervosdroits',btnTxt:'🔗 Simuler sur caf.fr →'});
+if(ecoMutuelle>0)steps.push({eco:ecoMutuelle,titre:`Comparer ta mutuelle — ~${formatEuro(ecoMutuelle)}/mois possible`,desc:`Ta mutuelle à ${formatEuro(mutuelle)}/mois : les comparateurs comme LeLynx ou Meilleureassurance permettent de trouver une garantie équivalente 20 à 35% moins chère. Résiliable à tout moment après 1 an.`,lien:'https://www.lelynx.fr/mutuelle-sante/',btnTxt:'🔗 Comparer sur LeLynx →'});
+if(dentiste>30)steps.push({eco:0,titre:'Demander le 100% Santé chez ton dentiste',desc:`Pour tes prochains soins dentaires, demande explicitement les soins du panier "100% Santé" — zéro reste à charge, pris en charge à 100% par l'Assurance Maladie + mutuelle.`,lien:'https://www.ameli.fr/assure/remboursements/rembourse/100-sante',btnTxt:'🔗 Guide 100% Santé Ameli →'});
+steps.push({eco:0,titre:'Activer Mon Espace Santé',desc:`Mon Espace Santé centralise ton dossier médical, tes ordonnances et tes remboursements. Évite les doublons d'examens coûteux et facilite le suivi.`,lien:'https://www.monespacesante.fr',btnTxt:'🔗 Activer Mon Espace Santé →'});
+
+steps.sort((a,b)=>b.eco-a.eco);steps.forEach((s,i)=>{s.num=i+1;s.urgence=i===0?'urgent':i<=1?'moyen':'long';});
+const ecoT=steps.filter(s=>s.eco>0).reduce((s,x)=>s+x.eco,0);
+document.getElementById('plan-sub').textContent=`${steps.length} actions identifiées${ecoT>0?` — économie potentielle : ${formatEuro(ecoT)}/mois`:'.'}.`;
+const ub={urgent:'#fff5f3',moyen:'#fffbf0',long:'#f4faf6'},bd={urgent:'var(--danger)',moyen:'var(--warning)',long:'#4a7c59'},ul={urgent:'⚡ À faire maintenant',moyen:'📅 Dans le mois',long:'🔭 À planifier'};
+steps.forEach(s=>document.getElementById('plan-steps').innerHTML+=`<div class="plan-step" style="background:${ub[s.urgence]};border-left:5px solid ${bd[s.urgence]}"><div class="plan-num" style="background:${bd[s.urgence]}">${s.num}</div><div style="flex:1"><div style="display:inline-flex;align-items:center;font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:50px;margin-bottom:8px;background:white;color:${bd[s.urgence]}">${ul[s.urgence]}</div><div class="plan-titre">${s.titre}</div><div class="plan-desc">${s.desc}</div><a href="${s.lien}" target="_blank" class="plan-btn">${s.btnTxt}</a></div>${s.eco>0?`<div class="plan-eco"><div class="plan-eco-val" style="color:${bd[s.urgence]}">−${formatEuro(s.eco)}</div><div style="font-size:0.65rem;color:var(--gris);margin-top:3px">économie/mois</div></div>`:''}</div>`);
+</script>
+</body>
+</html>

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon logement — Logidéal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-hero{background:var(--sable);padding:48px 56px 0;border-bottom:1px solid var(--sable3)}
+    .breadcrumb{font-size:0.78rem;color:var(--gris);margin-bottom:10px}
+    .breadcrumb a{color:var(--terra);text-decoration:none}
+    .page-title{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:700;color:var(--texte)}
+    .page-title em{font-style:italic;color:var(--terra)}
+    .loge-band{display:grid;gap:1px;background:var(--sable3);margin:28px -56px 0}
+    .loge-band-item{background:var(--creme);padding:20px 28px;display:flex;flex-direction:column;gap:5px;align-items:center;text-align:center}
+    .loge-band-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gris);min-height:2.2em;display:flex;align-items:center;justify-content:center}
+    .loge-band-val{font-family:'DM Serif Display',serif;font-size:1.7rem;font-weight:700;color:var(--texte);line-height:1}
+    .loge-band-sub{font-size:0.75rem;color:var(--gris2)}
+    .loge-section{padding:48px 56px}
+    .loge-section.alt{background:var(--sable)}
+    .loge-section.main{background:var(--blanc)}
+    .loge-inner{max-width:1100px;margin:0 auto}
+    .loge-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+    .loge-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
+    .loge-card{background:var(--creme);border-radius:var(--radius);padding:28px}
+    .loge-card.sable{background:var(--sable)}
+    .loge-card h4{font-family:'DM Serif Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:14px;color:var(--texte)}
+    .loge-card p{font-size:0.83rem;color:var(--gris);line-height:1.65;font-weight:300}
+    .jauge-track{position:relative;height:10px;background:var(--sable3);border-radius:5px;margin:24px 0 8px}
+    .jauge-fill{position:absolute;left:0;top:0;height:100%;border-radius:5px;transition:width 1s ease}
+    .jauge-mark{position:absolute;top:-5px;width:2px;height:20px;background:var(--gris2);opacity:0.5}
+    .jauge-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--gris2)}
+    .statut-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;font-size:0.8rem;font-weight:600;margin-bottom:12px}
+    .statut-ok{background:#edf5ee;color:#2e6b3e}
+    .statut-warn{background:#fef3e2;color:#7a4a10}
+    .statut-bad{background:#fceaea;color:#7a1f1f}
+    .charge-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--sable);border-radius:var(--radius-sm);margin-bottom:8px}
+    .charge-row-left{display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--texte)}
+    .charge-row-val{font-family:'DM Serif Display',serif;font-weight:700;font-size:1rem;color:var(--texte)}
+    .charge-row-pct{font-size:0.7rem;color:var(--gris2);margin-top:1px}
+    .charges-total{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--terra-pale);border-radius:var(--radius-sm);border-left:4px solid var(--terra);margin-top:12px}
+    .sim-result{background:var(--terra-pale);border-left:4px solid var(--terra);border-radius:var(--radius-sm);padding:20px;margin-top:16px}
+    .sim-result-val{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:700;color:var(--terra)}
+    .sim-result-sub{font-size:0.8rem;color:var(--terra-dark);margin-top:4px}
+    .lva-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .lva-col{border-radius:var(--radius-sm);padding:20px}
+    .lva-col.louer{background:#f0f7ff;border-left:4px solid #4a90d9}
+    .lva-col.acheter{background:#edf5ee;border-left:4px solid #4a7c59}
+    .lva-col h5{font-family:'DM Serif Display',serif;font-size:1rem;font-weight:700;margin-bottom:10px}
+    .lva-col p{font-size:0.8rem;color:var(--gris);line-height:1.8}
+    .lva-verdict{background:var(--sable);border-radius:var(--radius-sm);padding:14px 18px;margin-top:12px;font-size:0.85rem;color:var(--texte);line-height:1.6}
+    .objectif-progress{height:8px;background:var(--sable3);border-radius:4px;margin:12px 0;overflow:hidden}
+    .objectif-progress-fill{height:100%;background:var(--terra);border-radius:4px;transition:width 1s ease}
+    .info-box{background:var(--sable);border-radius:var(--radius-sm);padding:14px 18px;font-size:0.82rem;color:var(--gris);line-height:1.6;border-left:3px solid var(--sable3)}
+    .info-box.terra{background:var(--terra-pale);border-left-color:var(--terra);color:var(--terra-dark)}
+    .info-box.green{background:#edf5ee;border-left-color:#4a7c59;color:#2e6b3e}
+    .info-box.blue{background:#f0f7ff;border-left-color:#4a90d9;color:#1a4a7a}
+    @media(max-width:900px){
+      .loge-band{grid-template-columns:1fr 1fr}
+      .loge-section,.page-hero{padding:32px 20px}
+      .loge-band{margin:20px -20px 0}
+    .loge-grid-2,.loge-grid-3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+  <ul class="nav-links">
+    <li><a href="logement.html" class="active">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="breadcrumb" style="display:flex;align-items:center;justify-content:space-between"><a href="dashboard.html">← Tableau de bord</a><a href="profil.html?step=1" style="display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:7px 16px;border-radius:50px;transition:background 0.2s">✏️ Modifier mon profil</a></div>
+    <h1 class="page-title" id="page-title">Mon <em>logement</em> 🏠</h1>
+    <p style="font-size:0.9rem;color:var(--gris);margin-top:6px;font-weight:300" id="page-sub">—</p>
+    <div class="loge-band" id="loge-band" style="grid-template-columns:repeat(5,1fr)"></div>
+  </div>
+</div>
+
+<section class="loge-section alt" id="section-intro" style="padding-top:32px;padding-bottom:32px;border-bottom:1px solid var(--sable3);background:var(--blanc)">
+  <div class="loge-inner">
+    <p style="font-size:0.92rem;color:var(--texte);line-height:1.7" id="intro-text">—</p>
+  </div>
+</section>
+
+<section class="loge-section main" style="padding-top:56px">
+  <div class="loge-inner">
+    <span class="section-badge">Analyse</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Votre taux d\'effort logement</h2>
+    <p class="section-sub">La part de vos revenus consacrée au logement principal.</p>
+    <div class="loge-grid-2" style="margin-top:20px">
+      <div class="loge-card sable">
+        <h4 id="jauge-titre">—</h4>
+        <div style="font-family:'DM Serif Display',serif;font-size:2.8rem;font-weight:700;line-height:1" id="jauge-val">—</div>
+        <div style="font-size:0.8rem;color:var(--gris);margin-top:2px" id="jauge-sub">par mois</div>
+        <div class="jauge-track">
+          <div class="jauge-fill" id="jauge-fill" style="width:0%"></div>
+          <div class="jauge-mark" style="left:30%"></div>
+          <div class="jauge-mark" style="left:40%"></div>
+          <div style="position:absolute;left:30%;top:18px;transform:translateX(-50%);font-size:0.65rem;color:var(--gris2);white-space:nowrap">Idéal 30%</div>
+          <div style="position:absolute;left:40%;top:-18px;transform:translateX(-50%);font-size:0.65rem;color:var(--gris2);white-space:nowrap">Max 40%</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--gris2);margin-top:4px">
+          <span>0%</span><span>100%</span>
+        </div>
+        <div style="margin-top:12px" id="jauge-conseil"></div>
+      </div>
+      <div class="loge-card sable">
+        <h4>Seuils selon vos revenus</h4>
+        <div id="seuils-content"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="loge-section alt">
+  <div class="loge-inner">
+    <span class="section-badge">Coût réel</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Ce que coûte vraiment votre logement</h2>
+    <div style="max-width:680px;margin:20px 0 0">
+      <div id="charges-list"></div>
+      <div class="charges-total">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--terra-dark)">💰 Coût total logement / mois</span>
+        <span style="font-family:'DM Serif Display',serif;font-size:1.4rem;font-weight:700;color:var(--terra)" id="charges-total-val">—</span>
+      </div>
+      <div id="cout-repartition" style="margin-top:16px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="loge-section main" id="section-proprio" style="display:none">
+  <div class="loge-inner">
+    <span class="section-badge">Propriétaire</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Optimiser votre crédit & charges</h2>
+    <p class="section-sub" id="proprio-sub">Leviers d\'économies identifiés selon votre situation.</p>
+    <div class="loge-grid-3" style="margin-top:24px" id="proprio-conseils"></div>
+
+    <!-- Simulateur de revente -->
+    <div id="simul-revente-bloc" style="display:none;margin-top:48px">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;font-weight:700;color:var(--texte);margin-bottom:4px">💰 Simulateur de revente</h3>
+      <p style="font-size:0.82rem;color:var(--gris);margin-bottom:20px">Estimez votre plus-value nette si vous revendiez votre bien aujourd\'hui ou à un prix cible.</p>
+      <div class="loge-grid-3" style="align-items:start">
+        <div class="loge-card sable" style="grid-column:span 1">
+          <label style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gris);display:block;margin-bottom:5px">Prix de revente envisagé (€)</label>
+          <input type="number" id="revente-prix" min="0" step="1000"
+            style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;margin-bottom:14px"
+            oninput="calculerRevente()"
+            onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+          <div style="font-size:0.75rem;color:var(--gris2)" id="revente-valeur-ref"></div>
+        </div>
+        <div id="revente-result" style="grid-column:span 2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="loge-section alt" id="section-mixte" style="display:none">
+  <div class="loge-inner">
+    <span class="section-badge">Situation mixte</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Locataire & propriétaire bailleur</h2>
+    <p class="section-sub">Vous louez votre résidence principale tout en remboursant un crédit immobilier sur un autre bien.</p>
+    <div class="loge-grid-2" style="margin-top:20px">
+      <div class="loge-card sable"><h4>📊 Analyse de votre situation</h4><div id="mixte-analyse"></div></div>
+      <div class="loge-card sable"><h4>💡 Pistes d\'optimisation</h4><div id="mixte-conseils"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="loge-section alt" id="section-energie">
+  <div class="loge-inner">
+    <span class="section-badge">Énergie</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Vos factures vs la moyenne nationale</h2>
+    <p class="section-sub" id="energie-sub">—</p>
+    <div style="max-width:680px;margin:20px 0 0" id="energie-wrap"></div>
+  </div>
+</section>
+
+
+
+
+
+<section class="loge-section main" id="section-conseils">
+  <div class="loge-inner">
+    <span class="section-badge">Nos conseils</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Ce que vous pouvez faire</h2>
+    <p class="section-sub" id="conseils-sub">—</p>
+    <div class="loge-grid-3" style="margin-top:24px" id="conseils-grid"></div>
+
+    <!-- Micro-simulateurs d\'économies -->
+    <div style="margin-top:48px">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;font-weight:700;color:var(--texte);margin-bottom:4px">Simuler une économie</h3>
+      <p style="font-size:0.82rem;color:var(--gris);margin-bottom:20px">Entrez un montant cible pour chaque poste et voyez l\'économie potentielle.</p>
+      <div class="loge-grid-3" id="micro-simul-grid"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+function ouvrirLBC() {
+  const ville = document.getElementById('lbc-ville').value.trim();
+  const rayon = document.getElementById('lbc-rayon').value;
+  const type  = document.getElementById('lbc-type').value;
+  const loyer = document.getElementById('lbc-loyer').value;
+  const surf  = document.getElementById('lbc-surface').value;
+
+  if (!ville) {
+    document.getElementById('lbc-ville').focus();
+    document.getElementById('lbc-ville').style.borderColor = '#c0392b';
+    return;
+  }
+
+  // Base LBC locations/offres/locations-immobilieres
+  const villeSlug = ville.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+
+  let url = `https://www.leboncoin.fr/recherche?category=10&locations=${encodeURIComponent(ville)}__${rayon}km&real_estate_type=`;
+
+  // Type mapping
+  const typeMap = { 'appartements':'2', 'maisons_villas':'1', 'colocations':'3', 'studios':'2', 'meuble':'2', '':'' };
+  url += (typeMap[type] || '');
+
+  if (loyer) url += `&price=max-${loyer}`;
+
+  if (surf) url += `&square=${surf}-max`;
+
+  window.open(url, '_blank');
+}
+
+// Pré-remplir loyer depuis le profil si disponible
+(function() {
+  try {
+    const raw = localStorage.getItem('logideal_profil');
+    if (!raw) return;
+    const p = JSON.parse(raw);
+    if (p.loyer) document.getElementById('lbc-loyer').value = p.loyer;
+    if (p.ville) document.getElementById('lbc-ville').value = p.ville;
+  } catch(e) {}
+})();
+</script>
+
+<section class="loge-section alt" id="section-lbc" style="display:none">
+  <div class="loge-inner">
+    <span class="section-badge">Optimiser</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Trouver mieux pour moins cher</h2>
+    <p class="section-sub">Changer de logement est l\'un des leviers les plus puissants pour réduire ses charges — loyer plus bas, meilleure isolation, ou simplement mieux adapté à votre situation.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start">
+
+      <!-- Formulaire LBC -->
+      <div class="loge-card sable">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div>
+            <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📍 Ville ou commune</label>
+            <input id="lbc-ville" type="text" placeholder="Ex : Paris, Lyon, Bordeaux…"
+              style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+              onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📡 Rayon</label>
+              <select id="lbc-rayon"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+                <option value="0">Dans la ville</option>
+                <option value="10">+ 10 km</option>
+                <option value="20" selected>+ 20 km</option>
+                <option value="30">+ 30 km</option>
+                <option value="50">+ 50 km</option>
+                <option value="100">+ 100 km</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">🏠 Type de bien</label>
+              <select id="lbc-type"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+                <option value="">Tous types</option>
+                <option value="appartements">Appartement</option>
+                <option value="maisons_villas">Maison / Villa</option>
+                <option value="colocations">Colocation</option>
+                <option value="studios">Studio</option>
+                <option value="meuble">Meublé</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">💶 Loyer max (€/mois)</label>
+              <input id="lbc-loyer" type="number" min="0" step="50" placeholder="Ex : 900"
+                style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📐 Surface min (m²) <span style="font-weight:300;text-transform:none;letter-spacing:0">(optionnel)</span></label>
+              <input id="lbc-surface" type="number" min="0" step="5" placeholder="Ex : 30"
+                style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+          </div>
+          <button onclick="ouvrirLBC()"
+            style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px 20px;background:var(--terra);color:white;font-size:0.95rem;font-weight:700;font-family:inherit;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:opacity 0.15s"
+            onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+            🔍 Lancer la recherche →
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulateur déménagement -->
+      <div class="loge-card sable">
+        <h4 style="margin-bottom:6px">💸 Si je déménage…</h4>
+        <p style="font-size:0.82rem;color:var(--gris);margin-bottom:16px">Entrez un nouveau loyer pour voir l\'impact sur votre budget.</p>
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">Nouveau loyer mensuel (€)</label>
+          <input id="simul-loyer" type="number" min="0" step="10"
+            style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+            oninput="calculerSimul()"
+            onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+        </div>
+        <div id="simul-result"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>
+function estimerAPL(loyer, revenus, zone, nbP, nbEnf) {
+  const plafond = zone === 'paris' ? 2800 : zone === 'grande_ville' ? 2200 : 1800;
+  if (revenus > plafond) return 0;
+  const base = Math.min(loyer, zone === 'paris' ? 700 : zone === 'grande_ville' ? 500 : 380);
+  const participation = revenus * 0.10 + nbP * 15;
+  return Math.max(0, Math.round(base * 0.72 - participation + nbEnf * 25));
+}
+
+(async () => {
+  const user = await requireAuth();
+  if (!user) return;
+  renderNav();
+  let profil = await chargerProfilDB(user.id);
+  if (!profil) profil = chargerProfil();
+  if (!profil) { window.location.href = 'profil.html'; return; }
+
+  const isCoupleFoyer = (profil.usage_profil === 'foyer' || (!profil.usage_profil && profil.gestion_couple === 'commune'))
+    && (profil.situation === 'couple' || profil.situation === 'famille')
+    && profil.vit_ensemble === 'oui' && profil.gestion_couple === 'commune';
+  const salaire = isCoupleFoyer && profil.salaire_foyer ? profil.salaire_foyer : (profil.salaire || 0);
+  const nbPersonnes = isCoupleFoyer ? 2 + (profil.enfants || 0) : 1 + (profil.enfants || 0);
+  const nbEnfants = profil.enfants || 0;
+  const zone = profil.zone || 'province';
+  const isLocataire = profil.statut_logement !== 'proprietaire';
+  const isProprietaire = profil.statut_logement === 'proprietaire';
+  const hasCreditImmo = (profil.credit_immo || 0) > 0;
+  const isMixte = isLocataire && hasCreditImmo;
+  const Votre = isCoupleFoyer ? 'Votre' : 'Ton';
+  const votre = isCoupleFoyer ? 'votre' : 'ton';
+
+  const loyer = profil.loyer || 0;
+  const elec = profil.electricite || 0;
+  const eau = profil.eau || 0;
+  const assurHab = profil.assurance_habitation || 0;
+  const copro = profil.charges_copro || 0;
+  const entretien = profil.entretien_maison || 0;
+  const taxeFonc = (profil.taxe_fonciere_annuel || 0) / 12;
+  const taxeHab = (profil.taxe_habitation_annuel || 0) / 12;
+  const creditImmo = profil.credit_immo || 0;
+  const valeurBien = profil.valeur_bien || 0;
+  const dureeRestante = profil.duree_credit_restante || 0;
+  const tauxCreditAnnuel = profil.taux_credit || 0;
+  // Formule exacte : Capital = mensualité × (1 - (1+r)^-n) / r  avec r = taux mensuel
+  const capitalRestant = (() => {
+    if (creditImmo <= 0 || dureeRestante <= 0) return 0;
+    if (tauxCreditAnnuel <= 0) return null; // taux inconnu
+    const r = tauxCreditAnnuel / 100 / 12;
+    return Math.round(creditImmo * (1 - Math.pow(1 + r, -dureeRestante)) / r);
+  })();
+  const totalHorsCredit = loyer + elec + eau + assurHab + copro + entretien + Math.round(taxeFonc) + Math.round(taxeHab);
+  const totalAvecCredit = totalHorsCredit + creditImmo;
+  const chargesData = [
+    { icon: '🔑', label: 'Loyer mensuel', val: loyer, show: isLocataire },
+    { icon: '🏠', label: 'Crédit immobilier', val: creditImmo, show: hasCreditImmo },
+    { icon: '⚡', label: 'Électricité / Gaz', val: elec },
+    { icon: '💧', label: 'Eau', val: eau },
+    { icon: '🛡️', label: 'Assurance habitation', val: assurHab },
+    { icon: '🏢', label: 'Charges copropriété', val: copro, show: !!copro && isProprietaire },
+    { icon: '🧹', label: 'Entretien / ménage', val: entretien },
+    { icon: '🏛️', label: 'Taxe foncière (÷12)', val: Math.round(taxeFonc), show: !!taxeFonc },
+    { icon: '🏛️', label: 'Taxe d\'habitation résid. sec. (÷12)', val: Math.round(taxeHab), show: !!taxeHab },
+  ].filter(c => c.val > 0 && (c.show === undefined || c.show));
+  const totalDepensesListe = chargesData.reduce((s, c) => s + c.val, 0);
+
+  // Titre & sous-titre
+  document.getElementById('page-title').innerHTML = isCoupleFoyer ? 'Notre <em>logement</em> 🏠' : 'Mon <em>logement</em> 🏠';
+  document.getElementById('page-sub').textContent = salaire > 0
+    ? `${formatEuro(totalDepensesListe)}/mois · ${formatEuro(totalDepensesListe * 12)}/an pour ${votre} logement`
+    : 'Complétez votre profil pour voir l\'analyse.';
+
+  // Score band
+  const tauxLoyer = salaire > 0 ? (loyer / salaire) * 100 : 0;
+  const tauxTotal = salaire > 0 ? (totalDepensesListe / salaire) * 100 : 0;
+  const bandItems = [
+    { label: isCoupleFoyer ? 'Revenus du foyer' : 'Revenus mensuels', val: salaire > 0 ? formatEuro(salaire) : '—', sub: isCoupleFoyer ? 'revenus combinés' : 'net mensuel', highlight: false },
+    ...(creditImmo > 0 ? [{ label: 'Crédit immobilier', val: formatEuro(creditImmo), sub: `${Math.round(creditImmo/salaire*100)}% des revenus`, highlight: false }] : []),
+    ...(isLocataire ? [{ label: 'Loyer mensuel', val: formatEuro(loyer), sub: `${Math.round(tauxLoyer)}% des revenus`, highlight: false }] : []),
+    ...(isProprietaire && copro > 0 ? [{ label: 'Charges copro', val: formatEuro(copro), sub: 'charges mensuelles', highlight: false }] : []),
+    { label: 'Charges & énergie', val: formatEuro(elec + eau + entretien), sub: 'énergie, eau, entretien', highlight: false },
+    { label: 'Assurances & taxes', val: formatEuro(assurHab + Math.round(taxeFonc) + Math.round(taxeHab)), sub: taxeHab > 0 ? 'habitation + foncière + taxe hab.' : 'habitation + foncière', highlight: false },
+    { label: 'Coût total logement', val: formatEuro(totalDepensesListe), sub: `${Math.round(tauxTotal)}% de vos revenus`, highlight: true },
+    ...(isProprietaire && valeurBien > 0 ? [{ label: 'Patrimoine net immo', val: capitalRestant !== null && capitalRestant > 0 ? formatEuro(valeurBien - capitalRestant) : formatEuro(valeurBien), sub: capitalRestant > 0 ? `valeur − capital restant dû` : 'valeur estimée du bien', highlight: false }] : []),
+  ];
+  document.getElementById('loge-band').style.gridTemplateColumns = `repeat(${bandItems.length},1fr)`;
+  document.getElementById('loge-band').innerHTML = bandItems.map(i => `<div class="loge-band-item" ${i.highlight ? 'style="background:var(--terra-pale)"' : ''}><span class="loge-band-label">${i.label}</span><span class="loge-band-val" ${i.highlight ? 'style="color:var(--terra)"' : ''}>${i.val}</span><span class="loge-band-sub">${i.sub}</span></div>`).join('');
+
+  // Coût total logement pour la jauge principale
+  const loyerPrincipal = isLocataire ? loyer : creditImmo > 0 ? creditImmo : loyer;
+  const tauxPrincipal = salaire > 0 ? (totalDepensesListe / salaire) * 100 : 0;
+  const seuilIdeal = salaire * 0.30;
+  const seuilMax = salaire * 0.40;
+
+  // Intro personnalisée (placée ici car dépend de tauxPrincipal)
+  const prenomStr = profil.prenom ? `, ${profil.prenom}` : '';
+  const situationStr = isLocataire ? 'locataire' : isProprietaire ? 'propriétaire' : 'en situation mixte';
+  const loyerStr = creditImmo > 0
+    ? ` avec un crédit immobilier de ${formatEuro(creditImmo)}/mois${copro > 0 ? ` et ${formatEuro(copro)}/mois de charges de copropriété` : ''}`
+    : loyer > 0 ? ` avec un loyer de ${formatEuro(loyer)}/mois` : '';
+  const tauxStr = salaire > 0 && totalDepensesListe > 0 ? `, soit ${Math.round(totalDepensesListe / salaire * 100)}% de ${isCoupleFoyer ? 'vos revenus combinés' : 'vos revenus'}` : '';
+  const actionStr = tauxPrincipal > 40
+    ? `Votre charge logement dépasse le seuil critique — nous avons identifié des leviers concrets pour alléger la facture.`
+    : tauxPrincipal > 30
+    ? `Votre logement pèse significativement sur votre budget. Ensemble, analysons où des économies sont possibles.`
+    : `Votre logement est globalement bien calibré. Voyons comment l\'optimiser encore davantage.`;
+  document.getElementById('intro-text').innerHTML =
+    `Le logement est souvent le premier poste de dépenses d\'un foyer${prenomStr}. ${isCoupleFoyer ? 'En tant que foyer' : 'En tant que ' + situationStr}${loyerStr}, votre budget logement total représente <strong>${formatEuro(totalDepensesListe)}/mois</strong>${tauxStr}. ${actionStr}`;
+
+  document.getElementById('jauge-titre').textContent = isCoupleFoyer ? 'Coût total logement' : 'Coût total logement';
+  document.getElementById('jauge-val').textContent = formatEuro(totalDepensesListe);
+  document.getElementById('jauge-sub').textContent = `par mois · ${formatEuro(totalDepensesListe * 12)}/an (loyer + toutes charges)`;  
+  const fillColor = tauxPrincipal <= 30 ? 'var(--success)' : tauxPrincipal <= 40 ? 'var(--warning)' : 'var(--danger)';
+  document.getElementById('jauge-fill').style.cssText = `width:${Math.min(tauxPrincipal, 100)}%;background:${fillColor}`;
+  const sc = tauxPrincipal <= 30 ? 'statut-ok' : tauxPrincipal <= 40 ? 'statut-warn' : 'statut-bad';
+  const sm = tauxPrincipal <= 30 ? `✅ ${Math.round(tauxPrincipal)}% des revenus — dans les normes` : tauxPrincipal <= 40 ? `⚠️ ${Math.round(tauxPrincipal)}% des revenus — au-dessus de 30%` : `❌ ${Math.round(tauxPrincipal)}% des revenus — taux trop élevé`;
+  document.getElementById('jauge-conseil').innerHTML = `<div class="statut-badge ${sc}">${sm}</div>`;
+
+  const couleurLoyer = totalDepensesListe <= seuilIdeal ? 'var(--success)' : totalDepensesListe <= seuilMax ? 'var(--warning)' : 'var(--danger)';
+  document.getElementById('seuils-content').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+      ${[
+        { color:'var(--success)', label:'🎯 Seuil idéal (30%)', val: seuilIdeal },
+        { color:'var(--danger)', label:'🔴 Seuil maximum (40%)', val: seuilMax },
+        { color: couleurLoyer, label:'🏠 Votre coût logement total', val: totalDepensesListe },
+      ].map(s => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:white;border-radius:var(--radius-sm);border-left:3px solid ${s.color}">
+        <span style="font-size:0.83rem;color:var(--texte)">${s.label}</span>
+        <strong style="font-family:'DM Serif Display',serif;color:${s.color}">${formatEuro(s.val)}/mois</strong>
+      </div>`).join('')}
+      <div class="info-box ${tauxPrincipal <= 30 ? 'green' : tauxPrincipal <= 40 ? 'terra' : 'statut-bad' }">
+        ${tauxPrincipal <= 30
+          ? `✅ Bien joué — votre logement est maîtrisé. Vous conservez plus de marge pour épargner.`
+          : tauxPrincipal <= 40
+          ? `⚠️ Votre logement représente ${Math.round(tauxPrincipal)}% de vos revenus — au-dessus de 30%, surveillez votre budget.`
+          : `❌ Votre logement représente ${Math.round(tauxPrincipal)}% de vos revenus — au-dessus du seuil critique de 40%.`}
+      </div>
+      ${nbEnfants > 0 ? `<div class="info-box blue">👶 Avec ${nbEnfants} enfant${nbEnfants > 1 ? 's' : ''}, les banques acceptent parfois jusqu\'à 35% de taux d\'effort compte tenu des charges familiales.</div>` : ''}
+    </div>`;
+
+  // 2. Coût réel
+
+
+
+  // Liste des charges — montants seuls, sans barres redondantes
+  document.getElementById('charges-list').innerHTML = chargesData.map(c => {
+    const pct = totalDepensesListe > 0 ? Math.round(c.val / totalDepensesListe * 100) : 0;
+    return `
+    <div style="padding:12px 0;border-bottom:1px solid var(--sable3);text-align:center">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--texte)">
+          <span>${c.icon}</span><span>${c.label}</span>
+        </div>
+        <span style="font-family:'DM Serif Display',serif;font-weight:700;font-size:1rem;color:var(--texte)">${formatEuro(c.val)}</span>
+      </div>
+      <div style="height:6px;background:var(--sable3);border-radius:3px;overflow:hidden;margin-bottom:4px">
+        <div style="height:100%;width:${pct}%;background:var(--terra);border-radius:3px;opacity:0.75;transition:width 0.8s ease"></div>
+      </div>
+      <div style="font-size:0.72rem;color:var(--gris2);text-align:right">${pct}% du budget total</div>
+    </div>`;
+  }).join('');
+  document.getElementById('charges-total-val').textContent = formatEuro(totalDepensesListe);
+
+  const rPrincipal = totalDepensesListe > 0 ? Math.round(loyerPrincipal / totalDepensesListe * 100) : 0;
+  const rEnergie = totalDepensesListe > 0 ? Math.round((elec + eau) / totalDepensesListe * 100) : 0;
+  const rAutres = 100 - rPrincipal - rEnergie;
+
+  // Analyse qualitative
+  const energieMoyenne = 50 + nbPersonnes * 35;
+  let avisRepartition = '';
+  let avisClass = 'green';
+  if (rPrincipal > 85) {
+    avisRepartition = `⚠️ Votre ${isLocataire ? 'loyer' : 'crédit'} absorbe ${rPrincipal}% de votre budget logement. Il vous reste seulement ${formatEuro(Math.round(totalDepensesListe * (100 - rPrincipal) / 100))} pour l\'énergie, l\'eau et les assurances — la moindre hausse de facture déséquilibre votre budget.`;
+    avisClass = 'terra';
+  } else if (rPrincipal > 75) {
+    avisRepartition = `💡 Votre ${isLocataire ? 'loyer' : 'crédit'} représente ${rPrincipal}% de votre budget logement, soit ${formatEuro(loyerPrincipal)}/mois. Vos charges annexes (énergie, eau, assurances) totalisent ${formatEuro(totalDepensesListe - loyerPrincipal)}/mois — peu de marge si les tarifs augmentent.`;
+    avisClass = '';
+  } else if (elec > energieMoyenne * 1.3) {
+    avisRepartition = `💡 Votre ${isLocataire ? 'loyer' : 'crédit'} est maîtrisé (${rPrincipal}% du budget), mais votre facture énergie de ${formatEuro(elec)}/mois dépasse la moyenne nationale de ${formatEuro(energieMoyenne)} pour ${nbPersonnes} personne${nbPersonnes > 1 ? 's' : ''}. C\'est votre principal poste à optimiser.`;
+    avisClass = 'terra';
+  } else if (rPrincipal < 60 && totalDepensesListe > 0) {
+    avisRepartition = `✅ Votre ${isLocataire ? 'loyer' : 'crédit'} (${formatEuro(loyerPrincipal)}/mois) ne représente que ${rPrincipal}% de votre budget logement — vous avez une bonne marge si les charges augmentent.`;
+    avisClass = 'green';
+  } else {
+    avisRepartition = `✅ ${isLocataire ? 'Loyer' : 'Crédit'} : ${formatEuro(loyerPrincipal)}/mois · Énergie & eau : ${formatEuro(elec + eau)}/mois · Autres : ${formatEuro(totalDepensesListe - loyerPrincipal - elec - eau)}/mois. Répartition équilibrée.`;
+    avisClass = 'green';
+  }
+
+  document.getElementById('cout-repartition').innerHTML =
+    `<div class="info-box ${avisClass}" style="font-size:0.82rem;line-height:1.6">${avisRepartition}</div>
+     <div class="info-box" style="margin-top:8px">Coût total sur 20 ans : <strong>${formatEuro(totalDepensesListe * 12 * 20)}</strong></div>
+     ${isLocataire && loyer > 0 ? (() => {
+       const irlActuel = 142.06;
+       const irlPrecedent = 136.27;
+       const tauxIRL = ((irlActuel - irlPrecedent) / irlPrecedent);
+       const hausseMax = Math.round(loyer * tauxIRL);
+       const nouveauLoyer = loyer + hausseMax;
+       return `<div class="info-box terra" style="margin-top:8px;font-size:0.82rem;line-height:1.65">
+         ⚠️ <strong>Révision annuelle du loyer</strong> — Votre propriétaire peut réviser votre loyer <strong>une seule fois par an</strong>, uniquement selon l\'IRL publié par l\'INSEE. Sur la base du dernier IRL connu (+${(tauxIRL * 100).toFixed(2)}%), la hausse maximale autorisée serait de <strong>+${hausseMax}€/mois</strong>, portant votre loyer à ${formatEuro(nouveauLoyer)}/mois. Toute révision au-delà est illégale.
+       </div>`;
+     })() : ''}
+     ${isProprietaire && creditImmo > 0 ? (() => {
+       const tauxEndet = salaire > 0 ? Math.round(creditImmo / salaire * 100) : 0;
+       const statut = tauxEndet <= 33;
+       return `<div class="info-box ${statut ? 'green' : 'terra'}" style="margin-top:8px;font-size:0.82rem;line-height:1.65">
+         ${statut ? '✅' : '⚠️'} <strong>Taux d\'endettement : ${tauxEndet}%</strong> — ${statut
+           ? `dans les normes bancaires (seuil : 33%). Votre crédit de ${formatEuro(creditImmo)}/mois laisse une marge de ${formatEuro(Math.round(salaire * 0.33 - creditImmo))} avant d\'atteindre le plafond.`
+           : `au-dessus du seuil bancaire de 33%. Renégocier votre taux ou changer d\'assurance emprunteur peut réduire cette charge.`}
+       </div>`;
+     })() : ''}`;
+
+
+
+  // Simulateur déménagement (inline avec LBC)
+  document.getElementById('simul-loyer').value = totalDepensesListe;
+
+  window.calculerSimul = function() {
+    const nouveau = parseFloat(document.getElementById('simul-loyer').value) || 0;
+    const diff = totalDepensesListe - nouveau;
+    const el = document.getElementById('simul-result');
+    if (nouveau <= 0 || diff === 0) { el.innerHTML = ''; return; }
+    const gain = diff > 0;
+    const couleur = gain ? '#4a7c59' : '#c0392b';
+    const signe = gain ? '−' : '+';
+    const absDiff = Math.abs(diff);
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div style="background:var(--creme);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:4px">Par mois</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:700;color:${couleur}">${signe}${formatEuro(absDiff)}</div>
+        </div>
+        <div style="background:var(--creme);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:4px">Par an</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:700;color:${couleur}">${signe}${formatEuro(absDiff * 12)}</div>
+        </div>
+      </div>
+      ${salaire > 0 ? `<div class="info-box" style="font-size:0.8rem">Nouveau taux d\'effort : <strong>${Math.round(nouveau / salaire * 100)}%</strong> de vos revenus ${Math.round(nouveau / salaire * 100) <= 30 ? '✅' : Math.round(nouveau / salaire * 100) <= 40 ? '⚠️' : '🔴'}</div>` : ''}`;
+  };
+  calculerSimul();
+
+  // 4. Propriétaire
+  if (isProprietaire || hasCreditImmo) {
+    document.getElementById('section-proprio').style.display = 'block';    const ecoReneg = Math.round(creditImmo * 0.08);
+    const ecoLemoine = Math.round(creditImmo * 0.15);
+    const tauxCredit = salaire > 0 ? Math.round(creditImmo / salaire * 100) : 0;
+    const revenuRef = salaire / (nbPersonnes * 12);
+    const categorie = revenuRef < 1000 ? 'Bleue (très modeste — jusqu\'à 70%)' : revenuRef < 1500 ? 'Jaune (modeste — jusqu\'à 50%)' : revenuRef < 2000 ? 'Violette (intermédiaire — jusqu\'à 35%)' : 'Rose (aisé — jusqu\'à 25%)';
+
+    const proprioConseils = [
+      ...(creditImmo > 0 ? [{
+        icon: '🏠',
+        titre: `Crédit immobilier — ${formatEuro(creditImmo)}/mois`,
+        desc: `Taux d\'endettement : ${tauxCredit}% de vos revenus — ${tauxCredit <= 33 ? 'dans les normes bancaires.' : 'au-dessus du seuil bancaire de 33%.'} Renégocier 1 point de taux peut libérer ~${formatEuro(ecoReneg)}/mois.${capitalRestant > 0 ? ` Capital restant dû estimé : <strong>${formatEuro(capitalRestant)}</strong> (sur ${dureeRestante} mois).` : capitalRestant === null ? ' Renseignez votre taux d\'intérêt dans le profil pour calculer le capital restant dû.' : ''}`,
+        lien: 'https://www.pretto.fr/pret-immobilier/renegocier-son-pret-immobilier/',
+        btn: 'Simuler sur Pretto'
+      }] : []),
+      ...(creditImmo > 0 ? [{
+        icon: '🛡️',
+        titre: `Changer d\'assurance emprunteur — ~${formatEuro(ecoLemoine)}/mois`,
+        desc: `Loi Lemoine : changement à tout moment, sans frais. Sur votre mensualité de ${formatEuro(creditImmo)}, l\'économie potentielle est de ${formatEuro(ecoLemoine)}/mois, soit ${formatEuro(ecoLemoine * 12)}/an.`,
+        lien: 'https://www.meilleurtaux.com/demande-simulation/assurance-de-pret/',
+        btn: 'Comparer sur MeilleurTaux'
+      }] : []),
+      {
+        icon: '🔨',
+        titre: 'MaPrimeRénov & aides travaux',
+        desc: `Isolation, pompe à chaleur, chaudière — jusqu\'à 70% pris en charge. Selon vos revenus, vous seriez éligible à la catégorie <strong>MaPrimeRénov' ${categorie}</strong>.`,
+        lien: 'https://www.maprimerenov.gouv.fr',
+        btn: 'maprimerenov.gouv.fr'
+      },
+      ...(taxeFonc > 0 ? [{
+        icon: '🏛️',
+        titre: `Taxe foncière — ${formatEuro(taxeFonc * 12)}/an`,
+        desc: `Soit ${formatEuro(Math.round(taxeFonc))}/mois lissé. Des exonérations existent : revenus modestes, plus de 75 ans, logement vacant, construction neuve. Des travaux de rénovation peuvent aussi ouvrir droit à une réduction via les CEE.`,
+        lien: 'https://www.service-public.fr/particuliers/vosdroits/F42',
+        btn: 'Vérifier mes droits'
+      }] : []),
+      ...(copro > 0 ? [{
+        icon: '🏢',
+        titre: `Charges de copropriété — ${formatEuro(copro)}/mois`,
+        desc: copro > 150
+          ? `Vos charges (${formatEuro(copro)}/mois) dépassent la moyenne nationale (~150€/mois). En AG, vous pouvez contester les dépenses non justifiées et demander une mise en concurrence des prestataires. Tout copropriétaire peut voter contre des charges jugées excessives.`
+          : `Vos charges (${formatEuro(copro)}/mois) sont dans la moyenne nationale (~150€/mois). Pensez à vérifier chaque année le détail du budget prévisionnel voté en AG — certaines dépenses peuvent être contestées.`,
+        lien: 'https://www.service-public.fr/particuliers/vosdroits/F2608',
+        btn: 'Vos droits en copropriété'
+      }] : []),
+    ];
+
+    document.getElementById('proprio-sub').textContent = `${proprioConseils.length} levier${proprioConseils.length > 1 ? 's' : ''} identifié${proprioConseils.length > 1 ? 's' : ''} selon votre situation.`;
+    document.getElementById('proprio-conseils').innerHTML = proprioConseils.map((c, i) => `
+      <div class="loge-card sable">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:1.5rem">${c.icon}</span>
+          <span style="font-size:0.68rem;font-weight:700;color:var(--terra);background:var(--terra-pale);padding:3px 10px;border-radius:50px">${i + 1} / ${proprioConseils.length}</span>
+        </div>
+        <h4>${c.titre}</h4>
+        <p>${c.desc}</p>
+        <a href="${c.lien}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:var(--terra);color:white;font-size:0.75rem;font-weight:600;padding:7px 14px;border-radius:50px;text-decoration:none">🔗 ${c.btn} →</a>
+      </div>`).join('');
+
+    // Simulateur de revente
+    if (valeurBien > 0 || capitalRestant > 0) {
+      document.getElementById('simul-revente-bloc').style.display = 'block';
+      const prixRef = valeurBien > 0 ? valeurBien : 0;
+      const inputRevente = document.getElementById('revente-prix');
+      if (prixRef > 0) {
+        inputRevente.placeholder = formatEuro(prixRef).replace('€','').trim();
+        document.getElementById('revente-valeur-ref').textContent = `Valeur estimée du profil : ${formatEuro(prixRef)}`;
+        inputRevente.value = prixRef;
+      }
+
+      window.calculerRevente = function() {
+        const prix = parseFloat(document.getElementById('revente-prix').value) || 0;
+        const el = document.getElementById('revente-result');
+        if (!prix) { el.innerHTML = ''; return; }
+        const fraisAgence = Math.round(prix * 0.05);
+        const fraisNotaire = Math.round(prix * 0.01); // frais de mainlevée ~1%
+        const netVendeur = prix - fraisAgence - fraisNotaire - (capitalRestant || 0);
+        const plusValue = valeurBien > 0 ? prix - valeurBien : null;
+        const couleur = netVendeur > 0 ? '#4a7c59' : '#c0392b';
+        el.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div class="loge-card sable" style="text-align:center;padding:18px">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:var(--gris);margin-bottom:6px">Capital restant dû</div>
+              <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;font-weight:700;color:#c0392b">${capitalRestant === null ? '—' : '−' + formatEuro(capitalRestant)}</div>
+              ${capitalRestant === null ? '<div style="font-size:0.68rem;color:var(--terra);margin-top:4px">Taux à renseigner dans le profil</div>' : ''}
+            </div>
+            <div class="loge-card sable" style="text-align:center;padding:18px">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:var(--gris);margin-bottom:6px">Frais (agence + mainlevée)</div>
+              <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;font-weight:700;color:#c0392b">−${formatEuro(fraisAgence + fraisNotaire)}</div>
+              <div style="font-size:0.68rem;color:var(--gris2);margin-top:3px">~5% agence + ~1% notaire</div>
+            </div>
+            <div class="loge-card sable" style="text-align:center;padding:18px;background:${netVendeur > 0 ? '#edf5ee' : '#fceaea'}">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:var(--gris);margin-bottom:6px">Net vendeur</div>
+              <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:700;color:${couleur}">${netVendeur > 0 ? '+' : ''}${formatEuro(netVendeur)}</div>
+            </div>
+          </div>
+          ${plusValue !== null ? `<div class="info-box ${plusValue > 0 ? 'green' : 'terra'}" style="margin-top:12px;font-size:0.82rem">
+            ${plusValue > 0 ? `📈 Plus-value brute estimée : <strong>+${formatEuro(plusValue)}</strong> (prix de revente vs valeur d\'achat estimée).` : `📉 Moins-value estimée : <strong>${formatEuro(plusValue)}</strong> par rapport à la valeur renseignée dans le profil.`}
+          </div>` : ''}
+          ${capitalRestant === null ? '<div class="info-box terra" style="margin-top:8px;font-size:0.82rem">⚠️ Renseignez votre taux d\'intérêt dans le profil pour calculer le capital restant dû et affiner le net vendeur.</div>' : capitalRestant === 0 ? '<div class="info-box" style="margin-top:8px;font-size:0.82rem">ℹ️ Renseignez la durée restante et le taux du crédit dans votre profil pour calculer le capital restant dû.</div>' : ''}`;
+      };
+      calculerRevente();
+    }
+  }
+
+  // 5. Cas mixte
+  if (isMixte) {
+    document.getElementById('section-mixte').style.display = 'block';
+    const chargesMixte = loyer + creditImmo;
+    const tauxMixte = salaire > 0 ? (chargesMixte / salaire) * 100 : 0;
+    document.getElementById('mixte-analyse').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="charge-row"><div class="charge-row-left">🔑 Loyer résidence principale</div><strong>${formatEuro(loyer)}/mois</strong></div>
+        <div class="charge-row"><div class="charge-row-left">🏠 Remboursement crédit immo</div><strong>${formatEuro(creditImmo)}/mois</strong></div>
+        <div class="charges-total">
+          <span style="font-size:0.85rem;font-weight:600;color:var(--terra-dark)">Total charge principale</span>
+          <strong style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--terra)">${formatEuro(chargesMixte)}/mois (${Math.round(tauxMixte)}%)</strong>
+        </div>
+        <div class="info-box ${tauxMixte > 40 ? 'terra' : 'green'}">${tauxMixte > 40 ? `⚠️ Double charge élevée (${Math.round(tauxMixte)}%). Priorité : optimiser le crédit (assurance emprunteur, renégociation).` : `✅ Malgré les deux charges, votre taux d\'effort (${Math.round(tauxMixte)}%) reste gérable.`}</div>
+      </div>`;
+    document.getElementById('mixte-conseils').innerHTML = [
+      { cls:'terra', txt:`🛡️ <strong>Assurance emprunteur</strong><br>Loi Lemoine → économie potentielle de ${formatEuro(Math.round(creditImmo*0.15))}/mois` },
+      { cls:'blue', txt:'🏦 <strong>Rachat de crédit</strong><br>Si les taux ont baissé, un rachat peut réduire votre mensualité de 5 à 15%' },
+      { cls:'green', txt:'💰 <strong>Location du bien</strong><br>Si votre bien immobilier est loué, les loyers perçus couvrent tout ou partie du crédit' },
+      { cls:'', txt:'📋 <strong>Revenus locatifs</strong><br>Déclarez les loyers perçus — des régimes fiscaux avantageux (micro-foncier, LMNP) existent' },
+    ].map(c => `<div class="info-box ${c.cls}" style="margin-bottom:10px">${c.txt}</div>`).join('');
+  }
+
+  // 6. Énergie
+  // Moyennes nationales sourcées
+  // Électricité + Gaz : ADEME "Chiffres clés énergie 2023" + Enedis 2023
+  // 1 pers ≈ 80€, 2 pers ≈ 130€, 3 pers ≈ 160€, 4 pers ≈ 185€
+  const moyElec = 50 + nbPersonnes * 35;
+  // Eau : INSEE 2022 — consommation moyenne 148L/pers/jour à 4,3€/m³
+  // 1 pers ≈ 15€, 2 pers ≈ 25€, 3 pers ≈ 35€
+  const moyEau = 5 + nbPersonnes * 10;
+  document.getElementById('energie-sub').textContent = `Comparaison avec les moyennes nationales pour ${nbPersonnes} personne${nbPersonnes > 1 ? 's' : ''} — sources : ADEME 2023, INSEE, Enedis.`;
+  const energieItems = [
+    { icon:'⚡', label:'Électricité / Gaz', val:elec, moy:moyElec, color:'#e67e22' },
+    { icon:'💧', label:'Eau', val:eau, moy:moyEau, color:'#4a90d9' },
+  ].filter(e => e.val > 0);
+  document.getElementById('energie-wrap').innerHTML = energieItems.length ? energieItems.map(e => {
+    const ratio = e.val / e.moy;
+    const w = Math.min(ratio * 50, 100);
+    return `<div style="background:var(--sable);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:0.85rem;font-weight:600">${e.icon} ${e.label}</span>
+        <span style="font-size:0.72rem;color:var(--gris)">Moyenne nationale : ${formatEuro(e.moy)}/mois <span style='font-size:0.65rem;color:var(--gris2)'>(ADEME 2023)</span></span>
+      </div>
+      <div style="position:relative;height:8px;background:var(--sable3);border-radius:4px;margin-bottom:6px">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${w}%;background:${e.color};border-radius:4px;transition:width 0.8s ease"></div>
+        <div style="position:absolute;left:50%;top:-4px;width:2px;height:16px;background:var(--gris2);opacity:0.5"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gris2)">
+        <span>${ratio <= 1 ? '✅' : ratio <= 1.3 ? '⚠️' : '🔴'} ${formatEuro(e.val)}/mois</span>
+        <span>${ratio > 1 ? '+'+Math.round((ratio-1)*100)+'% vs moyenne' : '-'+Math.round((1-ratio)*100)+'% vs moyenne'}</span>
+      </div>
+    </div>`;
+  }).join('') : '<div class="info-box">Renseignez vos dépenses d\'énergie dans votre profil pour cette analyse.</div>';
+
+  // ══════════════════════════════════════════════════════════════
+  // ── MOTEUR DE CONSEILS LOGEMENT — règles scorées 0-100 ──
+  // ══════════════════════════════════════════════════════════════
+
+  if (isLocataire) document.getElementById('section-lbc').style.display = 'block';
+  const aplEstime2 = isLocataire ? estimerAPL(loyer, salaire, zone, nbPersonnes, nbEnfants) : 0;
+
+  // Contexte enrichi pour le moteur
+  const moyElecZone = zone === 'paris' ? 120 : zone === 'grande_ville' ? 100 : 90;
+  const anneeCredit = profil.annee_credit || 0;
+  const ageCredit = anneeCredit ? (new Date().getFullYear() - anneeCredit) : 0;
+  // dureeRestante, tauxCredit, valeurBien, capitalRestant déjà déclarés plus haut
+  const objectif = profil.objectif_patrimoine || '';
+  const epargne = profil.epargne || 0;
+  const apport = profil.apport || Math.round(salaire * 24);
+  const moisApport = epargne > 0 ? Math.ceil((apport - (profil.epargne_actuelle || 0)) / epargne) : 0;
+
+  const REGLES_LOGEMENT = [
+
+    // ── LOYER / CRÉDIT TROP ÉLEVÉ ──
+    { id:'taux_effort_critique', icon: isLocataire ? '🔑' : '🏠',
+      score: function() {
+        if (tauxPrincipal > 50) return 98;
+        if (tauxPrincipal > 40) return 90;
+        if (tauxPrincipal > 33) return 72;
+        return 0;
+      },
+      titre: function() {
+        return isLocataire ? 'Votre loyer dépasse ' + Math.round(tauxPrincipal) + '% de vos revenus'
+          : 'Votre crédit dépasse ' + Math.round(tauxPrincipal) + '% de vos revenus';
+      },
+      desc: function() {
+        if (isLocataire) {
+          return 'Votre loyer (' + formatEuro(loyer) + '/mois) représente <strong>' + Math.round(tauxPrincipal) + '% de vos revenus</strong> — au-dessus du seuil critique de 33%. Colocation, déménagement vers une zone moins chère ou négociation du loyer sont vos principaux leviers.';
+        }
+        var eco = Math.round(loyerPrincipal - seuilIdeal);
+        return 'Votre crédit (' + formatEuro(creditImmo) + '/mois) représente <strong>' + Math.round(tauxPrincipal) + '% de vos revenus</strong>. Renégocier le taux ou changer d\'assurance emprunteur peut dégager ' + (eco > 0 ? formatEuro(eco) + '/mois' : 'des économies significatives') + '.';
+      },
+      liens: isLocataire
+        ? [{lien:'https://www.leboncoin.fr/recherche?category=10',btn:'Chercher un logement'}]
+        : [{lien:'https://www.meilleurtaux.com',btn:'Renégocier sur MeilleurTaux'},{lien:'https://www.pretto.fr',btn:'Simuler sur Pretto'}]
+    },
+
+    // ── COLOCATION ──
+    { id:'colocation', icon:'🤝',
+      score: function() {
+        if (!isLocataire) return 0;
+        if (tauxPrincipal > 40) return 88;
+        if (tauxPrincipal > 30) return 60;
+        return 0;
+      },
+      titre: function() {
+        var loyerColoc = Math.round(loyer / 2);
+        return 'En colocation : ' + formatEuro(loyerColoc) + '/mois au lieu de ' + formatEuro(loyer);
+      },
+      desc: function() {
+        var loyerColoc = Math.round(loyer / 2);
+        var econColoc = loyer - loyerColoc;
+        var tauxColoc = Math.round(loyerColoc / salaire * 100);
+        return 'Partager votre logement diviserait votre loyer par deux — soit <strong>' + formatEuro(econColoc) + '/mois économisés</strong> (' + formatEuro(econColoc*12) + '/an) et un taux d\'effort ramené à ' + tauxColoc + '% de vos revenus.';
+      },
+      liens: [{lien:'https://www.leboncoin.fr/recherche?category=10&real_estate_type=3',btn:'Voir les colocations'},{lien:'https://www.lacartedescolocs.fr/',btn:'La Carte des Colocs'}]
+    },
+
+    // ── APL ──
+    { id:'apl_eligible', icon:'🏛️',
+      score: function() {
+        if (!isLocataire) return 0;
+        if (aplEstime2 > 200) return 95;
+        if (aplEstime2 > 100) return 88;
+        if (aplEstime2 > 0) return 78;
+        return 30; // vérifier quand même
+      },
+      titre: function() {
+        return aplEstime2 > 0
+          ? 'Aide au logement — ~' + formatEuro(aplEstime2) + '/mois potentiels'
+          : 'Aide au logement — à vérifier';
+      },
+      desc: function() {
+        return aplEstime2 > 0
+          ? 'Estimation basée sur votre loyer (' + formatEuro(loyer) + '/mois) et vos revenus. Le montant réel dépend des ressources N-1 et de votre situation familiale. À confirmer en 5 min sur CAF.fr — <strong>' + formatEuro(aplEstime2*12) + '/an</strong> potentiels.'
+          : 'Avec vos revenus (' + formatEuro(salaire) + '/mois), les plafonds APL sont peut-être dépassés. Vérifiez quand même sur le simulateur CAF — les plafonds évoluent chaque année.';
+      },
+      liens: [{lien:'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/logement/calculez-votre-aide-au-logement',btn:'Simuler sur CAF.fr'}]
+    },
+
+    // ── ASSURANCE EMPRUNTEUR ──
+    { id:'assur_emprunteur', icon:'🛡️',
+      score: function() {
+        if (!creditImmo) return 0;
+        var econoPot = Math.round(creditImmo * 0.15);
+        if (econoPot > 80) return 92;
+        if (econoPot > 40) return 82;
+        return 70;
+      },
+      titre: function() {
+        return 'Changer d\'assurance emprunteur — ~' + formatEuro(Math.round(creditImmo * 0.15)) + '/mois';
+      },
+      desc: function() {
+        var econoMens = Math.round(creditImmo * 0.15);
+        var econoTotal = econoMens * (dureeRestante || 120);
+        return 'Loi Lemoine : vous pouvez changer à tout moment sans frais. En déléguant votre assurance, l\'économie moyenne est de <strong>5 000 à 15 000€ sur la durée du crédit</strong>' + (econoTotal ? ' — soit ~' + formatEuro(econoTotal) + ' dans votre cas' : '') + '. La banque ne peut pas refuser une garantie équivalente.';
+      },
+      liens: [{lien:'https://www.meilleurtaux.com/demande-simulation/assurance-de-pret/',btn:'Comparer sur MeilleurTaux'},{lien:'https://www.reassurez-moi.fr/assurance-pret-immobilier',btn:'Réassurez-moi'}]
+    },
+
+    // ── RENÉGOCIATION CRÉDIT ──
+    { id:'reneg_credit', icon:'📉',
+      score: function() {
+        if (!creditImmo) return 0;
+        // Plus pertinent si taux élevé ou crédit récent (<3 ans)
+        if (tauxCredit > 3.5) return 88;
+        if (tauxCredit > 2.5 && ageCredit < 5) return 75;
+        if (creditImmo > 1000) return 65;
+        return 55;
+      },
+      titre: function() {
+        var econoPot = Math.round(creditImmo * 0.08);
+        return 'Renégocier votre crédit — ~' + formatEuro(econoPot) + '/mois possible';
+      },
+      desc: function() {
+        return 'Si les taux ont évolué depuis votre emprunt' + (tauxCredit ? ' (votre taux actuel : <strong>' + tauxCredit + '%</strong>)' : '') + ', un rachat de crédit peut libérer plusieurs dizaines d\'euros par mois' + (dureeRestante ? ' sur ' + dureeRestante + ' mois restants' : '') + '.';
+      },
+      liens: [{lien:'https://www.pretto.fr/rachat-de-credit-immobilier/',btn:'Simuler sur Pretto'},{lien:'https://www.meilleurtaux.com/credit-immobilier/rachat-de-pret-immobilier/',btn:'MeilleurTaux'}]
+    },
+
+    // ── MAPRIMERENOV ──
+    { id:'maprimerenov', icon:'🏗️',
+      score: function() {
+        if (!isProprietaire) return 0;
+        if (elec > moyElecZone * 1.5) return 90;
+        if (elec > moyElecZone) return 78;
+        return 62;
+      },
+      titre: function() { return 'MaPrimeRénov — jusqu\'à 90% des travaux financés'; },
+      desc: function() {
+        var pct = salaire < 2000 ? '90%' : salaire < 3500 ? '70%' : '50%';
+        return 'En tant que propriétaire, MaPrimeRénov peut couvrir <strong>' + pct + ' des travaux d\'isolation ou de chauffage</strong> selon vos revenus. Une bonne isolation réduit la facture de chauffage de 25 à 60%. Le service FAIRE vous accompagne gratuitement.';
+      },
+      liens: [{lien:'https://www.maprimerenov.gouv.fr',btn:'Simuler MaPrimeRénov'},{lien:'https://www.faire.gouv.fr',btn:'Service FAIRE (gratuit)'}]
+    },
+
+    // ── ÉNERGIE TROP ÉLEVÉE ──
+    { id:'energie_elevee', icon:'🔌',
+      score: function() {
+        if (!elec) return 40;
+        if (elec > moyElecZone * 1.5) return 88;
+        if (elec > moyElecZone * 1.2) return 72;
+        if (elec > moyElecZone) return 58;
+        return 42;
+      },
+      titre: function() {
+        var surplusMens = elec > moyElecZone ? Math.round((elec - moyElecZone) * 0.5) : 0;
+        return elec > moyElecZone
+          ? 'Facture énergie élevée — ~' + formatEuro(surplusMens) + '/mois d\'économie possible'
+          : 'Comparer votre offre énergie';
+      },
+      desc: function() {
+        return 'Les offres de marché sont 10 à 25% moins chères que le tarif réglementé EDF. Changer de fournisseur est gratuit, sans coupure, et prend moins de 10 minutes. ' + (elec > moyElecZone ? 'Votre facture (' + formatEuro(elec) + '/mois) est au-dessus de la moyenne de votre zone (' + formatEuro(moyElecZone) + '/mois).' : '');
+      },
+      liens: [{lien:'https://comparateur.energie-info.fr/',btn:'Comparateur officiel énergie'},{lien:'https://www.totalenergies.fr/particuliers/electricite',btn:'TotalEnergies'}]
+    },
+
+    // ── EAU ──
+    { id:'economie_eau', icon:'💧',
+      score: function() { return eau > 0 ? 65 : 0; },
+      titre: function() { return 'Réduire la facture d\'eau sans effort'; },
+      desc: function() {
+        return isProprietaire
+          ? 'Un mousseur de robinet (5–8€) réduit la consommation de 50% selon l\'ADEME. Une chasse d\'eau double flux économise 30L/jour. Ces équipements s\'amortissent en quelques semaines.'
+          : 'Un mousseur de robinet (5–8€) réduit la consommation de 50% selon l\'ADEME. Une pomme de douche économique peut être installée sans autorisation du propriétaire.';
+      },
+      liens: [
+        {lien:'https://www.amazon.fr/s?k=mousseur+robinet+economiseur+eau',btn:'Mousseur de robinet (~5€)'},
+        {lien:'https://www.amazon.fr/s?k=pomme+douche+economie+eau',btn:'Pomme de douche économique (~15€)'}
+      ]
+    },
+
+    // ── CHAUFFAGE / ISOLATION ──
+    { id:'chauffage', icon:'🌡️',
+      score: function() {
+        if (isProprietaire && elec > moyElecZone) return 80;
+        if (isProprietaire) return 60;
+        if (isLocataire && elec > moyElecZone * 1.3) return 72;
+        return 50;
+      },
+      titre: function() {
+        return isProprietaire ? 'Isolation & travaux — réduire la facture de chauffage' : 'Réduire la facture de chauffage sans travaux';
+      },
+      desc: function() {
+        return isLocataire
+          ? 'Baisser le thermostat de 1°C = 7% d\'économies (ADEME). Des joints de fenêtre isolants (10–20€) limitent les déperditions sans travaux. Un thermostat programmable peut économiser jusqu\'à 25% sur le chauffage.'
+          : 'Une bonne isolation réduit la facture de chauffage de 25 à 60%. MaPrimeRénov couvre une large part des travaux selon vos revenus. Le service FAIRE accompagne gratuitement.';
+      },
+      liens: isLocataire
+        ? [{lien:'https://www.amazon.fr/s?k=joint+isolation+fenetre',btn:'Joints de fenêtre (~10€)'},{lien:'https://www.amazon.fr/s?k=thermostat+programmable',btn:'Thermostat programmable (~30€)'}]
+        : [{lien:'https://www.faire.gouv.fr',btn:'Service FAIRE (gratuit)'},{lien:'https://www.maprimerenov.gouv.fr',btn:'MaPrimeRénov'}]
+    },
+
+    // ── ASSURANCE HABITATION ──
+    { id:'assur_habitation', icon:'🏡',
+      score: function() {
+        if (!assurHab) return 0;
+        if (isProprietaire && assurHab > 80) return 78;
+        if (isLocataire && assurHab > 30) return 82;
+        if (isLocataire && assurHab > 20) return 65;
+        return 50;
+      },
+      titre: function() {
+        if (isProprietaire) return 'Revoir votre assurance habitation propriétaire';
+        var eco = assurHab > 25 ? Math.round((assurHab - 18) * 0.7) : 0;
+        return eco > 0 ? 'Revoir l\'assurance habitation — ~' + formatEuro(eco) + '/mois possible' : 'Comparer son assurance habitation';
+      },
+      desc: function() {
+        return isProprietaire
+          ? 'Vérifiez que vous disposez d\'une assurance multirisque habitation (MRH) adaptée. Un comparatif annuel peut faire économiser 20 à 40% — résiliable à tout moment (loi Hamon).'
+          : 'Résiliable à tout moment après 1 an (loi Hamon). Un comparatif annuel peut faire économiser 20 à 40% à garanties équivalentes. La plupart des offres en ligne sont moins chères.';
+      },
+      liens: [{lien:'https://www.meilleureassurance.com/assurance-habitation',btn:'MeilleureAssurance'},{lien:'https://www.lelynx.fr/assurance-habitation/',btn:'LeLynx'}]
+    },
+
+    // ── CHARGES COPROPRIÉTÉ ÉLEVÉES ──
+    { id:'copro_elevee', icon:'🏢',
+      score: function() {
+        if (!copro || !isProprietaire) return 0;
+        if (copro > 300) return 80;
+        if (copro > 200) return 65;
+        if (copro > 150) return 50;
+        return 0;
+      },
+      titre: function() { return 'Charges de copropriété — ' + formatEuro(copro) + '/mois'; },
+      desc: function() {
+        var moyenneCopro = 150;
+        var surplus = copro - moyenneCopro;
+        return 'Vos charges de copropriété (' + formatEuro(copro) + '/mois) dépassent ' + (surplus > 0 ? 'de ' + formatEuro(surplus) + '/mois ' : '') + 'la moyenne nationale (~' + formatEuro(moyenneCopro) + '/mois). Assistez aux AG pour voter les travaux, vérifiez le contrat de syndic — changer de syndic peut réduire les charges de 15 à 30%.';
+      },
+      liens: [{lien:'https://www.unis-immo.fr/',btn:'Trouver un syndic'},{lien:'https://www.service-public.fr/particuliers/vosdroits/F2288',btn:'Droits en copropriété'}]
+    },
+
+    // ── TAXE FONCIÈRE ÉLEVÉE ──
+    { id:'taxe_fonciere', icon:'🏛️',
+      score: function() {
+        if (!taxeFonc || !isProprietaire) return 0;
+        if (taxeFonc > 2400) return 75;
+        if (taxeFonc > 1500) return 60;
+        return 40;
+      },
+      titre: function() { return 'Taxe foncière — optimisations possibles'; },
+      desc: function() {
+        return 'Votre taxe foncière est de ' + formatEuro(taxeFonc) + '/an (' + formatEuro(Math.round(taxeFonc/12)) + '/mois). Vérifiez que la superficie et les caractéristiques de votre bien sont correctement renseignées aux impôts — des erreurs de surface ou de classification peuvent coûter cher. Certains travaux de rénovation énergétique ouvrent droit à une exonération temporaire.';
+      },
+      liens: [{lien:'https://www.impots.gouv.fr/particulier/taxe-fonciere',btn:'Taxe foncière — impots.gouv.fr'}]
+    },
+
+    // ── PROJET ACHAT ──
+    { id:'projet_achat', icon:'🏠',
+      score: function() {
+        if (!isLocataire || objectif !== 'immobilier') return 0;
+        if (epargne > 500) return 85;
+        if (epargne > 200) return 70;
+        return 55;
+      },
+      titre: function() { return 'Préparer votre projet d\'achat'; },
+      desc: function() {
+        var dureeApport = moisApport
+          ? (moisApport > 12 ? Math.floor(moisApport/12) + ' ans ' + (moisApport%12 > 0 ? moisApport%12 + ' mois' : '') : moisApport + ' mois')
+          : null;
+        return 'Avec ' + formatEuro(epargne) + '/mois d\'épargne' + (dureeApport ? ', l\'apport (' + formatEuro(apport) + ') serait atteint en <strong>' + dureeApport + '</strong>' : '') + '. Le PTZ peut financer jusqu\'à 40% du bien selon la zone. Un courtier compare les offres de toutes les banques gratuitement.';
+      },
+      liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F10871',btn:'Vérifier le PTZ'},{lien:'https://www.pretto.fr',btn:'Simuler avec Pretto'}]
+    },
+
+    // ── SIMULATEUR DE REVENTE (PROPRIO) ──
+    { id:'simulation_revente', icon:'💰',
+      score: function() {
+        if (!isProprietaire || !valeurBien) return 0;
+        if (valeurBien > 300000) return 72;
+        if (valeurBien > 150000) return 60;
+        return 45;
+      },
+      titre: function() { return 'Valeur nette de votre bien immobilier'; },
+      desc: function() {
+        var fraisAgence = Math.round(valeurBien * 0.05);
+        var fraisNotaire = Math.round(valeurBien * 0.01);
+        var netVendeur = valeurBien - fraisAgence - fraisNotaire - capitalRestant;
+        return 'Valeur estimée : <strong>' + formatEuro(valeurBien) + '</strong>. En cas de revente : frais d\'agence (~' + formatEuro(fraisAgence) + ') + frais de mainlevée (~' + formatEuro(fraisNotaire) + ')' + (capitalRestant ? ' + capital restant dû (~' + formatEuro(capitalRestant) + ')' : '') + ' = <strong>net vendeur estimé : ' + formatEuro(Math.max(0, netVendeur)) + '</strong>.';
+      },
+      liens: [{lien:'https://www.meilleursagents.com/prix-immobilier/',btn:'Estimer le prix au m²'},{lien:'https://www.laforet.com/estimation-immobiliere/',btn:'Estimation gratuite Laforêt'}]
+    },
+
+    // ── LOYER EN DESSOUS DU MARCHÉ ──
+    { id:'loyer_ok', icon:'✅',
+      score: function() {
+        if (!isLocataire || tauxPrincipal > 33) return 0;
+        return tauxPrincipal < 20 ? 55 : 40;
+      },
+      titre: function() { return 'Votre taux d\'effort logement est maîtrisé'; },
+      desc: function() {
+        return 'Votre loyer représente <strong>' + Math.round(tauxPrincipal) + '% de vos revenus</strong> — en dessous du seuil recommandé de 33%. Vous disposez d\'une bonne marge pour épargner ou vous constituer un apport en vue d\'un achat immobilier.';
+      },
+      liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F10871',btn:'Vérifier le PTZ'}]
+    },
+
+    // ── RÈGLE 1 : ENCADREMENT DES LOYERS ──
+    { id:'encadrement_loyer', icon:'⚖️',
+      score: function() {
+        if (!isLocataire) return 0;
+        if (zone === 'paris' && loyer > 900) return 88;
+        if (zone === 'paris') return 75;
+        if (zone === 'grande_ville' && loyer > 700) return 72;
+        if (zone === 'grande_ville') return 58;
+        return 0;
+      },
+      titre: function() { return 'Encadrement des loyers — votre loyer est-il légal ?'; },
+      desc: function() {
+        var villeLabel = zone === 'paris' ? 'Paris' : 'votre ville';
+        return 'L\'encadrement des loyers s\'applique à ' + villeLabel + ' et dans plusieurs grandes agglomérations (Lyon, Bordeaux, Montpellier...). Si votre loyer dépasse le loyer de référence majoré, vous pouvez légalement demander une réduction à votre bailleur — et obtenir un remboursement rétroactif. Vérifiez votre situation en quelques clics sur le simulateur officiel.';
+      },
+      liens: [
+        {lien:'https://www.paris.fr/pages/l-encadrement-des-loyers-parisiens-3675',btn:'Simulateur Paris'},
+        {lien:'https://www.service-public.fr/particuliers/vosdroits/F1297',btn:'Vos droits — service-public.fr'}
+      ]
+    },
+
+    // ── RÈGLE 2 : GARANTIE VISALE ──
+    { id:'garantie_visale', icon:'🛡️',
+      score: function() {
+        if (!isLocataire) return 0;
+        if (salaire < 1500 && loyer > 0) return 85;
+        if (salaire < 2500 && loyer > 0) return 65;
+        return 35;
+      },
+      titre: function() { return 'Garantie Visale — caution gratuite de l\'État'; },
+      desc: function() {
+        return 'La garantie Visale est une caution gratuite accordée par Action Logement qui couvre votre bailleur en cas d\'impayés. Elle remplace la caution parentale et est acceptée par de nombreux propriétaires. Accessible aux moins de 30 ans, aux salariés précaires et aux personnes en mobilité professionnelle. Demande en ligne en 5 minutes.';
+      },
+      liens: [{lien:'https://www.visale.fr/',btn:'Demander la garantie Visale'}]
+    },
+
+    // ── RÈGLE 3 : DPE MAUVAIS — BIEN F OU G ──
+    { id:'dpe_mauvais', icon:'🏚️',
+      score: function() {
+        if (!isProprietaire) return 0;
+        var dpe = profil.dpe || '';
+        if (dpe === 'g') return 98;
+        if (dpe === 'f') return 90;
+        if (elec > moyElecZone * 1.6) return 78; // facture élevée = signal DPE mauvais
+        if (elec > moyElecZone * 1.3) return 60;
+        return 0;
+      },
+      titre: function() {
+        var dpe = profil.dpe || '';
+        return dpe === 'g' || dpe === 'f'
+          ? 'DPE ' + dpe.toUpperCase() + ' — votre bien bientôt interdit à la location'
+          : 'Passoire thermique — agir avant l\'interdiction';
+      },
+      desc: function() {
+        return 'Les logements classés G sont interdits à la location depuis janvier 2025, les F le seront en 2028. La valeur de revente d\'un bien mal classé peut être inférieure de 10 à 20% au marché. MaPrimeRénov peut financer jusqu\'à 90% des travaux de rénovation énergétique selon vos revenus — agir maintenant, c\'est préserver la valeur de votre patrimoine.';
+      },
+      liens: [
+        {lien:'https://www.maprimerenov.gouv.fr',btn:'Simuler MaPrimeRénov'},
+        {lien:'https://www.faire.gouv.fr',btn:'Audit énergétique gratuit — FAIRE'}
+      ]
+    },
+
+    // ── RÈGLE 4 : PRIMO-ACCÉDANT ──
+    { id:'primo_accedant', icon:'🏠',
+      score: function() {
+        if (!isLocataire) return 0;
+        if (objectif === 'immobilier' && salaire < 4000) return 88;
+        if (objectif === 'immobilier') return 72;
+        if (salaire < 3000 && loyer > 0) return 50;
+        return 0;
+      },
+      titre: function() { return 'Primo-accédant — cumulez les aides disponibles'; },
+      desc: function() {
+        var ptx = zone === 'paris' ? 'jusqu\'à 40%' : zone === 'grande_ville' ? 'jusqu\'à 40%' : 'jusqu\'à 50%';
+        var ptz = 'Le PTZ finance ' + ptx + ' du bien sans intérêts. ';
+        var al = 'Action Logement propose des prêts à 1% pour les salariés du privé (jusqu\'à 40 000€). ';
+        var pas = 'Le PAS (Prêt d\'Accession Sociale) donne accès aux APL propriétaire. ';
+        return ptz + al + pas + 'Ces trois aides sont cumulables — peu d\'acquéreurs le savent. Un courtier peut monter le dossier gratuitement.';
+      },
+      liens: [
+        {lien:'https://www.service-public.fr/particuliers/vosdroits/F10871',btn:'Simuler le PTZ'},
+        {lien:'https://www.actionlogement.fr/le-pret-accession',btn:'Prêt Action Logement'},
+        {lien:'https://www.pretto.fr',btn:'Courtier gratuit — Pretto'}
+      ]
+    },
+
+    // ── RÈGLE 5 : AIDES ÉNERGIE COMPLÉMENTAIRES ──
+    { id:'aides_energie_complementaires', icon:'🌿',
+      score: function() {
+        if (!isProprietaire) return 0;
+        if (elec > moyElecZone * 1.4) return 82;
+        if (elec > moyElecZone) return 65;
+        return 50;
+      },
+      titre: function() { return 'Aides énergie — au-delà de MaPrimeRénov'; },
+      desc: function() {
+        var montantCEE = salaire < 2000 ? 'plusieurs milliers d\'euros' : 'plusieurs centaines d\'euros';
+        return 'En complément de MaPrimeRénov, trois aides sont souvent ignorées : les <strong>CEE (Certificats d\'Économie d\'Énergie)</strong> versés directement par les fournisseurs d\'énergie (' + montantCEE + ' selon les travaux), l\'<strong>éco-PTZ</strong> (prêt jusqu\'à 50 000€ sans intérêts pour les rénovations), et les <strong>aides régionales et départementales</strong> cumulables. Le service FAIRE centralise tout gratuitement.';
+      },
+      liens: [
+        {lien:'https://www.faire.gouv.fr',btn:'Service FAIRE — toutes les aides'},
+        {lien:'https://www.service-public.fr/particuliers/vosdroits/F19905',btn:'Éco-PTZ — service-public.fr'}
+      ]
+    },
+
+    // ── RÈGLE 6 : PROPRIÉTAIRE BAILLEUR ──
+    { id:'proprietaire_bailleur', icon:'🔑',
+      score: function() {
+        // Signal : proprio avec charges copro élevées ou valeur bien renseignée sans crédit (bien locatif probable)
+        if (!isProprietaire) return 0;
+        if (valeurBien > 0 && !creditImmo && salaire > 0) return 75;
+        if (copro > 0 && valeurBien > 0) return 68;
+        return 0;
+      },
+      titre: function() { return 'Propriétaire bailleur — optimiser la fiscalité'; },
+      desc: function() {
+        var regimeMicro = salaire > 0;
+        return 'Si vous louez votre bien, le choix du régime fiscal est déterminant : le <strong>régime micro-foncier</strong> (abattement forfaitaire 30%, simple) vs le <strong>régime réel</strong> (déduction des charges réelles : travaux, intérêts, frais de gestion) — souvent plus avantageux au-delà de 5 000€ de charges. La <strong>Garantie Loyers Impayés (GLI)</strong> couvre les impayés pour ~3% des loyers annuels.';
+      },
+      liens: [
+        {lien:'https://www.impots.gouv.fr/particulier/revenus-fonciers',btn:'Revenus fonciers — impots.gouv.fr'},
+        {lien:'https://www.service-public.fr/particuliers/vosdroits/F31272',btn:'Garantie Loyers Impayés'}
+      ]
+    },
+
+  ];
+
+  // ── CALCUL SCORES ET TRI ──
+  const scoresLogement = REGLES_LOGEMENT.map(function(r) {
+    return { r: r, s: r.score() };
+  }).filter(function(x) { return x.s > 0; })
+    .sort(function(a, b) { return b.s - a.s; });
+
+  const SEUIL_PERTINENCE_LOGE = 60;
+  const MAX_CONSEILS_LOGE = 8;
+  const conseilsAffiches = scoresLogement.filter(function(x){ return x.s >= SEUIL_PERTINENCE_LOGE; }).slice(0, MAX_CONSEILS_LOGE);
+
+  document.getElementById('conseils-sub').textContent =
+    conseilsAffiches.length + ' conseil' + (conseilsAffiches.length > 1 ? 's' : '') +
+    ' personnalisé' + (conseilsAffiches.length > 1 ? 's' : '') +
+    ' selon votre situation — triés par pertinence.';
+
+  document.getElementById('conseils-grid').innerHTML = conseilsAffiches.map(function(x, i) {
+    var c = x.r; var score = x.s;
+    var scoreColor = score >= 85 ? '#2e7d32' : score >= 70 ? '#4a7c59' : score >= 55 ? '#f59e0b' : '#d97706';
+  var scoreBg = score >= 85 ? '#edf5ee' : score >= 70 ? '#f0f7f2' : score >= 55 ? '#fef3e2' : '#fde68a';
+    var liensHTML = (c.liens || []).map(function(l) {
+      return '<a href="' + l.lien + '" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:6px;background:var(--terra);color:white;font-size:0.75rem;font-weight:600;padding:6px 12px;border-radius:50px;text-decoration:none">🔗 ' + l.btn + ' →</a>';
+    }).join('');
+    return '<div class="loge-card sable">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+        '<span style="font-size:1.5rem">' + c.icon + '</span>' +
+        '<div style="font-size:0.65rem;color:' + scoreColor + ';font-weight:700;background:' + scoreBg + ';padding:2px 8px;border-radius:50px;border:1px solid ' + scoreColor + '">Pertinence ' + score + '%</div>' +
+      '</div>' +
+      '<h4>' + (typeof c.titre === 'function' ? c.titre() : c.titre) + '</h4>' +
+      '<p>' + (typeof c.desc === 'function' ? c.desc() : c.desc) + '</p>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">' + liensHTML + '</div>' +
+    '</div>';
+  }).join('');
+
+  // Micro-simulateurs d\'économies par poste
+  // Micro-simulateurs d\'économies par poste
+  const microPostes = [
+    { id: 'elec',  icon: '⚡', label: 'Électricité / Gaz', actuel: elec,    unite: '€/mois' },
+    { id: 'eau',   icon: '💧', label: 'Eau',               actuel: eau,     unite: '€/mois' },
+    { id: 'assur', icon: '🛡️', label: 'Assurance hab.',    actuel: assurHab, unite: '€/mois' },
+  ].filter(p => p.actuel > 0);
+
+  document.getElementById('micro-simul-grid').innerHTML = microPostes.map((p, i) => `
+    <div class="loge-card sable">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="font-size:1.2rem">${p.icon}</span>
+        <span style="font-size:0.8rem;font-weight:700;color:var(--texte)">${p.label}</span>
+        <span style="margin-left:auto;font-size:0.68rem;font-weight:700;color:var(--terra);background:var(--terra-pale);padding:3px 10px;border-radius:50px">${i + 1} / ${microPostes.length}</span>
+      </div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;font-weight:700;color:var(--terra);margin-bottom:12px">${formatEuro(p.actuel)}/mois</div>
+      <label style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gris);display:block;margin-bottom:5px">Montant cible (€/mois)</label>
+      <input type="number" min="0" step="1" placeholder="Ex : ${Math.round(p.actuel * 0.7)}"
+        id="ms-${p.id}"
+        oninput="majMicroSimul('${p.id}', ${p.actuel})"
+        style="width:100%;box-sizing:border-box;padding:8px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.88rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;margin-bottom:10px"
+        onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+      <div id="ms-result-${p.id}"></div>
+    </div>`).join('');
+
+  window.majMicroSimul = function(id, actuel) {
+    const val = parseFloat(document.getElementById('ms-' + id).value);
+    const el  = document.getElementById('ms-result-' + id);
+    if (!val || val >= actuel) { el.innerHTML = ''; return; }
+    const eco = actuel - val;
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--creme);border-radius:var(--radius-sm);padding:10px;text-align:center">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--gris);margin-bottom:3px">Par mois</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;color:#4a7c59">−${formatEuro(eco)}</div>
+        </div>
+        <div style="background:var(--creme);border-radius:var(--radius-sm);padding:10px;text-align:center">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--gris);margin-bottom:3px">Par an</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;color:#4a7c59">−${formatEuro(eco * 12)}</div>
+        </div>
+      </div>`;
+  };
+})();
+</script>
+</body>
+</html>

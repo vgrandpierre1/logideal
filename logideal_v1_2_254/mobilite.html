@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="version" content="1.2.254">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma mobilité — Logidéal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* HERO */
+    .page-hero{background:var(--sable);padding:48px 56px 0;border-bottom:1px solid var(--sable3)}
+    .breadcrumb{font-size:0.78rem;color:var(--gris);margin-bottom:10px}.breadcrumb a{color:var(--terra);text-decoration:none}
+    .page-title{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:700;color:var(--texte)}
+    .page-title em{font-style:italic;color:var(--terra)}
+    /* BAND */
+    .mobi-band{display:grid;gap:1px;background:var(--sable3);margin:28px -56px 0}
+    .mobi-band-item{background:var(--creme);padding:20px 28px;display:flex;flex-direction:column;gap:5px;align-items:center;text-align:center}
+    .mobi-band-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gris);min-height:2.2em;display:flex;align-items:center;justify-content:center}
+    .mobi-band-val{font-family:'DM Serif Display',serif;font-size:1.7rem;font-weight:700;color:var(--texte);line-height:1}
+    .mobi-band-sub{font-size:0.75rem;color:var(--gris2)}
+    /* SECTIONS */
+    .mobi-section{padding:56px 56px}
+    .mobi-section.alt{background:var(--sable)}
+    .mobi-section.main{background:var(--creme)}
+    .mobi-inner{max-width:1100px;margin:0 auto}
+    /* GRIDS */
+    .mobi-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
+    .mobi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
+    /* CARDS */
+    .mobi-card{background:var(--creme);border-radius:var(--radius);padding:26px}
+    .mobi-card.sable{background:var(--sable)}
+    .mobi-card h4{font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--texte)}
+    .mobi-card p{font-size:0.83rem;color:var(--gris);line-height:1.65;font-weight:300}
+    /* VEHICLE CARD */
+    .veh-card{background:var(--creme);border-radius:var(--radius);padding:28px;border:1px solid var(--sable3)}
+    .veh-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .veh-card-title{font-family:'DM Serif Display',serif;font-size:1.2rem;font-weight:700;color:var(--texte)}
+    .veh-card-badge{font-size:0.72rem;font-weight:700;color:white;background:var(--terra);padding:4px 12px;border-radius:50px}
+    .veh-cout-reel{background:var(--terra-pale);border:1.5px solid var(--terra3);border-radius:var(--radius-sm);padding:16px;margin-top:16px;text-align:center}
+    .veh-cout-reel-val{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:700;color:var(--terra)}
+    .veh-cout-reel-label{font-size:0.72rem;color:var(--terra-dark);margin-top:4px}
+    /* DETAIL ROWS */
+    .detail-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--sable);border-radius:var(--radius-sm);margin-bottom:6px}
+    .detail-row.hidden-cost{background:#fef3e2}
+    .detail-row-left{display:flex;align-items:center;gap:8px;font-size:0.83rem;color:var(--texte)}
+    .detail-val{font-family:'DM Serif Display',serif;font-weight:700;font-size:0.95rem}
+    .bar-wrap{height:5px;background:var(--sable3);border-radius:3px;overflow:hidden;margin-top:4px}
+    .bar-fill{height:100%;border-radius:3px;background:var(--terra);transition:width 0.8s ease}
+    /* INFO BOXES */
+    .info-box{border-radius:var(--radius-sm);padding:13px 15px;font-size:0.83rem;line-height:1.6;margin-top:12px}
+    .info-box.ok{background:#edf5ee;color:#2e6b3e;border-left:3px solid #4a7c59}
+    .info-box.warn{background:#fef3e2;color:#7a4a10;border-left:3px solid var(--warning)}
+    .info-box.bad{background:#fceaea;color:#7a1f1f;border-left:3px solid var(--danger)}
+    .info-box.terra{background:var(--terra-pale);color:var(--terra-dark);border-left:3px solid var(--terra3)}
+    /* COMPARATIF */
+    .comparatif-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--sable3);font-size:0.83rem}
+    .comparatif-row:last-child{border-bottom:none}
+    /* BADGE */
+    .card-badge{font-size:0.68rem;font-weight:700;color:var(--terra);background:var(--terra-pale);padding:3px 10px;border-radius:50px}
+    .simul-separator{height:1px;background:var(--sable3);margin:0 28px}
+    /* COST VISIBLE vs HIDDEN */
+    .cout-section-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gris);margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+    .cout-section-title::after{content:'';flex:1;height:1px;background:var(--sable3)}
+    .cout-section-hidden-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b07030;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+    .cout-section-hidden-title::after{content:'';flex:1;height:1px;background:#f0c080}
+    .cout-total-pill{margin-top:24px;padding:16px 24px;border-radius:var(--radius-sm);background:var(--terra-pale);border:1.5px solid var(--terra3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+    @media(max-width:900px){
+      .mobi-band{grid-template-columns:1fr 1fr}
+      .mobi-section,.page-hero{padding:32px 20px}
+      .mobi-band{margin:20px -20px 0}
+      .mobi-grid-2,.mobi-grid-3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Logi<span>déal</span></a>
+  <ul class="nav-links">
+    <li><a href="logement.html">🏠 Logement</a></li>
+    <li><a href="alimentation.html">🥗 Alimentation</a></li>
+    <li><a href="mobilite.html">🚗 Mobilité</a></li>
+    <li><a href="sante.html">🏥 Santé & bien-être</a></li>
+    <li><a href="famille.html">👨‍👩‍👧 Famille</a></li>
+    <li><a href="abonnements.html">📱 Abonnements</a></li>
+    <li><a href="loisirs.html">🎉 Loisirs</a></li>
+    <li><a href="patrimoine.html">📈 Patrimoine</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="depenses.html" class="nav-depenses">📒 Suivi dépenses</a>
+    <a href="auth.html" class="nav-btn-dashboard" id="nav-default-btn">Se connecter</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="breadcrumb" style="display:flex;align-items:center;justify-content:space-between"><a href="dashboard.html">← Tableau de bord</a><a href="profil.html?step=2" style="display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;color:var(--terra);text-decoration:none;background:var(--terra-pale);border:1.5px solid var(--terra3);padding:7px 16px;border-radius:50px;transition:background 0.2s">✏️ Modifier mon profil</a></div>
+    <h1 class="page-title">Ma <em>mobilité</em> 🚗</h1>
+    <p style="font-size:0.9rem;color:var(--gris);margin-top:6px;font-weight:300" id="page-sub">—</p>
+    <div class="mobi-band" id="hero-band"></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section class="mobi-section main" style="padding-top:28px;padding-bottom:28px;border-bottom:1px solid var(--sable3)">
+  <div class="mobi-inner">
+    <div id="intro-text" style="font-size:0.95rem;line-height:1.8;color:var(--texte)"></div>
+  </div>
+</section>
+
+<!-- 1. MES VÉHICULES / MOBILITÉ DOUCE -->
+<section class="mobi-section main" id="section-vehicules">
+  <div class="mobi-inner">
+    <span class="section-badge" id="s1-badge">Mes véhicules</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px" id="s1-titre">—</h2>
+    <p class="section-sub" id="s1-sub">—</p>
+    <div id="s1-content" style="margin-top:24px"></div>
+  </div>
+</section>
+
+<!-- 2. COÛT RÉEL COMPLET -->
+<section class="mobi-section alt" id="section-cout-reel">
+  <div class="mobi-inner">
+    <span class="section-badge">Coût réel</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Ce que vous coûte vraiment votre mobilité</h2>
+    <p class="section-sub" id="s2-sub">—</p>
+
+    <!-- Coûts déclarés -->
+    <div class="cout-section-title">💶 Coûts déclarés</div>
+    <div id="cout-visible-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px"></div>
+
+    <!-- Coûts oubliés -->
+    <div id="cout-cache-panel" style="display:none">
+      <div class="cout-section-hidden-title">👁️ Coûts souvent oubliés</div>
+      <div id="cout-cache-list"></div>
+    </div>
+
+    <!-- Total pill -->
+    <div id="cout-total-bloc" class="cout-total-pill"></div>
+
+    <!-- Analyse + Alternatives — grille en dessous -->
+    <div class="mobi-grid-2" style="margin-top:20px">
+      <div class="mobi-card">
+        <h4>📊 Analyse</h4>
+        <div id="cout-analyse"></div>
+      </div>
+      <div class="mobi-card" id="bloc-alternatives">
+        <h4>🆚 Alternatives dans votre zone</h4>
+        <div id="alternatives-content"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. NOS CONSEILS — section main (crème), cartes sable -->
+<section class="mobi-section main">
+  <div class="mobi-inner">
+    <span class="section-badge">Nos conseils</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Optimiser vos déplacements</h2>
+    <p class="section-sub" id="conseils-sub">—</p>
+    <div class="mobi-grid-3" id="conseils-grid" style="margin-top:24px"></div>
+  </div>
+</section>
+
+<!-- 4. OPTIMISER — section alt (sable), conteneur crème -->
+<section class="mobi-section alt" id="section-optimiser">
+  <div class="mobi-inner">
+    <span class="section-badge">Optimiser</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Réduire vos coûts de transport</h2>
+    <p class="section-sub" id="optimiser-sub">—</p>
+    <div style="margin-top:24px;background:var(--creme);border-radius:var(--radius);border:1px solid var(--sable3);overflow:hidden">
+
+
+      <div id="simul-tc-bloc" style="display:none">
+        <div style="padding:24px 28px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin-bottom:0;font-family:'DM Serif Display',serif;font-size:1.05rem">🚇 Simulateur passage aux TC</h4>
+            <span class="card-badge" id="simul-tc-badge"></span>
+          </div>
+          <p style="font-size:0.83rem;color:var(--gris);margin-bottom:14px">Comparez le coût de vos véhicules avec des abonnements transports en commun.</p>
+          <div style="background:var(--sable);border-radius:var(--radius-sm);overflow:hidden" id="simul-tc-content"></div>
+          <a id="simul-tc-lien" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 Voir les abonnements TC →</a>
+        </div>
+        <div class="simul-separator"></div>
+      </div>
+
+
+      <div id="sans-voiture-employeur" style="display:none">
+        <div style="padding:24px 28px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin-bottom:0;font-family:'DM Serif Display',serif;font-size:1.05rem">💡 Remboursement employeur TC</h4>
+            <span class="card-badge">Obligatoire</span>
+          </div>
+          <p style="font-size:0.83rem;color:var(--gris);margin-bottom:14px">La loi oblige votre employeur à rembourser <strong>50% de votre abonnement TC</strong>. C'est souvent méconnu ou non réclamé.</p>
+          <div style="background:var(--sable);border-radius:var(--radius-sm);overflow:hidden" id="sans-voiture-employeur-calc"></div>
+          <a href="https://www.service-public.fr/particuliers/vosdroits/F19846" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 Vos droits sur service-public.fr →</a>
+        </div>
+        <div class="simul-separator"></div>
+      </div>
+
+      <!-- SIMULATEUR BAISSE ASSURANCE -->
+      <div id="simul-baisse-assur-bloc">
+        <div style="padding:24px 28px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin-bottom:0;font-family:'DM Serif Display',serif;font-size:1.05rem">🛡️ Simuler une baisse d'assurance</h4>
+            <span class="card-badge">Interactif</span>
+          </div>
+          <p style="font-size:0.83rem;color:var(--gris);margin-bottom:16px">Entrez votre assurance actuelle et le pourcentage d'économie cible pour calculer ce que vous gagneriez.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Assurance actuelle (€/mois)</label>
+              <input id="si-assur-actuel" type="number" min="0" step="1" placeholder="Ex : 100"
+                oninput="calculerBaisseAssur()"
+                style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Économie visée (%)</label>
+              <select id="si-assur-pct" onchange="calculerBaisseAssur()"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="10">−10%</option>
+                <option value="20" selected>−20%</option>
+                <option value="30">−30%</option>
+                <option value="40">−40%</option>
+                <option value="50">−50%</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Durée</label>
+              <select id="si-assur-duree" onchange="calculerBaisseAssur()"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="12">1 an</option>
+                <option value="24">2 ans</option>
+                <option value="36" selected>3 ans</option>
+                <option value="60">5 ans</option>
+              </select>
+            </div>
+          </div>
+          <div id="si-assur-result" style="background:var(--sable);border-radius:var(--radius-sm);overflow:hidden;display:none"></div>
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+            <a href="https://www.lelynx.fr/assurance-auto/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 Comparer sur LeLynx →</a>
+            <a href="https://www.assurland.com/assurance-auto/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--terra);border:1.5px solid var(--terra3);font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 AssurLand →</a>
+          </div>
+        </div>
+        <div class="simul-separator"></div>
+      </div>
+
+      <!-- SIMULATEUR PASSAGE ÉLECTRIQUE DÉTAILLÉ -->
+      <div id="simul-elec-detail-bloc">
+        <div style="padding:24px 28px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin-bottom:0;font-family:'DM Serif Display',serif;font-size:1.05rem">⚡ Simuler le passage à l'électrique</h4>
+            <span class="card-badge">Interactif</span>
+          </div>
+          <p style="font-size:0.83rem;color:var(--gris);margin-bottom:16px">Estimez l'économie mensuelle en passant d'un véhicule thermique à l'électrique — carburant et entretien inclus.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Carburant actuel (€/mois)</label>
+              <input id="si-elec-carb" type="number" min="0" step="5" placeholder="Ex : 150"
+                oninput="calculerPassageElec()"
+                style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Entretien actuel (€/mois)</label>
+              <input id="si-elec-entretien" type="number" min="0" step="5" placeholder="Ex : 60"
+                oninput="calculerPassageElec()"
+                style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris);margin-bottom:6px">Kilométrage annuel</label>
+              <select id="si-elec-km" onchange="calculerPassageElec()"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="5000">5 000 km/an</option>
+                <option value="10000">10 000 km/an</option>
+                <option value="15000" selected>15 000 km/an</option>
+                <option value="20000">20 000 km/an</option>
+                <option value="30000">30 000 km/an</option>
+                <option value="50000">50 000 km/an</option>
+              </select>
+            </div>
+          </div>
+          <div id="si-elec-result" style="background:var(--sable);border-radius:var(--radius-sm);overflow:hidden;display:none"></div>
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+            <a href="https://www.service-public.fr/particuliers/vosdroits/F35095" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 Vérifier les aides →</a>
+            <a href="https://www.automobile-propre.com/voitures-electriques/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--terra);border:1.5px solid var(--terra3);font-size:0.78rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none">🔗 Comparer les modèles →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- 5. CHANGER DE VÉHICULE — section main (crème), cartes sable -->
+<section class="mobi-section main" id="section-lbc-voiture">
+  <div class="mobi-inner">
+    <span class="section-badge">Changer de véhicule</span>
+    <h2 class="section-title" style="font-size:1.8rem;margin-bottom:4px">Trouver votre prochain véhicule</h2>
+    <p class="section-sub">Cherchez un véhicule d'occasion correspondant à votre profil directement sur LeBonCoin.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start">
+
+      <!-- Formulaire -->
+      <div class="mobi-card sable">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📍 Ville ou région</label>
+            <input id="lbc-veh-ville" type="text" placeholder="Ex : Lyon, Paris, Bordeaux…"
+              style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+              onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📡 Rayon</label>
+              <select id="lbc-veh-rayon" style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="0">Dans la ville</option>
+                <option value="10">+ 10 km</option>
+                <option value="20" selected>+ 20 km</option>
+                <option value="30">+ 30 km</option>
+                <option value="50">+ 50 km</option>
+                <option value="100">+ 100 km</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">🚗 Type de véhicule</label>
+              <select id="lbc-veh-type" style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="">Tous types</option>
+                <option value="berline">Berline</option>
+                <option value="citadine">Citadine</option>
+                <option value="suv">SUV / 4x4</option>
+                <option value="break">Break</option>
+                <option value="monospace">Monospace</option>
+                <option value="utilitaire">Utilitaire</option>
+                <option value="cabriolet">Cabriolet</option>
+                <option value="coupe">Coupé</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">⛽ Carburant</label>
+              <select id="lbc-veh-carburant" style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="">Tous carburants</option>
+                <option value="essence">Essence</option>
+                <option value="diesel">Diesel</option>
+                <option value="hybride">Hybride</option>
+                <option value="electrique">Électrique</option>
+                <option value="gpl">GPL</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📅 Année min</label>
+              <select id="lbc-veh-annee" style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="">Sans limite</option>
+                <option value="2024">2024 ou plus récent</option>
+                <option value="2023">2023 ou plus récent</option>
+                <option value="2022">2022 ou plus récent</option>
+                <option value="2021">2021 ou plus récent</option>
+                <option value="2020">2020 ou plus récent</option>
+                <option value="2019">2019 ou plus récent</option>
+                <option value="2018">2018 ou plus récent</option>
+                <option value="2017">2017 ou plus récent</option>
+                <option value="2016">2016 ou plus récent</option>
+                <option value="2015">2015 ou plus récent</option>
+                <option value="2013">2013 ou plus récent</option>
+                <option value="2012">2012 ou plus récent</option>
+                <option value="2010">2010 ou plus récent</option>
+                <option value="2008">2008 ou plus récent</option>
+                <option value="2005">2005 ou plus récent</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">💶 Prix max (€)</label>
+              <input id="lbc-veh-prix" type="number" min="0" step="500" placeholder="Ex : 12 000"
+                style="width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none"
+                onfocus="this.style.borderColor='var(--terra)'" onblur="this.style.borderColor='var(--sable3)'">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gris);margin-bottom:6px">📍 Kilométrage max</label>
+              <select id="lbc-veh-km" style="width:100%;padding:10px 14px;border:1.5px solid var(--sable3);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--creme);color:var(--texte);outline:none;cursor:pointer">
+                <option value="">Sans limite</option>
+                <option value="30000">30 000 km</option>
+                <option value="50000">50 000 km</option>
+                <option value="80000">80 000 km</option>
+                <option value="100000">100 000 km</option>
+                <option value="150000">150 000 km</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="ouvrirLBCVoiture()"
+            style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px 20px;background:var(--terra);color:white;font-size:0.95rem;font-weight:700;font-family:inherit;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:opacity 0.15s"
+            onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+            🔍 Rechercher sur LeBonCoin →
+          </button>
+        </div>
+      </div>
+
+      <!-- Conseils achat VO -->
+      <div>
+        <div class="mobi-card sable" style="margin-bottom:16px">
+          <h4>💡 Conseils pour bien acheter</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;font-size:0.83rem;color:var(--gris);line-height:1.65">
+            <div>✅ <strong>Préférez les véhicules de 2-3 ans</strong> — la dépréciation maximale est passée, la garantie constructeur peut encore courir.</div>
+            <div>✅ <strong>Moins de 80 000 km</strong> pour un thermique, le moteur est encore loin de son usure limite.</div>
+            <div>✅ <strong>Vérifiez l'historique</strong> sur Histovec (gratuit, données officielles) avant toute visite.</div>
+            <div>✅ <strong>Faites contrôler</strong> par un garage indépendant — comptez 80 à 150€ pour éviter les mauvaises surprises.</div>
+          </div>
+          <a href="https://histovec.interieur.gouv.fr/" target="_blank"
+            style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:var(--terra);color:white;font-size:0.78rem;font-weight:600;padding:7px 14px;border-radius:50px;text-decoration:none">
+            🔗 Vérifier l'historique sur Histovec →
+          </a>
+        </div>
+        <div class="mobi-card sable">
+          <h4>📊 Estimer la valeur d'un véhicule</h4>
+          <p>Avant d'acheter ou de négocier, vérifiez la cote officielle du véhicule.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+            <a href="https://www.lacentrale.fr/cote-voiture.php" target="_blank"
+              style="display:inline-flex;align-items:center;gap:6px;background:var(--terra);color:white;font-size:0.75rem;font-weight:600;padding:7px 14px;border-radius:50px;text-decoration:none">🔗 La Centrale</a>
+            <a href="https://www.largus.fr/cote-auto/" target="_blank"
+              style="display:inline-flex;align-items:center;gap:6px;background:var(--terra);color:white;font-size:0.75rem;font-weight:600;padding:7px 14px;border-radius:50px;text-decoration:none">🔗 L'Argus</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <div class="footer-top">
+    <div><span class="footer-logo">Logidéal</span><p class="footer-desc">Votre allié pour mieux gérer votre quotidien.</p></div>
+    <div class="footer-col"><h4>Rubriques</h4><ul>
+      <li><a href="logement.html">Logement</a></li>
+      <li><a href="mobilite.html">Mobilité</a></li>
+      <li><a href="abonnements.html">Abonnements</a></li>
+      <li><a href="patrimoine.html">Épargne</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 Logidéal</span><span>🔒 Vos données restent sur votre appareil</span></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>renderNav();</script>
+<script>
+const profil = verifierProfil();
+if (!profil) window.location.href = 'index.html';
+
+// ── DONNÉES PROFIL ──
+const isCoupleFoyer = (profil.usage_profil === 'foyer' || (!profil.usage_profil && profil.gestion_couple === 'commune'))
+  && (profil.situation === 'couple' || profil.situation === 'famille')
+  && profil.vit_ensemble === 'oui' && profil.gestion_couple === 'commune';
+const salaire = isCoupleFoyer && profil.salaire_foyer ? profil.salaire_foyer : (profil.salaire || 0);
+function v(foyer, solo) { return isCoupleFoyer ? foyer : solo; }
+const prenomStr = profil.prenom ? ', ' + profil.prenom : '';
+const zone = profil.zone || 'province';
+const nbVoitures = parseInt(profil.nb_voitures) || 0;
+const vehicules = profil.vehicules || [];
+
+// Totaux calculés depuis les données par véhicule
+const carburant = vehicules.reduce(function(s,v2){return s+(v2.vCarburant||0);},0) || (profil.carburant || 0);
+const assurAuto = vehicules.reduce(function(s,v2){return s+(v2.vAssurance||0);},0) || (profil.assurance_auto || 0);
+const entretienAuto = vehicules.reduce(function(s,v2){return s+(v2.vEntretien||0);},0) || (profil.entretien_auto || 0);
+const parking = vehicules.reduce(function(s,v2){return s+(v2.vParking||0);},0) || (profil.parking || 0);
+const tc = profil.transports_commun || 0;
+const tcPonctuel = profil.tc_ponctuel || 0;
+const velo = profil.velo || 0;
+const vtc = profil.vtc || 0;
+const covoiturage = profil.covoiturage || 0;
+const train = profil.train || 0;
+
+const totalVehicule = carburant + assurAuto + entretienAuto + parking;
+const totalCommun = tc + tcPonctuel + velo + vtc + covoiturage + train;
+const totalMobilite = totalVehicule + totalCommun;
+const isSansVoiture = nbVoitures === 0;
+const tauxMobilite = salaire > 0 ? Math.round(totalMobilite / salaire * 100) : 0;
+
+// Dépréciation par type
+const TAUX_DEPRECIATION = { citadine: 0.15, berline: 0.12, suv: 0.10, break: 0.11, utilitaire: 0.08, moto: 0.14 };
+function calculerDepreciation(veh) {
+  if (!veh || !veh.annee || !veh.valeur) return 0;
+  const taux = TAUX_DEPRECIATION[veh.type] || 0.12;
+  return Math.round(veh.valeur * taux / 12);
+}
+function labelCarburant(c) {
+  return { essence: 'Essence', diesel: 'Diesel', hybride: 'Hybride', electrique: 'Électrique', autre: 'Autre' }[c] || c;
+}
+function labelType(t) {
+  return { citadine: 'Citadine', berline: 'Berline', suv: 'SUV / 4x4', break: 'Break', utilitaire: 'Utilitaire', moto: 'Moto / scooter' }[t] || t;
+}
+function labelFin(f) {
+  return { proprio: 'Achat comptant', credit: 'Crédit auto', loa: 'LOA / LLD' }[f] || f;
+}
+
+// Dépréciation totale tous véhicules
+const deprecTotale = vehicules.reduce(function(s, v2) { return s + calculerDepreciation(v2); }, 0);
+
+// ── LBC VOITURE ──
+function ouvrirLBCVoiture() {
+  const ville     = document.getElementById('lbc-veh-ville').value.trim();
+  const rayon     = document.getElementById('lbc-veh-rayon').value;
+  const type      = document.getElementById('lbc-veh-type').value;
+  const carburant = document.getElementById('lbc-veh-carburant').value;
+  const annee     = document.getElementById('lbc-veh-annee').value;
+  const prix      = document.getElementById('lbc-veh-prix').value;
+  const km        = document.getElementById('lbc-veh-km').value;
+
+  if (!ville) {
+    const el = document.getElementById('lbc-veh-ville');
+    el.focus(); el.style.borderColor = '#c0392b';
+    setTimeout(() => el.style.borderColor = 'var(--sable3)', 2000);
+    return;
+  }
+
+  let url = 'https://www.leboncoin.fr/recherche?category=2';
+  url += '&locations=' + encodeURIComponent(ville) + (rayon !== '0' ? '__' + rayon + 'km' : '');
+  if (prix)      url += '&price=0-' + prix;
+  if (km)        url += '&mileage=0-' + km;
+  if (carburant) url += '&fuel=' + carburant;
+  if (annee)     url += '&regdate=' + annee + '-';
+  if (type)      url += '&vehicle_type=' + type;
+
+  window.open(url, '_blank');
+}
+
+
+
+document.getElementById('page-sub').textContent =
+  formatEuro(totalMobilite) + '/mois — ' + tauxMobilite + '% de ' + v('vos revenus combinés', 'tes revenus');
+
+
+
+// ── LBC VOITURE — pré-remplissage depuis profil ──
+(function() {
+  var veh1 = vehicules[0] || {};
+  if (veh1.type) {
+    var typeMap = {citadine:'citadine',berline:'berline',suv:'suv',break:'break',utilitaire:'utilitaire',moto:''};
+    var sel = document.getElementById('lbc-veh-type');
+    if (sel && typeMap[veh1.type]) sel.value = typeMap[veh1.type];
+  }
+  if (veh1.carb) {
+    var carbMap = {essence:'essence',diesel:'diesel',hybride:'hybride',electrique:'electrique'};
+    var selC = document.getElementById('lbc-veh-carburant');
+    if (selC && carbMap[veh1.carb]) selC.value = carbMap[veh1.carb];
+  }
+  if (veh1.valeur) {
+    var prixEl = document.getElementById('lbc-veh-prix');
+    if (prixEl) prixEl.value = Math.round(veh1.valeur * 0.9 / 500) * 500;
+  }
+  // Pré-remplir simulateurs depuis profil
+  if (assurAuto > 0) {
+    var assurEl = document.getElementById('si-assur-actuel');
+    if (assurEl) { assurEl.value = assurAuto; calculerBaisseAssur(); }
+  }
+  if (carburant > 0 || entretienAuto > 0) {
+    var carbEl = document.getElementById('si-elec-carb');
+    var entEl  = document.getElementById('si-elec-entretien');
+    if (carbEl) carbEl.value = carburant;
+    if (entEl)  entEl.value  = entretienAuto;
+    var _kmPre = vehicules.reduce(function(s,v2){return s+(v2.km||0);},0);
+    if (_kmPre > 0) {
+      var kmSel = document.getElementById('si-elec-km');
+      if (kmSel) {
+        var closest = [5000,10000,15000,20000,30000,50000].reduce(function(a,b){ return Math.abs(b-_kmPre)<Math.abs(a-_kmPre)?b:a; });
+        kmSel.value = closest;
+      }
+    }
+    calculerPassageElec();
+  }
+})();
+
+// ── SIMULATEUR BAISSE ASSURANCE ──
+function calculerBaisseAssur() {
+  var actuel = parseFloat(document.getElementById('si-assur-actuel').value) || 0;
+  var pct    = parseInt(document.getElementById('si-assur-pct').value) || 20;
+  var duree  = parseInt(document.getElementById('si-assur-duree').value) || 36;
+  var res    = document.getElementById('si-assur-result');
+  if (!actuel) { res.style.display = 'none'; return; }
+  var eco    = Math.round(actuel * pct / 100);
+  var nouvel = actuel - eco;
+  var total  = eco * duree;
+  res.style.display = 'block';
+  res.innerHTML =
+    '<div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--sable3)"><span style="font-size:0.83rem">Assurance actuelle</span><strong>' + formatEuro(actuel) + '/mois</strong></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--sable3)"><span style="font-size:0.83rem">Après économie (−' + pct + '%)</span><strong>' + formatEuro(nouvel) + '/mois</strong></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--sable3)"><span style="font-size:0.83rem">Économie mensuelle</span><strong style="color:#4a7c59">−' + formatEuro(eco) + '/mois</strong></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:10px 14px;background:#edf5ee"><span style="font-size:0.83rem;font-weight:700">Économie sur ' + (duree/12) + ' an' + (duree > 12 ? 's' : '') + '</span><strong style="color:#2e7d32;font-size:1.05rem">' + formatEuro(total) + '</strong></div>';
+}
+
+// ── SIMULATEUR PASSAGE ÉLECTRIQUE ──
+function calculerPassageElec() {
+  var carb     = parseFloat(document.getElementById('si-elec-carb').value) || 0;
+  var entret   = parseFloat(document.getElementById('si-elec-entretien').value) || 0;
+  var km       = parseInt(document.getElementById('si-elec-km').value) || 15000;
+  var res      = document.getElementById('si-elec-result');
+  if (!carb && !entret) { res.style.display = 'none'; return; }
+
+  // Coût recharge électrique : ~0,03€/km (recharge domicile) vs ~0,12€/km essence moyenne
+  var coutRechargeMois = Math.round(km / 12 * 0.03);
+  var ecoCarb          = Math.max(0, carb - coutRechargeMois);
+  // Entretien électrique ~40% moins cher (pas de vidange, embrayage, courroie...)
+  var entretElec       = Math.round(entret * 0.6);
+  var ecoEntret        = entret - entretElec;
+  var ecoTotale        = ecoCarb + ecoEntret;
+  var ecoAnnuelle      = ecoTotale * 12;
+
+  res.style.display = 'block';
+  res.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--sable3)">' +
+      '<div style="background:var(--sable);padding:10px 14px"><div style="font-size:0.72rem;color:var(--gris);margin-bottom:4px">Carburant actuel</div><strong>' + formatEuro(carb) + '/mois</strong></div>' +
+      '<div style="background:var(--sable);padding:10px 14px"><div style="font-size:0.72rem;color:var(--gris);margin-bottom:4px">Recharge électrique estimée</div><strong>' + formatEuro(coutRechargeMois) + '/mois</strong></div>' +
+      '<div style="background:var(--sable);padding:10px 14px"><div style="font-size:0.72rem;color:var(--gris);margin-bottom:4px">Entretien actuel</div><strong>' + formatEuro(entret) + '/mois</strong></div>' +
+      '<div style="background:var(--sable);padding:10px 14px"><div style="font-size:0.72rem;color:var(--gris);margin-bottom:4px">Entretien électrique (−40%)</div><strong>' + formatEuro(entretElec) + '/mois</strong></div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--sable3)">' +
+      '<div style="background:#edf5ee;padding:10px 14px"><div style="font-size:0.72rem;color:#2e7d32;margin-bottom:4px">Économie carburant</div><strong style="color:#2e7d32">−' + formatEuro(ecoCarb) + '/mois</strong></div>' +
+      '<div style="background:#edf5ee;padding:10px 14px"><div style="font-size:0.72rem;color:#2e7d32;margin-bottom:4px">Économie entretien</div><strong style="color:#2e7d32">−' + formatEuro(ecoEntret) + '/mois</strong></div>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#edf5ee;border-top:2px solid #4a7c59">' +
+      '<span style="font-weight:700;color:#2e7d32">Économie totale estimée</span>' +
+      '<div style="text-align:right"><strong style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;color:#2e7d32">−' + formatEuro(ecoTotale) + '/mois</strong>' +
+      '<div style="font-size:0.72rem;color:#4a7c59">soit ' + formatEuro(ecoAnnuelle) + '/an</div></div>' +
+    '</div>' +
+    '<div style="padding:8px 14px;font-size:0.72rem;color:var(--gris2)">Estimation basée sur 0,03€/km en recharge domicile et un entretien électrique 40% moins cher.</div>';
+}
+
+
+
+const bandItems = [];
+bandItems.push({ label: v('Revenus du foyer', 'Revenus mensuels'), val: formatEuro(salaire), sub: v('revenus combinés', 'net mensuel') });
+bandItems.push({ label: 'Total mobilité', val: formatEuro(totalMobilite), sub: tauxMobilite + '% des revenus', highlight: true });
+if (isSansVoiture) {
+  if (tc > 0) bandItems.push({ label: 'Abonnement TC', val: formatEuro(tc), sub: '~' + formatEuro(Math.round(tc * 0.5)) + '/mois remboursés employeur' });
+  if (tcPonctuel > 0) bandItems.push({ label: 'Tickets ponctuels', val: formatEuro(tcPonctuel), sub: 'trajets occasionnels' });
+  if (velo > 0) bandItems.push({ label: 'Vélo / trottinette', val: formatEuro(velo), sub: 'par mois' });
+} else {
+  if (nbVoitures > 1) {
+    // Coût moyen par véhicule plutôt que total (déjà dans "Total mobilité")
+    const coutParVehicule = Math.round(totalVehicule / nbVoitures);
+    bandItems.push({ label: 'Coût / véhicule', val: formatEuro(coutParVehicule), sub: 'moyenne sur ' + nbVoitures + ' véhicules' });
+    if (deprecTotale > 0) bandItems.push({ label: 'Dépréciation estimée', val: '~' + formatEuro(deprecTotale), sub: 'coût caché / mois' });
+    else bandItems.push({ label: 'Coût réel estimé', val: '~' + formatEuro(totalVehicule), sub: 'hors dépréciation' });
+  } else {
+    if (carburant > 0) bandItems.push({ label: 'Carburant', val: formatEuro(carburant), sub: Math.round(carburant / salaire * 100) + '% des revenus' });
+    if (assurAuto > 0) bandItems.push({ label: 'Assurance auto', val: formatEuro(assurAuto), sub: 'par mois' });
+    if (deprecTotale > 0) bandItems.push({ label: 'Dépréciation estimée', val: '~' + formatEuro(deprecTotale), sub: 'coût caché / mois' });
+  }
+  if (totalCommun > 0) bandItems.push({ label: 'Transports alternatifs', val: formatEuro(totalCommun), sub: 'TC + vélo + autres' });
+}
+const band = document.getElementById('hero-band');
+band.style.gridTemplateColumns = 'repeat(' + bandItems.length + ',1fr)';
+bandItems.forEach(function(b) {
+  band.innerHTML += '<div class="mobi-band-item"' + (b.highlight ? ' style="background:var(--terra-pale)"' : '') + '>' +
+    '<span class="mobi-band-label">' + b.label + '</span>' +
+    '<span class="mobi-band-val"' + (b.highlight ? ' style="color:var(--terra)"' : '') + '>' + b.val + '</span>' +
+    '<span class="mobi-band-sub">' + b.sub + '</span></div>';
+});
+
+// ── INTRO ──
+const situationMobilite = tauxMobilite <= 10 ? 'maîtrisée' : tauxMobilite <= 15 ? 'dans la moyenne' : 'élevée';
+let introTxt = 'La mobilité représente <strong>' + formatEuro(totalMobilite) + '/mois</strong> pour ' + v('votre foyer', 'vous') + prenomStr +
+  ', soit <strong>' + tauxMobilite + '%</strong> de ' + v('vos revenus combinés', 'vos revenus') +
+  ' — une part <strong>' + situationMobilite + '</strong> (seuil recommandé : 10 à 15%). ';
+if (isSansVoiture && totalCommun > 0)
+  introTxt += v('Vous vous déplacez', 'Vous vous déplacez') + ' exclusivement en transports alternatifs — une approche économique qui ' + v('vous', 'vous') + ' fait économiser plusieurs centaines d\'euros par mois par rapport à un véhicule. ';
+else if (nbVoitures > 1)
+  introTxt += 'Avec ' + nbVoitures + ' véhicules' + (isCoupleFoyer ? ' pour votre foyer' : '') + ', les coûts fixes sont significatifs. Au-delà des dépenses déclarées, la dépréciation représente un coût réel souvent sous-estimé. ';
+else if (totalVehicule > 0 && totalCommun > 0)
+  introTxt += v('Vous combinez', 'Vous combinez') + ' véhicule personnel (' + formatEuro(totalVehicule) + '/mois) et transports alternatifs (' + formatEuro(totalCommun) + '/mois). ';
+else if (totalVehicule > 0)
+  introTxt += 'Le coût déclaré est de ' + formatEuro(totalVehicule) + '/mois — mais le coût réel total incluant la dépréciation est probablement plus élevé. ';
+if (tauxMobilite > 15) introTxt += 'Plusieurs leviers existent pour réduire cette charge.';
+else introTxt += 'Continuez à surveiller ces postes, notamment l\'assurance auto qui mérite d\'être comparée chaque année.';
+document.getElementById('intro-text').innerHTML = introTxt;
+
+// ── 1. MES VÉHICULES / MOBILITÉ DOUCE ──
+const s1Content = document.getElementById('s1-content');
+if (isSansVoiture && totalCommun > 0) {
+  document.getElementById('s1-badge').textContent = 'Mobilité douce';
+  document.getElementById('s1-titre').textContent = 'Vous vous déplacez sans voiture';
+  document.getElementById('s1-sub').textContent = formatEuro(totalCommun) + '/mois en transports alternatifs — ' + tauxMobilite + '% de vos revenus.';
+  const coutVoitureEstime = zone === 'paris' ? 420 : zone === 'grande_ville' ? 380 : 320;
+  const ecoVoiture = coutVoitureEstime - totalCommun;
+  s1Content.innerHTML = '<div class="mobi-grid-2">' +
+    '<div class="mobi-card sable">' +
+      '<h4>Vos dépenses de transport</h4>' +
+      [{ icon: '🎫', label: 'Abonnement TC', val: tc }, { icon: '🎟️', label: 'Tickets ponctuels', val: tcPonctuel },
+       { icon: '🚲', label: 'Vélo / trottinette', val: velo }, { icon: '🚕', label: 'VTC / taxi', val: vtc },
+       { icon: '🤝', label: 'Covoiturage', val: covoiturage }, { icon: '🚂', label: 'Train / avion', val: train }]
+      .filter(function(l) { return l.val > 0; })
+      .map(function(l) {
+        return '<div class="detail-row"><div class="detail-row-left">' + l.icon + ' ' + l.label + '</div><div class="detail-val">' + formatEuro(l.val) + '</div></div>';
+      }).join('') +
+    '</div>' +
+    '<div class="mobi-card sable">' +
+      '<h4>💰 Économie vs avoir une voiture</h4>' +
+      '<div class="comparatif-row"><span>Votre mobilité actuelle</span><strong>' + formatEuro(totalCommun) + '/mois</strong></div>' +
+      '<div class="comparatif-row"><span>Coût moyen d\'un véhicule en ' + (zone === 'paris' ? 'Paris/IDF' : zone === 'grande_ville' ? 'grande ville' : 'province') + '</span><strong style="color:var(--danger)">~' + formatEuro(coutVoitureEstime) + '/mois</strong></div>' +
+      '<div class="comparatif-row" style="background:' + (ecoVoiture > 0 ? '#edf5ee' : 'var(--sable)') + ';border-radius:var(--radius-sm);padding:10px 12px">' +
+        '<span style="font-weight:600">' + (ecoVoiture > 0 ? 'Économie estimée' : 'Écart') + '</span>' +
+        '<strong style="color:' + (ecoVoiture > 0 ? '#4a7c59' : 'var(--danger)') + '">' + (ecoVoiture > 0 ? '+' : '') + formatEuro(ecoVoiture) + '/mois</strong>' +
+      '</div>' +
+      '<div class="info-box terra" style="margin-top:12px">💡 En 1 an, ' + v('vous économisez', 'vous économisez') + ' <strong>' + formatEuro(ecoVoiture * 12) + '</strong> par rapport à un véhicule moyen dans votre zone.</div>' +
+    '</div>' +
+  '</div>';
+} else if (nbVoitures > 0) {
+  document.getElementById('s1-titre').textContent = nbVoitures === 1 ? 'Mon véhicule' : 'Mes ' + nbVoitures + ' véhicules';
+  document.getElementById('s1-sub').textContent = formatEuro(totalVehicule) + '/mois de dépenses déclarées' + (deprecTotale > 0 ? ' — coût réel estimé ' + formatEuro(totalVehicule + deprecTotale) + '/mois avec la dépréciation.' : '.');
+  const vehGrid = nbVoitures === 1 ? 'mobi-grid-2' : 'mobi-grid-' + Math.min(nbVoitures, 3);
+  let vehHTML = '<div class="' + (nbVoitures >= 2 ? 'mobi-grid-2' : 'mobi-grid-2') + '">';
+  for (var i = 0; i < Math.min(vehicules.length, nbVoitures); i++) {
+    var veh = vehicules[i];
+    var depreciMois = calculerDepreciation(veh);
+    var annee = veh.annee || 0;
+    var age = annee ? (new Date().getFullYear() - annee) : 0;
+    var finLabel = veh.fin ? labelFin(veh.fin) : '';
+    var typeLabel = veh.type ? labelType(veh.type) : '';
+    var carbLabel = veh.carb ? labelCarburant(veh.carb) : '';
+    // Coût connu = seulement les champs propres à ce véhicule (crédit/LOA + dépréciation)
+    var vCarb = veh.vCarburant || 0;
+    var vAssur = veh.vAssurance || 0;
+    var vEntretien = veh.vEntretien || 0;
+    var vPark = veh.vParking || 0;
+    var coutDeclare = vCarb + vAssur + vEntretien + vPark + (veh.credit || 0) + (veh.loa || 0);
+    var coutConnu = coutDeclare + depreciMois;
+    var hasPropresData = veh.fin || veh.type || veh.carb || veh.annee || veh.valeur || coutDeclare > 0;
+    vehHTML += '<div class="veh-card">' +
+      '<div class="veh-card-header">' +
+        '<div class="veh-card-title">🚗 Véhicule ' + (i + 1) + (typeLabel ? ' — ' + typeLabel : '') + '</div>' +
+        (carbLabel ? '<span class="veh-card-badge">' + carbLabel + '</span>' : '') +
+      '</div>' +
+      // Infos connues du véhicule
+      (hasPropresData ? '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">' +
+        (annee ? '<span style="font-size:0.75rem;background:var(--sable);padding:4px 10px;border-radius:50px;color:var(--gris)">Année ' + annee + (age ? ' (' + age + ' ans)' : '') + '</span>' : '') +
+        (veh.valeur ? '<span style="font-size:0.75rem;background:var(--sable);padding:4px 10px;border-radius:50px;color:var(--gris)">Valeur : ' + formatEuro(veh.valeur) + '</span>' : '') +
+        (veh.km ? '<span style="font-size:0.75rem;background:var(--sable);padding:4px 10px;border-radius:50px;color:var(--gris)">' + veh.km.toLocaleString('fr-FR') + ' km/an</span>' : '') +
+      '</div>' : '') +
+      // Seulement les coûts propres à ce véhicule
+      (veh.credit > 0 ? '<div class="detail-row"><div class="detail-row-left">💳 Mensualité crédit</div><div class="detail-val">' + formatEuro(veh.credit) + '/mois</div></div>' : '') +
+      (veh.loa > 0 ? '<div class="detail-row"><div class="detail-row-left">📋 Loyer LOA/LLD</div><div class="detail-val">' + formatEuro(veh.loa) + '/mois</div></div>' : '') +
+      (depreciMois > 0 ? '<div class="detail-row hidden-cost" style="flex-direction:column;align-items:flex-start;gap:3px"><div style="display:flex;justify-content:space-between;width:100%;align-items:center"><div class="detail-row-left">📉 Dépréciation estimée <span style="font-size:0.68rem;color:var(--gris2)">(coût caché)</span></div><div class="detail-val" style="color:#7a4a10">~' + formatEuro(depreciMois) + '/mois</div></div><div style="font-size:0.70rem;color:#7a4a10;font-style:italic">Perte de valeur progressive — coût réel non décaissé mais qui réduit votre patrimoine.</div></div>' : '') +
+      // Note si aucune donnée propre
+      (!veh.credit && !veh.loa && !depreciMois ? '<div class="info-box terra" style="margin-top:0">Renseignez le financement et l\'année dans votre profil pour calculer le coût réel de ce véhicule.</div>' : '') +
+      (coutConnu > 0 ? '<div class="veh-cout-reel"><div class="veh-cout-reel-val">' + formatEuro(coutConnu) + '/mois</div><div class="veh-cout-reel-label">coût spécifique estimé (hors carburant partagé)</div></div>' : '') +
+    '</div>';
+  }
+  // Si moins de vehicules que nbVoitures (données non renseignées)
+  if (vehicules.length < nbVoitures) {
+    for (var j = vehicules.length; j < nbVoitures; j++) {
+      vehHTML += '<div class="veh-card"><div class="veh-card-header"><div class="veh-card-title">🚗 Véhicule ' + (j + 1) + '</div></div>' +
+        '<div class="info-box terra" style="margin-top:0">Renseignez les détails de ce véhicule dans votre profil pour une analyse personnalisée.</div>' +
+      '</div>';
+    }
+  }
+  vehHTML += '</div>';
+  if (totalCommun > 0) {
+    vehHTML += '<div class="mobi-card sable" style="margin-top:20px"><h4>🚇 Transports alternatifs utilisés</h4><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">';
+    [{ icon: '🎫', label: 'TC', val: tc }, { icon: '🚲', label: 'Vélo', val: velo }, { icon: '🚕', label: 'VTC', val: vtc }, { icon: '🤝', label: 'Covoiturage', val: covoiturage }, { icon: '🚂', label: 'Train', val: train }]
+      .filter(function(l) { return l.val > 0; })
+      .forEach(function(l) { vehHTML += '<div style="background:var(--creme);border-radius:var(--radius-sm);padding:8px 14px;font-size:0.83rem">' + l.icon + ' ' + l.label + ' <strong>' + formatEuro(l.val) + '</strong>/mois</div>'; });
+    vehHTML += '</div></div>';
+  }
+  s1Content.innerHTML = vehHTML;
+} else {
+  document.getElementById('section-vehicules').style.display = 'none';
+}
+
+// ── 2. COÛT RÉEL COMPLET ──
+const allPostes = [
+  { icon: '⛽', label: 'Carburant', val: carburant, visible: true },
+  { icon: '🛡️', label: 'Assurance auto', val: assurAuto, visible: true },
+  { icon: '🔧', label: 'Entretien & réparations', val: entretienAuto, visible: true },
+  { icon: '🅿️', label: 'Parking / péages', val: parking, visible: true },
+  { icon: '🎫', label: 'Abonnement TC', val: tc, visible: true },
+  { icon: '🎟️', label: 'Tickets ponctuels', val: tcPonctuel, visible: true },
+  { icon: '🚲', label: 'Vélo / trottinette', val: velo, visible: true },
+  { icon: '🚕', label: 'VTC / taxi', val: vtc, visible: true },
+  { icon: '🤝', label: 'Covoiturage', val: covoiturage, visible: true },
+  { icon: '🚂', label: 'Train / avion', val: train, visible: true },
+].filter(function(p) { return p.val > 0; });
+
+const totalVisible = allPostes.reduce(function(s, p) { return s + p.val; }, 0);
+const totalReel = totalVisible + deprecTotale;
+
+document.getElementById('s2-sub').textContent = deprecTotale > 0
+  ? formatEuro(totalVisible) + '/mois déclarés — coût réel estimé à ' + formatEuro(totalReel) + '/mois en comptant la dépréciation.'
+  : formatEuro(totalVisible) + '/mois de dépenses de mobilité déclarées.';
+
+const visibleListEl = document.getElementById('cout-visible-list');
+allPostes.forEach(function(p) {
+  const pct = totalReel > 0 ? Math.round(p.val / totalReel * 100) : 0;
+  const barW = Math.min(pct * 2, 100);
+  visibleListEl.innerHTML +=
+    '<div style="background:var(--sable);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:14px">' +
+      '<span style="font-size:1.3rem;flex-shrink:0">' + p.icon + '</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:0.82rem;color:var(--gris);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.label + '</div>' +
+        '<div style="display:flex;align-items:baseline;gap:6px;margin-top:2px">' +
+          '<span style="font-family:\'DM Serif Display\',serif;font-weight:700;font-size:1.05rem;color:var(--texte)">' + formatEuro(p.val) + '</span>' +
+          '<span style="font-size:0.68rem;color:var(--gris2)">' + pct + '% du total</span>' +
+        '</div>' +
+        '<div class="bar-wrap" style="width:100%;margin-top:5px"><div class="bar-fill" style="width:' + barW + '%"></div></div>' +
+      '</div>' +
+    '</div>';
+});
+
+if (deprecTotale > 0) {
+  document.getElementById('cout-cache-panel').style.display = 'block';
+  document.getElementById('cout-cache-list').innerHTML =
+    '<div class="detail-row hidden-cost" style="flex-direction:column;align-items:flex-start;gap:4px">' +
+      '<div style="display:flex;justify-content:space-between;width:100%;align-items:center">' +
+        '<div class="detail-row-left">📉 Dépréciation véhicule(s)</div>' +
+        '<div class="detail-val" style="color:#7a4a10">~' + formatEuro(deprecTotale) + '/mois</div>' +
+      '</div>' +
+      '<div style="font-size:0.72rem;color:#7a4a10;line-height:1.5;font-style:italic">Perte de valeur progressive du véhicule dans le temps — un coût réel qui ne passe pas en caisse mais réduit votre patrimoine.</div>' +
+    '</div>';
+}
+
+document.getElementById('cout-total-bloc').innerHTML =
+  '<div style="display:flex;align-items:baseline;gap:8px">' +
+    '<span style="font-size:0.83rem;font-weight:600;color:var(--gris)">Total déclaré :</span>' +
+    '<span style="font-family:\'DM Serif Display\',serif;font-size:1.4rem;font-weight:700">' + formatEuro(totalVisible) + '/mois</span>' +
+  '</div>' +
+  (deprecTotale > 0 ?
+    '<div style="display:flex;align-items:baseline;gap:8px">' +
+      '<span style="font-size:0.83rem;font-weight:700;color:var(--terra)">Coût réel estimé :</span>' +
+      '<span style="font-family:\'DM Serif Display\',serif;font-size:1.6rem;font-weight:700;color:var(--terra)">~' + formatEuro(totalReel) + '/mois</span>' +
+    '</div>' : '');
+
+// Analyse
+const analyseEl = document.getElementById('cout-analyse');
+const msgs = [];
+if (totalMobilite === 0) msgs.push({ cls: 'terra', txt: 'Aucune dépense de transport renseignée. Complétez l\'étape Mobilité de votre profil.' });
+if (carburant > salaire * 0.08) msgs.push({ cls: 'bad', txt: '⛽ Le carburant (' + formatEuro(carburant) + '/mois) représente ' + Math.round(carburant/salaire*100) + '% de vos revenus.' });
+else if (carburant > 0) msgs.push({ cls: 'ok', txt: '✅ Budget carburant (' + formatEuro(carburant) + '/mois) maîtrisé.' });
+if (assurAuto > 120) msgs.push({ cls: 'warn', txt: '🛡️ Assurance auto à ' + formatEuro(assurAuto) + '/mois — une comparaison peut économiser 20 à 40%.' });
+if (deprecTotale > 0) msgs.push({ cls: 'warn', txt: '📉 La dépréciation représente <strong>~' + formatEuro(deprecTotale) + '/mois</strong> supplémentaires — soit <strong>' + Math.round(deprecTotale/totalReel*100) + '%</strong> du coût réel total.' });
+if (vtc > 80) msgs.push({ cls: 'warn', txt: '🚕 ' + formatEuro(vtc) + '/mois en VTC — un abonnement TC revient souvent 2 à 3× moins cher.' });
+if (totalCommun > 0 && totalVehicule > 0) msgs.push({ cls: 'ok', txt: '✅ Bonne combinaison véhicule + transports alternatifs.' });
+// Analyse par kilométrage
+vehicules.forEach(function(veh2, idx) {
+  if (!veh2.km) return;
+  var coutVeh = (veh2.vCarburant||0)+(veh2.vAssurance||0)+(veh2.vEntretien||0)+(veh2.vParking||0)+(veh2.credit||0)+(veh2.loa||0);
+  var coutKm = coutVeh > 0 ? Math.round(coutVeh * 12 / veh2.km * 100) / 100 : 0;
+  var label = vehicules.length > 1 ? ' (véhicule ' + (idx+1) + ')' : '';
+  if (veh2.km < 5000 && coutVeh > 0)
+    msgs.push({ cls: 'warn', txt: '📍 Faible kilométrage' + label + ' (' + veh2.km.toLocaleString('fr-FR') + ' km/an) — la location ponctuelle ou l\'autopartage pourrait être plus économique que posséder un véhicule.' });
+  else if (veh2.km > 25000 && (veh2.carb === 'essence' || veh2.carb === 'diesel'))
+    msgs.push({ cls: 'terra', txt: '📍 Fort kilométrage' + label + ' (' + veh2.km.toLocaleString('fr-FR') + ' km/an) — à ce volume, le coût du carburant est significatif. Un véhicule électrique ou hybride devient particulièrement rentable : le surcoût d\'achat s\'amortit plus vite grâce aux économies à la pompe.' });
+  if (veh2.usage === 'domicile_travail' && veh2.km > 10000)
+    msgs.push({ cls: 'terra', txt: '🏢 Trajet domicile-travail' + label + ' — le covoiturage ou un abonnement TC pourrait diviser vos frais. Vérifiez les indemnités kilométriques auprès de votre employeur.' });
+  if (veh2.usage === 'professionnel' || veh2.usage === 'mixte')
+    msgs.push({ cls: 'ok', txt: '💼 Usage professionnel' + label + ' — vous pouvez déduire les frais kilométriques de vos impôts (barème fiscal). Pensez à tenir un carnet de bord.' });
+  if (coutKm > 0.30)
+    msgs.push({ cls: 'warn', txt: '📊 Coût au km' + label + ' estimé à <strong>' + coutKm.toFixed(2) + '€/km</strong> — au-dessus de la moyenne (0,20-0,25€/km). Des optimisations sont possibles.' });
+});
+if (msgs.length === 0) msgs.push({ cls: 'ok', txt: '✅ Vos dépenses de mobilité semblent bien maîtrisées.' });
+msgs.forEach(function(m) { analyseEl.innerHTML += '<div class="info-box ' + m.cls + '" style="margin-bottom:8px">' + m.txt + '</div>'; });
+
+// Alternatives
+const alts = zone === 'paris' ? [
+  { icon: '🚇', label: 'Navigo mensuel', cout: '86€/mois', lien: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs' },
+  { icon: '🚲', label: 'Vélib\'', cout: '37€/an', lien: 'https://www.velib-metropole.fr/offres' },
+  { icon: '🚗', label: 'Free2Move', cout: 'Variable', lien: 'https://free2move.com/fr-FR/' },
+  { icon: '🚕', label: 'BlaBlaCar Daily', cout: '~50-80€/mois', lien: 'https://www.blablacar.fr/blablacar-daily' },
+] : zone === 'grande_ville' ? [
+  { icon: '🚇', label: 'Abonnement TC', cout: '50-80€/mois', lien: 'https://www.sncf-connect.com/train/abonnements' },
+  { icon: '🚲', label: 'Vélo électrique', cout: '~30€/mois', lien: 'https://www.1jeune1solution.gouv.fr/aides-et-services/aide-velo' },
+  { icon: '🚗', label: 'BlaBlaCar', cout: '~40-60€/mois', lien: 'https://www.blablacar.fr/blablacar-daily' },
+  { icon: '🛵', label: 'Scooter électrique', cout: '~60€/mois', lien: 'https://www.lacentrale.fr/moto' },
+] : [
+  { icon: '🚗', label: 'BlaBlaCar', cout: '~30-50€/mois', lien: 'https://www.blablacar.fr/' },
+  { icon: '🚂', label: 'TER + abonnement', cout: 'Variable', lien: 'https://www.sncf-connect.com/train/abonnements' },
+  { icon: '🚲', label: 'Vélo', cout: '~10€/mois', lien: 'https://www.1jeune1solution.gouv.fr/aides-et-services/aide-velo' },
+  { icon: '🏠', label: 'Télétravail', cout: '0€', lien: 'https://www.service-public.fr/particuliers/vosdroits/F35030' },
+];
+// Add zone badge to alternatives card
+(function() {
+  var h4 = document.querySelector('#bloc-alternatives h4');
+  if (h4) {
+    var zoneLabel = zone==='paris' ? 'Paris / IDF' : zone==='grande_ville' ? 'Grande ville' : 'Province';
+    h4.outerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><h4 style="margin-bottom:0">🆚 Alternatives dans votre zone</h4><span class="card-badge">' + zoneLabel + '</span></div>';
+  }
+})();
+const altEl = document.getElementById('alternatives-content');
+alts.forEach(function(a) {
+  altEl.innerHTML += '<div class="comparatif-row"><div><strong>' + a.icon + ' ' + a.label + '</strong></div>' +
+    '<div style="text-align:right"><span style="font-weight:700;color:var(--terra)">' + a.cout + '</span><br>' +
+    '<a href="' + a.lien + '" target="_blank" style="font-size:0.68rem;color:var(--terra);text-decoration:none">→ Voir</a></div></div>';
+});
+
+// ── 3. OPTIMISER ──
+let simuCount = 0;
+if (assurAuto > 0) {
+  simuCount++;
+}
+if (totalVehicule > 0 && (zone === 'paris' || zone === 'grande_ville')) {
+  simuCount++;
+  document.getElementById('simul-tc-bloc').style.display = 'block';
+  const tarifTC = zone === 'paris' ? 86 : zone === 'grande_ville' ? 65 : 40;
+  // Autant d\'abonnements TC que de véhicules (1 par personne)
+  const nbAbonnements = nbVoitures;
+  const totalAbonnementsTC = tarifTC * nbAbonnements;
+  const eco = totalVehicule - totalAbonnementsTC;
+  const labelAbonnements = nbAbonnements > 1
+    ? nbAbonnements + ' abonnements TC (' + formatEuro(tarifTC) + ' × ' + nbAbonnements + ')'
+    : 'Abonnement TC estimé';
+  document.getElementById('simul-tc-content').innerHTML =
+    '<div class="comparatif-row" style="border-bottom:1px solid var(--sable3)"><span>' + nbVoitures + ' véhicule' + (nbVoitures > 1 ? 's' : '') + '</span><strong>' + formatEuro(totalVehicule) + '/mois</strong></div>' +
+    '<div class="comparatif-row" style="border-bottom:1px solid var(--sable3)"><span>' + labelAbonnements + '</span><strong>' + formatEuro(totalAbonnementsTC) + '/mois</strong></div>' +
+    '<div class="comparatif-row" style="background:' + (eco > 0 ? '#edf5ee' : 'var(--sable)') + ';border-radius:0 0 var(--radius-sm) var(--radius-sm);padding:10px 12px">' +
+      '<span style="font-weight:600">' + (eco > 0 ? 'Économie potentielle' : 'Surcoût TC') + '</span>' +
+      '<strong style="color:' + (eco > 0 ? '#4a7c59' : 'var(--danger)') + '">' + (eco > 0 ? '+' : '') + formatEuro(Math.abs(eco)) + '/mois</strong>' +
+    '</div>' +
+    (nbAbonnements > 1 ? '<div style="font-size:0.72rem;color:var(--gris2);margin-top:6px">Comparaison sur la base de ' + nbAbonnements + ' abonnements TC — un par véhicule remplacé.</div>' : '');
+  document.getElementById('simul-tc-badge').textContent = eco > 0 ? '+' + formatEuro(eco) + '/mois' : 'Comparaison';
+  document.getElementById('simul-tc-lien').href = zone === 'paris' ? 'https://www.iledefrance-mobilites.fr/titres-et-tarifs' : 'https://www.sncf-connect.com/train/abonnements';
+}
+// Simulateur électrique si véhicule thermique
+const hasThermique = vehicules.some(function(v2) { return v2.carb === 'essence' || v2.carb === 'diesel'; });
+if (hasThermique && totalVehicule > 0) {
+  simuCount++;
+  const bonusEco = salaire < 2500 ? 7000 : 5000;
+  const primeConv = (vehicules.some(function(v2) { return v2.carb === 'diesel'; })) ? 3000 : 1500;
+  const totalAides = bonusEco + primeConv;
+  // Aides elec kept for conseils only — removed from optimiser
+  var _elecContent =
+    '<div class="comparatif-row"><span>Bonus écologique estimé</span><strong style="color:#4a7c59">+' + formatEuro(bonusEco) + '</strong></div>' +
+    '<div class="comparatif-row"><span>Prime à la conversion estimée</span><strong style="color:#4a7c59">+' + formatEuro(primeConv) + '</strong></div>' +
+    '<div class="comparatif-row" style="background:#edf5ee;border-radius:var(--radius-sm);padding:10px 12px">' +
+      '<span style="font-weight:600">Aides totales estimées</span>' +
+      '<strong style="color:#4a7c59">jusqu\'à ' + formatEuro(totalAides) + '</strong>' +
+    '</div>' +
+    '<div style="font-size:0.72rem;color:var(--gris2);margin-top:6px">Estimation indicative — montants selon revenus et conditions 2024.</div>';
+}
+// Remboursement employeur TC
+if (tc > 0) {
+  simuCount++;
+  document.getElementById('sans-voiture-employeur').style.display = 'block';
+  const remb = Math.round(tc * 0.5);
+  document.getElementById('sans-voiture-employeur-calc').innerHTML =
+    '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:0.83rem">Abonnement TC</span><strong>' + formatEuro(tc) + '/mois</strong></div>' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:0.83rem">Remboursement dû (50%)</span><strong style="color:#4a7c59">+' + formatEuro(remb) + '/mois</strong></div>' +
+    '<div style="font-size:0.72rem;color:var(--gris2);margin-top:6px">Soit <strong>' + formatEuro(remb * 12) + '/an</strong> récupérables.</div>';
+}
+if (simuCount > 0) {
+  document.getElementById('optimiser-sub').textContent = simuCount + ' simulateur' + (simuCount > 1 ? 's' : '') + ' personnalisé' + (simuCount > 1 ? 's' : '') + ' selon votre situation.';
+} else {
+  document.getElementById('section-optimiser').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── MOTEUR DE CONSEILS — règles scorées 0-100 ──
+// Chaque règle = { score(ctx), titre, desc(ctx), icon, liens }
+// score() retourne 0 = non applicable, 1-100 = pertinence
+// On trie par score décroissant, on affiche les N meilleurs
+// ══════════════════════════════════════════════════════════════
+
+// Contexte global enrichi
+const hasEssence   = vehicules.some(function(v2) { return v2.carb === 'essence'; });
+const hasDiesel    = vehicules.some(function(v2) { return v2.carb === 'diesel'; });
+const hasHybride   = vehicules.some(function(v2) { return v2.carb === 'hybride'; });
+const hasElectrique= vehicules.some(function(v2) { return v2.carb === 'electrique'; });
+const hasSuv       = vehicules.some(function(v2) { return v2.type === 'suv'; });
+const hasMoto      = vehicules.some(function(v2) { return v2.type === 'moto'; });
+const hasLoa       = vehicules.some(function(v2) { return v2.fin === 'loa'; });
+const hasCredit    = vehicules.some(function(v2) { return v2.fin === 'credit'; });
+const hasProUsage  = vehicules.some(function(v2) { return v2.usage === 'professionnel' || v2.usage === 'mixte'; });
+const hasDomTrav   = vehicules.some(function(v2) { return v2.usage === 'domicile_travail' || v2.usage === 'mixte'; });
+const vehAncien    = vehicules.some(function(v2) { return v2.annee && (new Date().getFullYear() - v2.annee) > 8; });
+const vehTresAncien= vehicules.some(function(v2) { return v2.annee && (new Date().getFullYear() - v2.annee) > 15; });
+const kmTotal      = vehicules.reduce(function(s,v2){return s+(v2.km||0);},0);
+const kmMax        = vehicules.reduce(function(s,v2){return Math.max(s,v2.km||0);},0);
+const kmMin        = vehicules.filter(function(v2){return v2.km>0;}).reduce(function(s,v2){return Math.min(s,v2.km);},99999);
+const tauxEffort   = tauxMobilite;
+const coutKmMoyen  = (function() {
+  var total = 0; var km = 0;
+  vehicules.forEach(function(v2) {
+    var cout = (v2.vCarburant||0)+(v2.vAssurance||0)+(v2.vEntretien||0)+(v2.vParking||0)+(v2.credit||0)+(v2.loa||0);
+    if (v2.km && cout) { total += cout*12; km += v2.km; }
+  });
+  return km > 0 ? Math.round(total/km*100)/100 : 0;
+})();
+
+// Contexte par véhicule — utilisé dans les descriptions dynamiques
+function ctxVeh(i) {
+  var v2 = vehicules[i] || {};
+  var cout = (v2.vCarburant||0)+(v2.vAssurance||0)+(v2.vEntretien||0)+(v2.vParking||0)+(v2.credit||0)+(v2.loa||0);
+  var age = v2.annee ? (new Date().getFullYear() - v2.annee) : 0;
+  var deprec = calculerDepreciation(v2);
+  var coutKm = v2.km && cout ? Math.round(cout*12/v2.km*100)/100 : 0;
+  var ecoElec = v2.vCarburant ? Math.round(v2.vCarburant * 0.55) : 0; // ~55% économie carburant elec
+  return { v:v2, cout:cout, age:age, deprec:deprec, coutKm:coutKm, ecoElec:ecoElec,
+    label: vehicules.length > 1 ? ' (véh. '+(i+1)+')' : '' };
+}
+
+// ── RÈGLES DU MOTEUR ──
+const REGLES = [
+
+  // ── ASSURANCE ÉLEVÉE ──
+  { id:'assur_eleve', icon:'🛡️',
+    score: function() {
+      if (!assurAuto) return 0;
+      if (assurAuto > 150) return 95;
+      if (assurAuto > 100) return 80;
+      return 55;
+    },
+    titre: function() { return 'Comparer votre assurance auto'; },
+    desc: function() {
+      var eco = Math.round(assurAuto * 0.3);
+      return `Votre assurance auto s'élève à ${formatEuro(assurAuto)}/mois. Les comparateurs permettent d'économiser 20 à 40% à garanties identiques — soit potentiellement <strong>${formatEuro(eco)}/mois</strong> ou <strong>${formatEuro(eco*12)}/an</strong>. Résiliable à tout moment après 1 an (loi Chatel).`;
+    },
+    liens: [{lien:'https://www.lelynx.fr/assurance-auto/',btn:'LeLynx'},{lien:'https://www.assurland.com/assurance-auto/',btn:'AssurLand'}]
+  },
+
+  // ── ASSURANCE TOUS RISQUES INUTILE ──
+  { id:'assur_vieux_tous_risques', icon:'🛡️',
+    score: function() { return vehAncien && assurAuto > 80 ? 75 : 0; },
+    titre: function() { return 'Passer au tiers pour votre véhicule ancien'; },
+    desc: function() {
+      return `Un véhicule de plus de 8 ans vaut rarement la peine d'être assuré tous risques — les primes peuvent dépasser la valeur de remboursement en cas de sinistre. Le tiers simple ou le tiers+ peut suffire et coûte 30 à 50% moins cher.`;
+    },
+    liens: [{lien:'https://www.lelynx.fr/assurance-auto/',btn:'Comparer les formules'}]
+  },
+
+  // ── CARBURANT ──
+  { id:'carburant_eleve', icon:'⛽',
+    score: function() {
+      if (!carburant || hasElectrique) return 0;
+      var pct = salaire > 0 ? carburant/salaire : 0;
+      if (pct > 0.08) return 90;
+      if (pct > 0.05) return 70;
+      return 40;
+    },
+    titre: function() { return 'Réduire sa facture carburant'; },
+    desc: function() {
+      var pct = salaire > 0 ? Math.round(carburant/salaire*100) : 0;
+      return `Le carburant représente <strong>${formatEuro(carburant)}/mois</strong>${pct ? ', soit ' + pct + '% de vos revenus' : ''}. L'éco-conduite (anticipation, régime stable, pression des pneus) réduit la consommation de 10 à 20%. L'application gouvernementale localise les stations les moins chères en temps réel.`;
+    },
+    liens: [{lien:'https://www.prix-carburants.gouv.fr/',btn:'Prix carburants officiel'}]
+  },
+
+  // ── DIESEL ANCIEN + ZFE ──
+  { id:'diesel_zfe', icon:'🔍',
+    score: function() {
+      if (!hasDiesel) return 0;
+      if (vehTresAncien && (zone==='paris'||zone==='grande_ville')) return 95;
+      if (vehAncien && zone==='paris') return 85;
+      if (vehAncien) return 60;
+      return 30;
+    },
+    titre: function() { return "Diesel ancien — vignette Crit'Air & ZFE"; },
+    desc: function() {
+      var d = vehicules.find(function(v2){return v2.carb==='diesel';}) || {};
+      var age = d.annee ? (new Date().getFullYear()-d.annee) : 0;
+      return `Votre véhicule diesel${age ? ' de ' + age + ' ans' : ''} peut être soumis aux Zones à Faibles Émissions (ZFE) dans les grandes villes${zone==='paris' ? ', notamment à Paris' : ''}. Une vignette Crit'Air est obligatoire pour circuler — vérifiez votre catégorie et anticipez les restrictions à venir.`;
+    },
+    liens: [{lien:'https://www.certificat-air.gouv.fr/',btn:"Obtenir sa vignette Crit'Air"},{lien:'https://www.ecologie.gouv.fr/zones-faibles-emissions',btn:'Carte des ZFE'}]
+  },
+
+  // ── PASSAGE ÉLECTRIQUE — FORT KILOMÉTRAGE ──
+  { id:'elec_fort_km', icon:'⚡',
+    score: function() {
+      if (hasElectrique) return 0;
+      if (kmMax > 25000 && (hasEssence||hasDiesel)) return 92;
+      if (kmMax > 15000 && hasDiesel) return 80;
+      if (kmMax > 15000 && hasEssence) return 65;
+      return 0;
+    },
+    titre: function() { return "Passer à l'électrique — rentable à votre kilométrage"; },
+    desc: function() {
+      var v2 = vehicules.find(function(v){return (v.carb==='essence'||v.carb==='diesel')&&v.km>0;}) || vehicules[0] || {};
+      var ecoMens = v2.vCarburant ? Math.round(v2.vCarburant*0.55) : 0;
+      var bonusEco = salaire < 2500 ? 7000 : 5000;
+      var prime = hasDiesel ? 3000 : 1500;
+      return `Avec ${(v2.km||kmMax).toLocaleString('fr-FR')} km/an, l'électrique devient très rentable. Économie carburant estimée : <strong>~${formatEuro(ecoMens)}/mois</strong>. Aides disponibles : bonus écologique jusqu'à ${formatEuro(bonusEco)} + prime à la conversion jusqu'à ${formatEuro(prime)}.`;
+    },
+    liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F35095',btn:'Vérifier les aides'},{lien:'https://www.automobile-propre.com/voitures-electriques/',btn:'Comparer les modèles'}]
+  },
+
+  // ── PASSAGE ÉLECTRIQUE — DIESEL ANCIEN ──
+  { id:'elec_diesel_ancien', icon:'⚡',
+    score: function() {
+      if (!hasDiesel || hasElectrique) return 0;
+      // Si kmMax > 15000, elec_fort_km couvre déjà le sujet — ne pas doubler
+      if (kmMax > 15000) return 0;
+      if (vehTresAncien) return 88;
+      if (vehAncien) return 70;
+      return 0;
+    },
+    titre: function() { return "Prime à la conversion — jusqu'à 10 000€ d'aides"; },
+    desc: function() {
+      var bonusEco = salaire < 2500 ? 7000 : 5000;
+      return `Votre diesel ancien est éligible à la prime à la conversion (jusqu'à 3 000€) cumulable avec le bonus écologique (jusqu'à ${formatEuro(bonusEco)}). Total potentiel : <strong>jusqu'à ${formatEuro(bonusEco+3000)}</strong>. Le remplacement peut s'autofinancer partiellement.`;
+    },
+    liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F35095',btn:'Simuler les aides'}]
+  },
+
+  // ── LOA — RACHAT FIN DE CONTRAT ──
+  { id:'loa_rachat', icon:'📋',
+    score: function() { return hasLoa ? 82 : 0; },
+    titre: function() { return 'LOA — faut-il racheter votre véhicule ?'; },
+    desc: function() {
+      return `En fin de contrat LOA, le rachat à la valeur résiduelle est souvent intéressant si le véhicule est en bon état — comparez avec le prix du marché avant de décider. Évitez de renouveler systématiquement pour ne pas rester dans un cycle LOA perpétuel.`;
+    },
+    liens: [{lien:'https://www.lacentrale.fr/',btn:'Cote marché — La Centrale'},{lien:'https://www.largus.fr/',btn:"L'Argus — Cote officielle"}]
+  },
+
+  // ── CRÉDIT AUTO — RENÉGOCIATION ──
+  { id:'credit_renegociation', icon:'💳',
+    score: function() {
+      if (!hasCredit) return 0;
+      var totCredit = vehicules.reduce(function(s,v2){return s+(v2.credit||0);},0);
+      if (totCredit > 300) return 85;
+      if (totCredit > 150) return 70;
+      return 55;
+    },
+    titre: function() { return 'Renégocier votre crédit auto'; },
+    desc: function() {
+      var totCredit = vehicules.reduce(function(s,v2){return s+(v2.credit||0);},0);
+      return `Votre (ou vos) mensualité(s) crédit auto s'élèvent à <strong>${formatEuro(totCredit)}/mois</strong>. Si votre crédit date de plus de 2 ans, les taux ont peut-être évolué. Une renégociation ou un rachat de crédit peut réduire significativement vos mensualités.`;
+    },
+    liens: [{lien:'https://www.meilleurtaux.com/credit-conso/rachat-de-credit-auto.html',btn:'Simuler sur MeilleurTaux'}]
+  },
+
+  // ── COVOITURAGE — DOMICILE TRAVAIL ──
+  { id:'covoiturage_dt', icon:'🤝',
+    score: function() {
+      if (!hasDomTrav) return 0;
+      if (kmMax > 20000) return 90;
+      if (kmMax > 10000) return 78;
+      if (kmMax > 5000) return 55;
+      return 30;
+    },
+    titre: function() { return 'Covoiturage domicile-travail'; },
+    desc: function() {
+      var v2 = vehicules.find(function(v){return v.usage==='domicile_travail'||v.usage==='mixte';}) || {};
+      var eco = v2.vCarburant ? Math.round(v2.vCarburant*0.5) : null;
+      return `Partager vos trajets domicile-travail divise les frais par le nombre de passagers${eco ? ' — économie estimée <strong>~' + formatEuro(eco) + '/mois</strong>' : ''}. Certaines entreprises versent des indemnités covoiturage exonérées d'impôts (jusqu'à 600€/an).`;
+    },
+    liens: [{lien:'https://www.blablacar.fr/blablacar-daily',btn:'BlaBlaCar Daily'},{lien:'https://www.karos.fr/',btn:'Karos'}]
+  },
+
+  // ── INDEMNITÉS KILOMÉTRIQUES ──
+  { id:'indemnites_km', icon:'📍',
+    score: function() {
+      if (!hasProUsage && !hasDomTrav) return 0;
+      if (hasProUsage) return 85;
+      if (hasDomTrav && kmMax > 10000) return 75;
+      return 50;
+    },
+    titre: function() { return 'Déduire vos frais kilométriques'; },
+    desc: function() {
+      var bareme = hasSuv ? '0,621€/km (véhicule > 13cv)' : '0,529€/km (barème moyen)';
+      return `Vous utilisez votre véhicule à des fins professionnelles ou pour le domicile-travail : vous pouvez déduire vos frais réels selon le barème officiel (${bareme}) plutôt que la déduction forfaitaire de 10%. Conservez un carnet de bord avec date, trajet et kilomètres.`;
+    },
+    liens: [{lien:'https://www.impots.gouv.fr/particulier/les-frais-reels',btn:'Barème kilométrique impôts'}]
+  },
+
+  // ── AUTOPARTAGE — FAIBLE KM ──
+  { id:'autopartage_km_faible', icon:'🔄',
+    score: function() {
+      if (kmMin <= 0 || kmMin >= 5000) return 0;
+      var v2 = vehicules.find(function(v){return v.km>0&&v.km<5000;}) || {};
+      var cout = (v2.vCarburant||0)+(v2.vAssurance||0)+(v2.vEntretien||0)+(v2.vParking||0)+(v2.credit||0)+(v2.loa||0);
+      if (cout > 200) return 88;
+      if (cout > 100) return 72;
+      return 55;
+    },
+    titre: function() { return "Faible kilométrage — l'autopartage peut être plus économique"; },
+    desc: function() {
+      var v2 = vehicules.find(function(v){return v.km>0&&v.km<5000;}) || {};
+      var cout = (v2.vCarburant||0)+(v2.vAssurance||0)+(v2.vEntretien||0)+(v2.vParking||0);
+      return `Avec ${(v2.km||0).toLocaleString('fr-FR')} km/an, vos coûts fixes (${formatEuro(cout)}/mois) représentent un coût par kilomètre élevé. L'autopartage ou la location ponctuelle peut revenir moins cher si vous roulez peu.`;
+    },
+    liens: [{lien:'https://free2move.com/fr-FR/',btn:'Free2Move'},{lien:'https://www.getaround.com/fr/',btn:'Getaround'}]
+  },
+
+  // ── SUV — ÉCO-CONDUITE ──
+  { id:'suv_eco_conduite', icon:'🚙',
+    score: function() {
+      return hasSuv && carburant > 100 ? 72 : hasSuv ? 55 : 0;
+    },
+    titre: function() { return 'SUV — réduire la surconsommation'; },
+    desc: function() {
+      return `Les SUV consomment en moyenne 20 à 30% de plus qu'une berline équivalente. L'éco-conduite (vitesse stabilisée, pression des pneus optimale, anticipation) peut réduire cette surconsommation de 15 à 20%. Pensez aussi à retirer les galeries de toit quand elles ne servent pas.`;
+    },
+    liens: [{lien:'https://www.prix-carburants.gouv.fr/',btn:'Prix carburants'},{lien:'https://www.ademe.fr/particuliers-eco-citoyens/deplacements/opter-pour-des-modes-de-deplacements-eco-responsables/dossier/voiture/eco-conduite',btn:'Guide éco-conduite ADEME'}]
+  },
+
+  // ── ENTRETIEN PRÉVENTIF ──
+  { id:'entretien_preventif', icon:'🔧',
+    score: function() {
+      if (!totalVehicule) return 0;
+      if (vehAncien && entretienAuto < 50) return 80;
+      if (entretienAuto > 0) return 45;
+      return 60;
+    },
+    titre: function() { return 'Entretien préventif — économiser sur les réparations'; },
+    desc: function() {
+      return `Un entretien régulier coûte en moyenne 3× moins cher que les réparations d'urgence. Les garages indépendants et centres auto sont souvent 20 à 30% moins chers que les concessions. Comparez les devis en ligne avant de vous engager.`;
+    },
+    liens: [{lien:'https://www.autobutler.fr/',btn:'Autobutler'},{lien:'https://www.midas.fr/devis',btn:'Devis Midas'}]
+  },
+
+  // ── TC ABONNEMENT ANNUEL ──
+  { id:'tc_abonnement_annuel', icon:'📅',
+    score: function() {
+      if (zone === 'province') return 0;
+      return tc > 0 && isSansVoiture ? 78 : tc > 0 ? 50 : 0;
+    },
+    titre: function() { return 'Abonnement annuel TC — économiser 10 à 15%'; },
+    desc: function() {
+      var annuel = Math.round(tc * 11);
+      var eco = Math.round(tc * 12 - annuel);
+      return `Votre abonnement TC mensuel (${formatEuro(tc)}/mois) coûte ${formatEuro(tc*12)}/an. Un abonnement annuel revient généralement à <strong>${formatEuro(annuel)}</strong>, soit <strong>${formatEuro(eco)} d'économie par an</strong>. À vérifier selon votre réseau de transport.`;
+    },
+    liens: [{lien: zone==='paris'?'https://www.iledefrance-mobilites.fr/titres-et-tarifs':'https://www.sncf-connect.com/train/abonnements', btn: zone==='paris'?'Navigo annuel':'Abonnements SNCF'}]
+  },
+
+  // ── REMBOURSEMENT EMPLOYEUR TC ──
+  { id:'remboursement_tc', icon:'💡',
+    score: function() { return tc > 0 ? 88 : 0; },
+    titre: function() { return 'Remboursement employeur TC — 50% obligatoire'; },
+    desc: function() {
+      var remb = Math.round(tc * 0.5);
+      return `La loi oblige votre employeur à rembourser <strong>50% de votre abonnement TC</strong>, soit <strong>${formatEuro(remb)}/mois</strong> ou <strong>${formatEuro(remb*12)}/an</strong>. Si ce n'est pas encore le cas, réclamez-le auprès de votre RH — c'est un droit.`;
+    },
+    liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F19846',btn:'Vos droits — service-public.fr'}]
+  },
+
+  // ── FORFAIT MOBILITÉS DURABLES ──
+  { id:'forfait_mobilites', icon:'🏅',
+    score: function() { return 65; },
+    titre: function() { return "Forfait mobilités durables — jusqu'à 800€/an"; },
+    desc: function() {
+      return `Votre employeur peut verser jusqu'à <strong>800€/an exonérés d'impôts</strong> pour les trajets en vélo, trottinette ou covoiturage. Ce forfait est cumulable avec le remboursement de l'abonnement TC. Moins de 20% des salariés éligibles en bénéficient.`;
+    },
+    liens: [{lien:'https://www.service-public.fr/particuliers/vosdroits/F34046',btn:'En savoir plus'}]
+  },
+
+  // ── VÉLO — TRAJETS COURTS ──
+  { id:'velo_trajets_courts', icon:'🚲',
+    score: function() {
+      if (zone === 'province') return 0;
+      if (isSansVoiture && velo > 0) return 40;
+      if (zone === 'paris' || zone === 'grande_ville') return 62;
+      if (hasDomTrav) return 55;
+      return 35;
+    },
+    titre: function() { return 'Le vélo — rentable dès 2 km'; },
+    desc: function() {
+      return `Pour les trajets de moins de 5 km, le vélo est souvent plus rapide que la voiture (stationnement inclus) et élimine carburant, parking et usure. Un vélo à assistance électrique se rentabilise en 1 à 2 ans. Des aides à l'achat sont disponibles.`;
+    },
+    liens: [{lien:'https://www.1jeune1solution.gouv.fr/aides-et-services/aide-velo',btn:"Aides à l'achat vélo"}]
+  },
+
+  // ── VTC ÉLEVÉ ──
+  { id:'vtc_abonnement', icon:'🚕',
+    score: function() {
+      if (vtc > 150) return 85;
+      if (vtc > 80) return 70;
+      return 0;
+    },
+    titre: function() { return 'Budget VTC élevé — des alternatives moins chères'; },
+    desc: function() {
+      var tarifTC = zone==='paris'?86:zone==='grande_ville'?65:40;
+      var econoTC = vtc - tarifTC;
+      return `Votre budget VTC/taxi (${formatEuro(vtc)}/mois) est significatif. Un abonnement TC mensuel${econoTC > 0 ? ' vous économiserait <strong>~' + formatEuro(econoTC) + '/mois</strong>' : ''}. Pour les trajets fréquents, le vélo ou trottinette en libre-service est souvent plus rapide et moins cher en ville.`;
+    },
+    liens: [{lien:'https://citymapper.com/fr',btn:'Citymapper — optimiser ses trajets'}]
+  },
+
+  // ── DÉPRÉCIATION ──
+  { id:'depreciation', icon:'📉',
+    score: function() {
+      if (deprecTotale <= 0) return 0;
+      var pct = totalReel > 0 ? Math.round(deprecTotale/totalReel*100) : 0;
+      if (pct > 30) return 82;
+      if (pct > 20) return 68;
+      return 50;
+    },
+    titre: function() { return 'La dépréciation — le coût invisible de votre voiture'; },
+    desc: function() {
+      var pct = totalReel > 0 ? Math.round(deprecTotale/totalReel*100) : 0;
+      return `La dépréciation représente <strong>~${formatEuro(deprecTotale)}/mois</strong>, soit <strong>${pct}% de votre coût réel de mobilité</strong>. C'est un coût réel qui ne se traduit pas en dépense mensuelle visible, mais qui réduit la valeur de votre patrimoine. Les véhicules d'occasion de 2-3 ans offrent le meilleur rapport valeur/dépréciation.`;
+    },
+    liens: [{lien:'https://www.lacentrale.fr/',btn:'Estimer la cote de votre véhicule'}]
+  },
+
+  // ── TAUX D'EFFORT ÉLEVÉ ──
+  { id:'taux_effort_eleve', icon:'📊',
+    score: function() {
+      if (tauxEffort > 20) return 92;
+      if (tauxEffort > 15) return 78;
+      return 0;
+    },
+    titre: function() { return 'Mobilité trop coûteuse — agir maintenant'; },
+    desc: function() {
+      return `Vos dépenses de mobilité représentent <strong>${tauxEffort}% de vos revenus</strong> (seuil recommandé : 10-15%). C'est un levier important d'optimisation. Priorités : comparer l'assurance, revoir les abonnements et envisager le covoiturage pour les trajets réguliers.`;
+    },
+    liens: [{lien:'https://www.lelynx.fr/assurance-auto/',btn:"Comparer l'assurance"},{lien:'https://www.blablacar.fr/blablacar-daily',btn:'Covoiturage domicile-travail'}]
+  },
+
+  // ── MOTO — ASSURANCE ──
+  { id:'moto_assurance', icon:'🏍️',
+    score: function() { return hasMoto && assurAuto > 0 ? 65 : 0; },
+    titre: function() { return 'Assurance moto — des offres très variables'; },
+    desc: function() {
+      return `Les tarifs d'assurance moto varient jusqu'à 50% selon les assureurs pour des garanties équivalentes. L'usage (loisir/quotidien), la cylindrée et l'expérience du conducteur influencent fortement la prime. Comparez chaque année.`;
+    },
+    liens: [{lien:'https://www.lelynx.fr/assurance-moto/',btn:'Comparer assurance moto'}]
+  },
+
+  // ── VÉHICULE ÉLECTRIQUE — OPTIMISER ──
+  { id:'elec_optimiser', icon:'⚡',
+    score: function() { return hasElectrique ? 78 : 0; },
+    titre: function() { return 'Véhicule électrique — optimiser la recharge'; },
+    desc: function() {
+      var econoHC = vehicules.filter(function(v2){return v2.carb==='electrique';}).reduce(function(s,v2){return s+(v2.vCarburant||0);},0);
+      var econoMens = econoHC ? Math.round(econoHC * 0.35) : null;
+      return `La recharge aux heures creuses (22h–6h) coûte 40 à 50% moins cher que le plein prix EDF.${econoMens ? ' Économie potentielle : <strong>~' + formatEuro(econoMens) + '/mois</strong>.' : ''} Pensez aussi à la carte réseau de bornes rapides (Chargemap Pass) pour les longs trajets, et à vérifier l'état de la batterie si le véhicule a plus de 5 ans.`;
+    },
+    liens: [{lien:'https://www.chargemap.com/',btn:'Chargemap — réseau de bornes'},{lien:'https://www.enedis.fr/heures-creuses',btn:'Heures creuses EDF'}]
+  },
+
+  // ── SUPPRIMER UN VÉHICULE ──
+  { id:'supprimer_vehicule', icon:'🚗',
+    score: function() {
+      if (nbVoitures < 2) return 0;
+      var vehFaibleKm = vehicules.filter(function(v2){return v2.km > 0 && v2.km < 8000;});
+      if (vehFaibleKm.length > 0 && nbVoitures >= 2) return 85;
+      if (nbVoitures >= 3) return 70;
+      if (nbVoitures >= 2 && tauxEffort > 15) return 65;
+      return 0;
+    },
+    titre: function() {
+      var vehFaibleKm = vehicules.find(function(v2){return v2.km > 0 && v2.km < 8000;});
+      return vehFaibleKm ? "Un de vos véhicules est peu utilisé — vendre ou louer ?" : "Réduire à " + (nbVoitures - 1) + " véhicule" + (nbVoitures - 1 > 1 ? 's' : '') + " — économie possible";
+    },
+    desc: function() {
+      var vehFaibleKm = vehicules.find(function(v2){return v2.km > 0 && v2.km < 8000;});
+      var idx = vehicules.indexOf(vehFaibleKm);
+      var coutV = vehFaibleKm ? (vehFaibleKm.vCarburant||0)+(vehFaibleKm.vAssurance||0)+(vehFaibleKm.vEntretien||0)+(vehFaibleKm.vParking||0)+(vehFaibleKm.credit||0)+(vehFaibleKm.loa||0) : 0;
+      if (vehFaibleKm && coutV > 0) return `Votre véhicule ${idx+1} ne roule qu'à ${(vehFaibleKm.km||0).toLocaleString('fr-FR')} km/an pour un coût de <strong>${formatEuro(coutV)}/mois</strong>. Le vendre et utiliser l'autopartage pour les trajets occasionnels pourrait vous économiser l'essentiel de ce coût.`;
+      return `Avec ${nbVoitures} véhicules, vos coûts fixes sont significatifs. Si l'un est peu utilisé, le vendre et recourir ponctuellement à l'autopartage ou à la location peut générer plusieurs centaines d'euros d'économies par mois.`;
+    },
+    liens: [{lien:'https://www.lacentrale.fr/',btn:'Estimer la valeur — La Centrale'},{lien:'https://www.getaround.com/fr/',btn:'Mettre en location sur Getaround'}]
+  },
+
+  // ── ASSURANCE AU KILOMÈTRE ──
+  { id:'assurance_km', icon:'📏',
+    score: function() {
+      var vehFaibleKm = vehicules.find(function(v2){return v2.km > 0 && v2.km < 7000;});
+      if (!vehFaibleKm) return 0;
+      var assurV = vehFaibleKm.vAssurance || assurAuto;
+      if (assurV > 80 && vehFaibleKm.km < 5000) return 88;
+      if (assurV > 60 && vehFaibleKm.km < 7000) return 72;
+      return 50;
+    },
+    titre: function() { return "Assurance au kilomètre — jusqu'à 50% moins cher"; },
+    desc: function() {
+      var vehFaibleKm = vehicules.find(function(v2){return v2.km > 0 && v2.km < 7000;});
+      var km = vehFaibleKm ? vehFaibleKm.km : kmMin;
+      var assurActuelle = (vehFaibleKm && vehFaibleKm.vAssurance) || assurAuto;
+      var econoPot = assurActuelle ? Math.round(assurActuelle * 0.4) : null;
+      return `Avec ${(km||0).toLocaleString('fr-FR')} km/an, une assurance pay-per-mile (au kilométrage) peut être 30 à 50% moins chère qu'une assurance classique.${econoPot ? ' Économie estimée : <strong>~' + formatEuro(econoPot) + '/mois</strong>.' : ''} Ces offres intègrent un boîtier GPS ou une application de suivi des trajets.`;
+    },
+    liens: [{lien:'https://www.leocare.eu/',btn:'Leocare — assurance auto'},{lien:'https://www.wilov.fr/',btn:'Wilov — assurance au km'}]
+  },
+
+  // ── AUTO-ENTREPRENEUR ──
+  { id:'autoentrepreneur_deduction', icon:'💼',
+    score: function() {
+      if (!hasProUsage) return 0;
+      return kmMax > 15000 ? 82 : kmMax > 8000 ? 70 : 55;
+    },
+    titre: function() { return 'Usage professionnel — optimiser la déduction fiscale'; },
+    desc: function() {
+      var vPro = vehicules.find(function(v2){return v2.usage==='professionnel'||v2.usage==='mixte';}) || {};
+      var km = vPro.km || kmMax;
+      var typeVeh = vPro.type || 'berline';
+      var baremes = {citadine:'0,456€/km',berline:'0,529€/km',suv:'0,621€/km',break:'0,529€/km',utilitaire:'0,529€/km',moto:'0,395€/km'};
+      var bareme = baremes[typeVeh] || '0,529€/km';
+      var deducAnnuelle = km ? Math.round(km * parseFloat(bareme) * 0.7) : null;
+      return `En tant que travailleur indépendant ou salarié en frais réels, vous pouvez déduire vos frais kilométriques selon le barème officiel (<strong>${bareme}</strong> pour votre type de véhicule).${deducAnnuelle ? ' Déduction annuelle estimée : <strong>' + formatEuro(deducAnnuelle) + '</strong> (part pro à 70%).' : ''} Tenez un carnet de bord avec date, départ, destination et km.`;
+    },
+    liens: [{lien:'https://www.impots.gouv.fr/particulier/les-frais-reels',btn:'Barème kilométrique officiel'},{lien:'https://www.urssaf.fr/portail/home/independant/mes-cotisations/quelles-cotisations/les-frais-professionnels.html',btn:'URSSAF — frais professionnels'}]
+  },
+
+  // ── PARKING ÉLEVÉ ──
+  { id:'parking_eleve', icon:'🅿️',
+    score: function() {
+      var totParking = vehicules.reduce(function(s,v2){return s+(v2.vParking||0);},0) || parking;
+      if (totParking > 150) return 85;
+      if (totParking > 100) return 72;
+      if (totParking > 60 && (zone==='paris'||zone==='grande_ville')) return 65;
+      return 0;
+    },
+    titre: function() {
+      var totParking = vehicules.reduce(function(s,v2){return s+(v2.vParking||0);},0) || parking;
+      return `Parking / péages — ${formatEuro(totParking)}/mois à optimiser`;
+    },
+    desc: function() {
+      var totParking = vehicules.reduce(function(s,v2){return s+(v2.vParking||0);},0) || parking;
+      var econoPark = zone === 'paris'
+        ? "Un abonnement parking annuel coûte souvent 30 à 40% moins cher qu'au mois. Les parkings P+R (Park and Ride) en périphérie permettent de finir en métro bien moins cher."
+        : "Un abonnement annuel ou semestriel dans un parking est souvent 20 à 30% moins cher. Certaines villes proposent des abonnements résidents à tarif préférentiel.";
+      return `Votre budget parking/péages est de <strong>${formatEuro(totParking)}/mois</strong> (${formatEuro(totParking*12)}/an). ${econoPark}`;
+    },
+    liens: zone === 'paris'
+      ? [{lien:'https://www.parkindigo.com/fr/abonnement',btn:'Abonnements Indigo'},{lien:'https://ratp.fr/parkings-relais',btn:'Parkings P+R RATP'}]
+      : [{lien:'https://www.parkindigo.com/fr/abonnement',btn:'Abonnements parking'},{lien:'https://www.zenpark.com/',btn:'Zenpark — parking partagé'}]
+  },
+
+  // ── PARIS TC + VOITURE ──
+  { id:'paris_tc_voiture', icon:'🗺️',
+    score: function() {
+      if (zone !== 'paris' || nbVoitures === 0) return 0;
+      if (tc > 0 && totalVehicule > 0) return 88;
+      if (totalVehicule > 0 && (hasDiesel || hasEssence)) return 72;
+      return 0;
+    },
+    titre: function() { return 'Paris — optimiser voiture + Navigo'; },
+    desc: function() {
+      var econoPossible = assurAuto ? Math.round(assurAuto * 0.4) : null;
+      var items = ["La vignette Crit'Air est obligatoire à Paris et dans les ZFE — vérifiez votre catégorie."];
+      if (econoPossible) items.push(`Une assurance "week-end" ou au kilomètre peut économiser <strong>~${formatEuro(econoPossible)}/mois</strong> si vous n'utilisez la voiture qu'occasionnellement.`);
+      if (hasDiesel) items.push("Les diesels Crit'Air 3 et plus sont progressivement interdits en semaine à Paris — anticipez la conversion.");
+      items.push("Le stationnement résidentiel coûte 45€/an à Paris — vérifiez votre éligibilité.");
+      return items.join(' ');
+    },
+    liens: [{lien:'https://www.certificat-air.gouv.fr/',btn:"Vignette Crit'Air"},{lien:'https://www.paris.fr/pages/le-stationnement-a-paris-197',btn:'Stationnement résidentiel Paris'}]
+  },
+
+  // ── APPLICATIONS ──
+  { id:'applis', icon:'📱',
+    score: function() { return 30; },
+    titre: function() { return 'Applications pour optimiser vos déplacements'; },
+    desc: function() {
+      return `Waze (éviter les embouteillages), prix-carburants.gouv.fr (station la moins chère), SNCF Connect (billets de train), Citymapper (transports en commun), BlaBlaCar Daily (covoiturage domicile-travail).`;
+    },
+    liens: [{lien:'https://citymapper.com/fr',btn:'Citymapper'},{lien:'https://www.prix-carburants.gouv.fr/',btn:'Prix carburants'}]
+  },
+
+];
+
+// Pré-calcul du fallback (règles en dur) — utilisé si l'IA échoue
+const conseilsScores = REGLES.map(function(r) {
+  return { r: r, s: r.score() };
+}).filter(function(x) { return x.s > 0; })
+  .sort(function(a, b) { return b.s - a.s; });
+const conseilsAffiches = conseilsScores.filter(function(x){ return x.s >= 60; }).slice(0, 8);
+
+// ── CONSEILS — moteur IA avec fallback règles ──
+document.getElementById('conseils-sub').textContent = 'Analyse de votre profil en cours…';
+
+(async function() {
+  const cGrid = document.getElementById('conseils-grid');
+
+  // Contexte calculé à passer à l'IA (données déjà fiables car calculées par le code)
+  const contextesMobilite = `
+Données calculées précises :
+- Coût mobilité déclaré : ${formatEuro(totalMobilite)}/mois (${tauxMobilite}% des revenus)
+- Coût réel estimé (avec dépréciation) : ${formatEuro(totalReel)}/mois
+- Dépréciation totale estimée : ${deprecTotale > 0 ? formatEuro(deprecTotale) + '/mois' : 'non calculée'}
+- Nombre de véhicules : ${nbVoitures}
+- Zone géographique : ${zone}
+${vehicules.map(function(v, i) {
+  return '- Véhicule ' + (i+1) + ' : ' + (v.type||'?') + ', ' + (v.carb||'?') + ', ' +
+    (v.annee ? (new Date().getFullYear() - v.annee) + ' ans' : '') +
+    (v.km ? ', ' + v.km.toLocaleString('fr-FR') + ' km/an' : '') +
+    (v.valeur ? ', valeur ' + formatEuro(v.valeur) : '') +
+    (v.usage ? ', usage ' + v.usage : '');
+}).join('\n')}
+- Carburant total : ${formatEuro(carburant)}/mois
+- Assurance auto totale : ${formatEuro(assurAuto)}/mois
+- Entretien auto total : ${formatEuro(entretienAuto)}/mois
+- Transports commun : ${formatEuro(tc)}/mois
+- VTC/taxi : ${formatEuro(vtc)}/mois
+- Covoiturage : ${formatEuro(covoiturage)}/mois`;
+
+  // Afficher le loader
+  cGrid.innerHTML =
+    '<div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:16px;padding:48px 24px">' +
+      '<div class="ia-loader"></div>' +
+      '<div style="font-size:0.88rem;color:var(--gris)">L\'IA analyse votre profil de mobilité…</div>' +
+    '</div>';
+
+  try {
+    const conseils = await genererConseilIA('mobilite', profil, contextesMobilite);
+
+    if (conseils && conseils.length > 0) {
+      document.getElementById('conseils-sub').textContent =
+        conseils.length + ' conseil' + (conseils.length > 1 ? 's' : '') + ' personnalisé' + (conseils.length > 1 ? 's' : '') + ' générés par IA selon votre situation exacte.';
+
+      cGrid.innerHTML = '';
+      conseils.forEach(function(c) {
+        const borderColor = c.priorite === 'bad' ? 'var(--danger)' : c.priorite === 'warn' ? 'var(--warning)' : '#4a7c59';
+        const badgeColor = c.priorite === 'bad' ? '#fceaea' : c.priorite === 'warn' ? '#fef3e2' : '#edf5ee';
+        const badgeLabel = c.priorite === 'bad' ? '⚠ Important' : c.priorite === 'warn' ? '💡 À optimiser' : '✅ Bon à savoir';
+        cGrid.innerHTML +=
+          '<div class="mobi-card sable" style="border:1px solid var(--sable3);border-top:3px solid ' + borderColor + ';display:flex;flex-direction:column">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+              '<span style="font-size:0.65rem;font-weight:700;background:' + badgeColor + ';color:' + borderColor + ';padding:3px 10px;border-radius:50px">' + badgeLabel + '</span>' +
+              '<span style="font-size:0.62rem;color:var(--gris2);font-style:italic">✨ IA</span>' +
+            '</div>' +
+            '<h4 style="margin-bottom:8px">' + c.titre + '</h4>' +
+            '<p style="flex:1">' + c.texte + '</p>' +
+            (c.economie ? '<div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:var(--terra-pale);color:var(--terra-dark);font-size:0.75rem;font-weight:700;padding:5px 12px;border-radius:50px">💰 ' + c.economie + '</div>' : '') +
+          '</div>';
+      });
+    } else {
+      throw new Error('Pas de conseils retournés');
+    }
+  } catch(e) {
+    // Fallback : afficher les règles codées en dur
+    document.getElementById('conseils-sub').textContent =
+      conseilsAffiches.length + ' conseil' + (conseilsAffiches.length > 1 ? 's' : '') + ' personnalisé' + (conseilsAffiches.length > 1 ? 's' : '') + ' selon votre situation.';
+    cGrid.innerHTML = '';
+    conseilsAffiches.forEach(function(x) {
+      var c = x.r;
+      var score = x.s;
+      var scoreColor = score >= 85 ? '#2e7d32' : score >= 70 ? '#4a7c59' : score >= 55 ? '#f59e0b' : '#d97706';
+      var scoreBg = score >= 85 ? '#edf5ee' : score >= 70 ? '#f0f7f2' : score >= 55 ? '#fef3e2' : '#fde68a';
+      var liensHTML = (c.liens || []).map(function(l) {
+        return '<a href="' + l.lien + '" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:6px;background:var(--terra);color:white;font-size:0.75rem;font-weight:600;padding:6px 12px;border-radius:50px;text-decoration:none">🔗 ' + l.btn + ' →</a>';
+      }).join('');
+      cGrid.innerHTML +=
+        '<div class="mobi-card sable" style="border:1px solid var(--sable3);display:flex;flex-direction:column">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+            '<span style="font-size:1.5rem">' + c.icon + '</span>' +
+            '<div style="font-size:0.65rem;color:' + scoreColor + ';font-weight:700;background:' + scoreBg + ';padding:2px 8px;border-radius:50px;border:1px solid ' + scoreColor + '">Pertinence ' + score + '%</div>' +
+          '</div>' +
+          '<h4 style="margin-bottom:8px">' + (typeof c.titre === 'function' ? c.titre() : c.titre) + '</h4>' +
+          '<p style="flex:1">' + (typeof c.desc === 'function' ? c.desc() : c.desc) + '</p>' +
+          (liensHTML ? '<div style="border-top:1px solid var(--sable3);margin-top:14px;padding-top:12px">' + liensHTML + '</div>' : '') +
+        '</div>';
+    });
+  }
+})();
+
+</script>
+</body>
+</html>
